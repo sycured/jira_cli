@@ -84,15 +84,15 @@ pub fn cli_create_version() -> Command<'static> {
         .about("Create version")
         .arg_required_else_help(true)
         .arg(
-            Arg::new("project_id")
-                .help("Project id (use get_project_id subcommand to get it")
-                .env("JIRA_PROJECT_ID")
+            Arg::new("version_name")
+                .help("Version name")
                 .takes_value(true)
                 .required(true),
         )
         .arg(
-            Arg::new("version_name")
-                .help("Version name")
+            Arg::new("project_id")
+                .help("Project id (use get_project_id subcommand to get it")
+                .env("JIRA_PROJECT_ID")
                 .takes_value(true)
                 .required(true),
         )

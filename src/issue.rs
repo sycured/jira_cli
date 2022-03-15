@@ -35,15 +35,15 @@ pub fn cli_add_version() -> Command<'static> {
         .about("Add version to Jira issue")
         .arg_required_else_help(true)
         .arg(
-            Arg::new("version_name")
-                .help("Version name")
-                .env("JIRA_VERSION_NAME")
+            Arg::new("issue_key")
+                .help("Issue key")
                 .takes_value(true)
                 .required(true),
         )
         .arg(
-            Arg::new("issue_key")
-                .help("Issue key")
+            Arg::new("version_name")
+                .help("Version name")
+                .env("JIRA_VERSION_NAME")
                 .takes_value(true)
                 .required(true),
         )

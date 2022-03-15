@@ -7,7 +7,7 @@ CLI tool using Jira REST API
 Required for all subcommands
 
 | CLI short flag | CLI long flag | environment variable name |
-| :------------: | :-----------: | :-----------------------: |
+|:--------------:|:-------------:|:-------------------------:|
 |      `-d`      |  `--domain`   |       `JIRA_DOMAIN`       |
 |      `-t`      |   `--token`   |       `JIRA_TOKEN`        |
 |      `-u`      |   `--user`    |        `JIRA_USER`        |
@@ -17,11 +17,12 @@ Required for all subcommands
 ### add_version
 
 |    argument    | environment variable name |
-| :------------: | :-----------------------: |
-| `version_name` |    `JIRA_VERSION_NAME`    |
+|:--------------:|:-------------------------:|
 |  `issue_key`   |                           |
+| `version_name` |    `JIRA_VERSION_NAME`    |
 
-`JIRA_VERSION_NAME` exists because when I'm adding the same tag to a different issue, I can loop more quickly using this syntax:
+`JIRA_VERSION_NAME` exists because when I'm adding the same tag to a different issue, I can loop more quickly using this
+syntax:
 
 ```shell
 while read line; do jira_cli add_version $line; done < /tmp/issues_list
@@ -39,7 +40,7 @@ SYY-1035
 ### create_project
 
 |           argument           |                       default value                       | specific list of values |
-| :--------------------------: | :-------------------------------------------------------: | :---------------------: |
+|:----------------------------:|:---------------------------------------------------------:|:-----------------------:|
 |        `project_name`        |                                                           |                         |
 |        `project_key`         |                                                           |                         |
 | `jira_project_leadaccountid` |                                                           |                         |
@@ -61,9 +62,9 @@ jira_cli create_project -h
 ### create_version
 
 |    argument    | environment variable name |
-| :------------: | :-----------------------: |
-|  `project_id`  |     `JIRA_PROJECT_ID`     |
+|:--------------:|:-------------------------:|
 | `version_name` |                           |
+|  `project_id`  |     `JIRA_PROJECT_ID`     |
 
 When creating multiple versions for the same project, it's quicker to do it like:
 
@@ -76,7 +77,7 @@ jira_cli create_version v1.2
 ### delete_project
 
 |   argument    |
-| :-----------: |
+|:-------------:|
 | `project_key` |
 
 This subcommand has a confirmation prompt to be sure that you want to delete the project.
@@ -84,19 +85,19 @@ This subcommand has a confirmation prompt to be sure that you want to delete the
 ### get_account_id
 
 |    argument     |
-| :-------------: |
+|:---------------:|
 | `email_address` |
 
 ### get_project_id
 
 |   argument    |
-| :-----------: |
+|:-------------:|
 | `project_key` |
 
 ### set_project_feature_state
 
 |    argument     | specific list of values |
-| :-------------: | :---------------------: |
+|:---------------:|:-----------------------:|
 |  `project_key`  |                         |
 |  `feature_key`  |                         |
 | `feature_state` |            x            |
