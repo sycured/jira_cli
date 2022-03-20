@@ -11,6 +11,7 @@ fn b64auth(jira_user: &str, jira_token: &str) -> String {
     ));
 }
 
+#[inline]
 pub fn delete_request(url: &str, jira_user: &str, jira_token: &str, success_message: &str) {
     let resp = delete(url)
         .set(
@@ -29,6 +30,7 @@ pub fn delete_request(url: &str, jira_user: &str, jira_token: &str, success_mess
     }
 }
 
+#[inline]
 pub fn get_request(url: &str, jira_user: &str, jira_token: &str) -> Response {
     let resp = get(url)
         .set("Accept", "application/json")
@@ -46,6 +48,7 @@ pub fn get_request(url: &str, jira_user: &str, jira_token: &str) -> Response {
     }
 }
 
+#[inline]
 pub fn post_request(
     url: &str,
     payload: Value,
@@ -72,6 +75,7 @@ pub fn post_request(
     }
 }
 
+#[inline]
 pub fn put_request(
     url: &str,
     payload: Value,
