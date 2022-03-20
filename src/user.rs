@@ -21,7 +21,6 @@ pub fn cli_get_account_id() -> Command<'static> {
         .arg(
             Arg::new("email_address")
                 .help("Email address")
-                .takes_value(true)
                 .required(true),
         );
 }

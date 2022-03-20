@@ -34,19 +34,16 @@ pub fn cli_create_project() -> Command<'static> {
         .arg(
             Arg::new("project_name")
                 .help("Project name")
-                .takes_value(true)
                 .required(true),
         )
         .arg(
             Arg::new("project_key")
                 .help("Project key")
-                .takes_value(true)
                 .required(true),
         )
         .arg(
             Arg::new("jira_project_leadaccountid")
                 .help("Project lead (account id)")
-                .takes_value(true)
                 .required(true)
         )
         .arg(
@@ -86,14 +83,12 @@ pub fn cli_create_version() -> Command<'static> {
         .arg(
             Arg::new("version_name")
                 .help("Version name")
-                .takes_value(true)
                 .required(true),
         )
         .arg(
             Arg::new("project_id")
                 .help("Project id (use get_project_id subcommand to get it")
                 .env("JIRA_PROJECT_ID")
-                .takes_value(true)
                 .required(true),
         );
 }
@@ -128,11 +123,7 @@ pub fn cli_delete_project() -> Command<'static> {
     return Command::new("delete_project")
         .about("Delete project")
         .arg_required_else_help(true)
-        .arg(
-            Arg::new("project_key")
-                .help("Project key")
-                .takes_value(true),
-        )
+        .arg(Arg::new("project_key").help("Project key").required(true));
 }
 
 pub fn get_project_id(
@@ -155,11 +146,7 @@ pub fn cli_get_project_id() -> Command<'static> {
     return Command::new("get_project_id")
         .about("Get project id")
         .arg_required_else_help(true)
-        .arg(
-            Arg::new("project_key")
-                .help("Project key")
-                .takes_value(true),
-        )
+        .arg(Arg::new("project_key").help("Project key").required(true));
 }
 
 pub fn set_project_feature_state(
@@ -190,22 +177,11 @@ pub fn cli_set_project_feature_state() -> Command<'static> {
     return Command::new("set_project_feature_state")
         .about("Set project feature state")
         .arg_required_else_help(true)
-        .arg(
-            Arg::new("project_key")
-                .help("Project key")
-                .takes_value(true)
-                .required(true),
-        )
-        .arg(
-            Arg::new("feature_key")
-                .help("Feature key")
-                .takes_value(true)
-                .required(true),
-        )
+        .arg(Arg::new("project_key").help("Project key").required(true))
+        .arg(Arg::new("feature_key").help("Feature key").required(true))
         .arg(
             Arg::new("feature_state")
                 .help("Feature state")
-                .takes_value(true)
                 .possible_values(["ENABLED", "DISABLED", "COMING_SOON"])
                 .required(true),
         );

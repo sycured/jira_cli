@@ -20,7 +20,7 @@ pub fn delete_request(url: &str, jira_user: &str, jira_token: &str, success_mess
         .call();
     match resp {
         Err(err) => {
-            println!("{}", err);
+            eprintln!("{}", err);
             exit(1);
         }
         Ok(_) => {
@@ -39,7 +39,7 @@ pub fn get_request(url: &str, jira_user: &str, jira_token: &str) -> Response {
         .call();
     match resp {
         Err(err) => {
-            println!("{}", err);
+            eprintln!("{}", err);
             exit(1);
         }
         Ok(response) => response,
@@ -63,7 +63,7 @@ pub fn post_request(
         .send_json(payload);
     match resp {
         Err(err) => {
-            println!("{}", err);
+            eprintln!("{}", err);
             exit(1);
         }
         Ok(_) => {
@@ -89,7 +89,7 @@ pub fn put_request(
         .send_json(payload);
     match resp {
         Err(err) => {
-            println!("{}", err);
+            eprintln!("{}", err);
             exit(1);
         }
         Ok(_) => {
