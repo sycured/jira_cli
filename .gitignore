@@ -1,6 +1,6 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/clion+all,rust,macos,vim
-# Edit at https://www.toptal.com/developers/gitignore?templates=clion+all,rust,macos,vim
+# Created by https://www.toptal.com/developers/gitignore/api/clion+all,rust,macos,vim,dotenv
+# Edit at https://www.toptal.com/developers/gitignore?templates=clion+all,rust,macos,vim,dotenv
 
 ### CLion+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
@@ -90,6 +90,9 @@ fabric.properties
 !.idea/codeStyles
 !.idea/runConfigurations
 
+### dotenv ###
+.env
+
 ### macOS ###
 # General
 .DS_Store
@@ -155,5 +158,5 @@ tags
 # Persistent undo
 [._]*.un~
 
-# End of https://www.toptal.com/developers/gitignore/api/clion+all,rust,macos,vim
+# End of https://www.toptal.com/developers/gitignore/api/clion+all,rust,macos,vim,dotenv
 
