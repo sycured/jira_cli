@@ -82,6 +82,26 @@ jira_cli create_version v1.2
 
 This subcommand has a confirmation prompt to be sure that you want to delete the project.
 
+### generate
+
+| argument | specific list of values |
+|:--------:|:-----------------------:|
+| `shell`  |            x            |
+
+Possible values for `shell` (case sensitive):
+
+- bash
+- elvish
+- fish
+- powershell
+- zsh
+
+For example to generate zsh autocompletion and save it to a file:
+
+```shell
+jira_cli generate zsh > ~/.zsh/completion/_jira_cli
+```
+
 ### get_account_id
 
 |    argument     |
