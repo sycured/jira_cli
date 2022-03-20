@@ -15,7 +15,7 @@ pub fn get_account_id(jira_domain: &str, jira_user: &str, jira_token: &str, emai
 }
 
 pub fn cli_get_account_id() -> Command<'static> {
-    Command::new("get_account_id")
+    return Command::new("get_account_id")
         .about("Get account id")
         .arg_required_else_help(true)
         .arg(
@@ -23,5 +23,5 @@ pub fn cli_get_account_id() -> Command<'static> {
                 .help("Email address")
                 .takes_value(true)
                 .required(true),
-        )
+        );
 }

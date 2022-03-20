@@ -31,7 +31,7 @@ pub fn add_version(
 }
 
 pub fn cli_add_version() -> Command<'static> {
-    Command::new("add_version")
+    return Command::new("add_version")
         .about("Add version to Jira issue")
         .arg_required_else_help(true)
         .arg(
@@ -46,5 +46,5 @@ pub fn cli_add_version() -> Command<'static> {
                 .env("JIRA_VERSION_NAME")
                 .takes_value(true)
                 .required(true),
-        )
+        );
 }

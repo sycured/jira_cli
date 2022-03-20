@@ -28,7 +28,7 @@ pub fn create_project(
 }
 
 pub fn cli_create_project() -> Command<'static> {
-    Command::new("create_project")
+    return Command::new("create_project")
         .about("Create project")
         .arg_required_else_help(true)
         .arg(
@@ -60,7 +60,7 @@ pub fn cli_create_project() -> Command<'static> {
                 .help("Project template")
                 .default_value("com.pyxis.greenhopper.jira:gh-simplified-agility-kanban")
                 .possible_values(["com.atlassian.jira-core-project-templates:jira-core-simplified-content-management", "com.atlassian.jira-core-project-templates:jira-core-simplified-document-approval", "com.atlassian.jira-core-project-templates:jira-core-simplified-lead-tracking", "com.atlassian.jira-core-project-templates:jira-core-simplified-process-control", "com.atlassian.jira-core-project-templates:jira-core-simplified-procurement", "com.atlassian.jira-core-project-templates:jira-core-simplified-project-management", "com.atlassian.jira-core-project-templates:jira-core-simplified-recruitment", "com.atlassian.jira-core-project-templates:jira-core-simplified-task-tracking", "com.atlassian.servicedesk:simplified-it-service-management", "com.atlassian.servicedesk:simplified-general-service-desk", "com.atlassian.servicedesk:simplified-internal-service-desk", "com.atlassian.servicedesk:simplified-external-service-desk", "com.atlassian.servicedesk:simplified-hr-service-desk", "com.atlassian.servicedesk:simplified-facilities-service-desk", "com.atlassian.servicedesk:simplified-legal-service-desk", "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "com.pyxis.greenhopper.jira:gh-simplified-agility-scrum", "com.pyxis.greenhopper.jira:gh-simplified-basic", "com.pyxis.greenhopper.jira:gh-simplified-kanban-classic", "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic"]),
-        )
+        );
 }
 
 pub fn create_version(
@@ -80,7 +80,7 @@ pub fn create_version(
 }
 
 pub fn cli_create_version() -> Command<'static> {
-    Command::new("create_version")
+    return Command::new("create_version")
         .about("Create version")
         .arg_required_else_help(true)
         .arg(
@@ -95,7 +95,7 @@ pub fn cli_create_version() -> Command<'static> {
                 .env("JIRA_PROJECT_ID")
                 .takes_value(true)
                 .required(true),
-        )
+        );
 }
 
 pub fn delete_project(
@@ -125,7 +125,7 @@ pub fn delete_project(
 }
 
 pub fn cli_delete_project() -> Command<'static> {
-    Command::new("delete_project")
+    return Command::new("delete_project")
         .about("Delete project")
         .arg_required_else_help(true)
         .arg(
@@ -152,7 +152,7 @@ pub fn get_project_id(
 }
 
 pub fn cli_get_project_id() -> Command<'static> {
-    Command::new("get_project_id")
+    return Command::new("get_project_id")
         .about("Get project id")
         .arg_required_else_help(true)
         .arg(
@@ -187,7 +187,7 @@ pub fn set_project_feature_state(
 }
 
 pub fn cli_set_project_feature_state() -> Command<'static> {
-    Command::new("set_project_feature_state")
+    return Command::new("set_project_feature_state")
         .about("Set project feature state")
         .arg_required_else_help(true)
         .arg(
@@ -208,5 +208,5 @@ pub fn cli_set_project_feature_state() -> Command<'static> {
                 .takes_value(true)
                 .possible_values(["ENABLED", "DISABLED", "COMING_SOON"])
                 .required(true),
-        )
+        );
 }
