@@ -83,6 +83,7 @@ pub fn cli_create_version() -> Command<'static> {
         .arg(
             Arg::new("version_name")
                 .help("Version name")
+                .env("JIRA_VERSION_NAME")
                 .required(true),
         )
         .arg(

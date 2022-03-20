@@ -63,7 +63,7 @@ jira_cli create_project -h
 
 |    argument    | environment variable name |
 |:--------------:|:-------------------------:|
-| `version_name` |                           |
+| `version_name` |    `JIRA_VERSION_NAME`    |
 |  `project_id`  |     `JIRA_PROJECT_ID`     |
 
 When creating multiple versions for the same project, it's quicker to do it like:
