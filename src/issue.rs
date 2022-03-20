@@ -4,11 +4,11 @@ use serde_json::Value;
 use ureq::json;
 
 pub fn add_version(
-    jira_domain: String,
-    jira_user: String,
-    jira_token: String,
-    version_name: String,
-    jira_issue: String,
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    version_name: &str,
+    jira_issue: &str,
 ) {
     let url: String = format!(
         "https://{domain}/rest/api/3/issue/{issue_key}",
@@ -27,7 +27,7 @@ pub fn add_version(
         }
     });
     let success_message: String = format!("Version {} added to issue {}", version_name, jira_issue);
-    put_request(url, payload, jira_user, jira_token, success_message);
+    put_request(&url, payload, jira_user, jira_token, &success_message);
 }
 
 pub fn cli_add_version() -> Command<'static> {

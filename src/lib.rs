@@ -3,16 +3,16 @@ use serde_json::Value;
 use std::process::exit;
 use ureq::{delete, get, post, put, Response};
 
-fn b64auth(jira_user: String, jira_token: String) -> String {
     b64encode(format!(
+fn b64auth(jira_user: &str, jira_token: &str) -> String {
         "{user}:{token}",
         user = jira_user,
         token = jira_token
     ))
 }
 
-pub fn delete_request(url: String, jira_user: String, jira_token: String, success_message: String) {
-    let resp = delete(&url)
+pub fn delete_request(url: &str, jira_user: &str, jira_token: &str, success_message: &str) {
+    let resp = delete(url)
         .set(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(jira_user, jira_token)),
@@ -29,8 +29,8 @@ pub fn delete_request(url: String, jira_user: String, jira_token: String, succes
     }
 }
 
-pub fn get_request(url: String, jira_user: String, jira_token: String) -> Response {
-    let resp = get(&url)
+pub fn get_request(url: &str, jira_user: &str, jira_token: &str) -> Response {
+    let resp = get(url)
         .set("Accept", "application/json")
         .set(
             "Authorization",
@@ -47,13 +47,13 @@ pub fn get_request(url: String, jira_user: String, jira_token: String) -> Respon
 }
 
 pub fn post_request(
-    url: String,
+    url: &str,
     payload: Value,
-    jira_user: String,
-    jira_token: String,
-    success_message: String,
+    jira_user: &str,
+    jira_token: &str,
+    success_message: &str,
 ) {
-    let resp = post(&url)
+    let resp = post(url)
         .set("Accept", "application/json")
         .set("Content-Type", "application/json")
         .set(
@@ -73,13 +73,13 @@ pub fn post_request(
 }
 
 pub fn put_request(
-    url: String,
+    url: &str,
     payload: Value,
-    jira_user: String,
-    jira_token: String,
-    success_message: String,
+    jira_user: &str,
+    jira_token: &str,
+    success_message: &str,
 ) {
-    let resp = put(&url)
+    let resp = put(url)
         .set("Accept", "application/json")
         .set("Content-Type", "application/json")
         .set(

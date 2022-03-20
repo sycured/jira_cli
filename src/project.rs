@@ -5,14 +5,14 @@ use serde_json::Value;
 use ureq::{json, Response};
 
 pub fn create_project(
-    jira_domain: String,
-    jira_user: String,
-    jira_token: String,
-    jira_project_name: String,
-    jira_project_key: String,
-    jira_project_leadaccountid: String,
-    jira_project_type: String,
-    jira_project_template: String,
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    jira_project_name: &str,
+    jira_project_key: &str,
+    jira_project_leadaccountid: &str,
+    jira_project_type: &str,
+    jira_project_template: &str,
 ) {
     let url: String = format!("https://{domain}/rest/api/3/project", domain = jira_domain);
     let payload: Value = json!({
@@ -24,7 +24,7 @@ pub fn create_project(
         "assigneeType": "UNASSIGNED"
     });
     let success_message: String = format!("Project {} created", jira_project_key);
-    post_request(url, payload, jira_user, jira_token, success_message);
+    post_request(&url, payload, jira_user, jira_token, &success_message);
 }
 
 pub fn cli_create_project() -> Command<'static> {
@@ -64,11 +64,11 @@ pub fn cli_create_project() -> Command<'static> {
 }
 
 pub fn create_version(
-    jira_domain: String,
-    jira_user: String,
-    jira_token: String,
-    jira_project_id: String,
-    version_name: String,
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    jira_project_id: &str,
+    version_name: &str,
 ) {
     let url: String = format!("https://{domain}/rest/api/3/version", domain = jira_domain);
     let payload: Value = json!({
@@ -76,7 +76,7 @@ pub fn create_version(
       "projectId": jira_project_id.parse::<i32>().unwrap()
     });
     let success_message: String = format!("Version created: {}", version_name);
-    post_request(url, payload, jira_user, jira_token, success_message);
+    post_request(&url, payload, jira_user, jira_token, &success_message);
 }
 
 pub fn cli_create_version() -> Command<'static> {
@@ -99,10 +99,10 @@ pub fn cli_create_version() -> Command<'static> {
 }
 
 pub fn delete_project(
-    jira_domain: String,
-    jira_user: String,
-    jira_token: String,
-    jira_project_key: String,
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    jira_project_key: &str,
 ) {
     let url: String = format!(
         "https://{domain}/rest/api/3/project/{key}",
@@ -118,7 +118,7 @@ pub fn delete_project(
         .unwrap()
     {
         let success_message: String = format!("Project {} deleted", jira_project_key);
-        delete_request(url, jira_user, jira_token, success_message);
+        delete_request(&url, jira_user, jira_token, &success_message);
     } else {
         println!("Project {} not deleted.", jira_project_key);
     }
@@ -136,17 +136,17 @@ pub fn cli_delete_project() -> Command<'static> {
 }
 
 pub fn get_project_id(
-    jira_domain: String,
-    jira_user: String,
-    jira_token: String,
-    jira_project_key: String,
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    jira_project_key: &str,
 ) {
     let url: String = format!(
         "https://{domain}/rest/api/3/project/{key}",
         domain = jira_domain,
         key = jira_project_key
     );
-    let resp: Response = get_request(url, jira_user, jira_token);
+    let resp: Response = get_request(&url, jira_user, jira_token);
     let json: Value = resp.into_json().unwrap();
     println!("{}", json["id"].as_str().unwrap().parse::<i32>().unwrap());
 }
@@ -163,12 +163,12 @@ pub fn cli_get_project_id() -> Command<'static> {
 }
 
 pub fn set_project_feature_state(
-    jira_domain: String,
-    jira_user: String,
-    jira_token: String,
-    jira_project_key: String,
-    jira_project_feature_key: String,
-    jira_project_feature_state: String,
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    jira_project_key: &str,
+    jira_project_feature_key: &str,
+    jira_project_feature_state: &str,
 ) {
     let url: String = format!(
         "https://{domain}/rest/api/3/project/{projectkey}/features/{featurekey}",
@@ -183,7 +183,7 @@ pub fn set_project_feature_state(
         feature_state = jira_project_feature_state,
         project_key = jira_project_key
     );
-    put_request(url, payload, jira_user, jira_token, success_message);
+    put_request(&url, payload, jira_user, jira_token, &success_message);
 }
 
 pub fn cli_set_project_feature_state() -> Command<'static> {
