@@ -24,7 +24,14 @@ pub fn create_project(
         "assigneeType": "UNASSIGNED"
     });
     let success_message: String = format!("Project {} created", jira_project_key);
-    post_request(&url, payload, jira_user, jira_token, &success_message);
+    post_request(
+        &url,
+        payload,
+        jira_user,
+        jira_token,
+        &success_message,
+        false,
+    );
 }
 
 pub fn cli_create_project() -> Command<'static> {
@@ -73,7 +80,14 @@ pub fn create_version(
       "projectId": jira_project_id.parse::<i32>().unwrap()
     });
     let success_message: String = format!("Version created: {}", version_name);
-    post_request(&url, payload, jira_user, jira_token, &success_message);
+    post_request(
+        &url,
+        payload,
+        jira_user,
+        jira_token,
+        &success_message,
+        false,
+    );
 }
 
 pub fn cli_create_version() -> Command<'static> {
@@ -122,6 +136,7 @@ pub fn delete_project(
 
 pub fn cli_delete_project() -> Command<'static> {
     return Command::new("delete_project")
+        .aliases(&["destroy", "destroy_project"])
         .about("Delete project")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));

@@ -30,6 +30,19 @@ fn main() {
                 args.value_of("issue_key").unwrap(),
             );
         }
+        Some(("create_issue", args)) => {
+            issue::create_issue(
+                matches.value_of("domain").unwrap(),
+                matches.value_of("user").unwrap(),
+                matches.value_of("token").unwrap(),
+                args.value_of("reporter_account_id").unwrap(),
+                args.value_of("project_key").unwrap(),
+                args.value_of("issue_type").unwrap(),
+                args.value_of("issue_summary").unwrap(),
+                args.value_of("issue_description").unwrap(),
+                args.value_of("issue_priority").unwrap_or(""),
+            );
+        }
         Some(("create_project", args)) => {
             project::create_project(
                 matches.value_of("domain").unwrap(),
@@ -65,6 +78,21 @@ fn main() {
                 matches.value_of("user").unwrap(),
                 matches.value_of("token").unwrap(),
                 args.value_of("email_address").unwrap(),
+            );
+        }
+        Some(("get_issue_priorities", _)) => {
+            issue::get_issue_priorities(
+                matches.value_of("domain").unwrap(),
+                matches.value_of("user").unwrap(),
+                matches.value_of("token").unwrap(),
+            );
+        }
+        Some(("get_issue_types", args)) => {
+            issue::get_issue_types(
+                matches.value_of("domain").unwrap(),
+                matches.value_of("user").unwrap(),
+                matches.value_of("token").unwrap(),
+                args.value_of("project_key").unwrap(),
             );
         }
         Some(("get_project_id", args)) => {

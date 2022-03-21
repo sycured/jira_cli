@@ -1,4 +1,5 @@
 use base64::encode as b64encode;
+use either::Either;
 use serde_json::Value;
 use std::process::exit;
 use ureq::{delete, get, post, put, Response};
@@ -55,7 +56,8 @@ pub fn post_request(
     jira_user: &str,
     jira_token: &str,
     success_message: &str,
-) {
+    return_response: bool,
+) -> Either<(), Response> {
     let resp = post(url)
         .set("Accept", "application/json")
         .set("Content-Type", "application/json")
@@ -69,8 +71,12 @@ pub fn post_request(
             eprintln!("{}", err);
             exit(1);
         }
-        Ok(_) => {
-            println!("{}", success_message);
+        Ok(response) => {
+            if return_response {
+                Either::Right(response)
+            } else {
+                Either::Left(println!("{}", success_message))
+            }
         }
     }
 }
