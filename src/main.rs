@@ -22,96 +22,34 @@ fn main() {
             print_completions(shell, &mut cmd);
         }
         Some(("add_version", args)) => {
-            issue::add_version(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("version_name").unwrap(),
-                args.value_of("issue_key").unwrap(),
-            );
+            issue::cli_logic::add_version(&matches, args);
         }
         Some(("create_issue", args)) => {
-            issue::create_issue(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("reporter_account_id").unwrap(),
-                args.value_of("project_key").unwrap(),
-                args.value_of("issue_type").unwrap(),
-                args.value_of("issue_summary").unwrap(),
-                args.value_of("issue_description").unwrap(),
-                args.value_of("issue_priority").unwrap_or(""),
-            );
+            issue::cli_logic::create_issue(&matches, args);
         }
         Some(("create_project", args)) => {
-            project::create_project(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("project_name").unwrap(),
-                args.value_of("project_key").unwrap(),
-                args.value_of("jira_project_leadaccountid").unwrap(),
-                args.value_of("project_type").unwrap(),
-                args.value_of("project_template").unwrap(),
-            );
+            project::cli_logic::create_project(&matches, args);
         }
         Some(("create_version", args)) => {
-            project::create_version(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("project_id").unwrap(),
-                args.value_of("version_name").unwrap(),
-            );
+            project::cli_logic::create_version(&matches, args);
         }
         Some(("delete_project", args)) => {
-            project::delete_project(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("project_key").unwrap(),
-            );
+            project::cli_logic::delete_project(&matches, args);
         }
         Some(("get_account_id", args)) => {
-            user::get_account_id(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("email_address").unwrap(),
-            );
-        }
-        Some(("get_issue_priorities", _)) => {
-            issue::get_issue_priorities(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-            );
-        }
-        Some(("get_issue_types", args)) => {
-            issue::get_issue_types(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("project_key").unwrap(),
-            );
+            user::cli_logic::get_account_id(&matches, args);
         }
         Some(("get_project_id", args)) => {
-            project::get_project_id(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("project_key").unwrap(),
-            );
+            project::cli_logic::get_project_id(&matches, args);
+        }
+        Some(("list_issue_priorities", _)) => {
+            issue::cli_logic::list_issue_priorities(&matches);
+        }
+        Some(("list_issue_types", args)) => {
+            issue::cli_logic::list_issue_types(&matches, args);
         }
         Some(("set_project_feature_state", args)) => {
-            project::set_project_feature_state(
-                matches.value_of("domain").unwrap(),
-                matches.value_of("user").unwrap(),
-                matches.value_of("token").unwrap(),
-                args.value_of("project_key").unwrap(),
-                args.value_of("feature_key").unwrap(),
-                args.value_of("feature_state").unwrap(),
-            );
+            project::cli_logic::set_project_feature_state(&matches, args);
         }
         _ => {
             unreachable!();

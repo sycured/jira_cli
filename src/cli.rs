@@ -47,14 +47,14 @@ pub fn build_cli() -> Command<'static> {
                 .required(true),
         )
         .subcommand(generate())
-        .subcommand(issue::cli_add_version())
-        .subcommand(issue::cli_create_issue())
-        .subcommand(issue::cli_get_issue_priorities())
-        .subcommand(issue::cli_get_issue_types())
-        .subcommand(project::cli_get_project_id())
-        .subcommand(project::cli_create_version())
-        .subcommand(project::cli_create_project())
-        .subcommand(project::cli_delete_project())
-        .subcommand(project::cli_set_project_feature_state())
-        .subcommand(user::cli_get_account_id());
+        .subcommand(issue::cli_commands::add_version())
+        .subcommand(issue::cli_commands::create_issue())
+        .subcommand(issue::cli_commands::list_issue_priorities())
+        .subcommand(issue::cli_commands::list_issue_types())
+        .subcommand(project::cli_commands::get_project_id())
+        .subcommand(project::cli_commands::create_version())
+        .subcommand(project::cli_commands::create_project())
+        .subcommand(project::cli_commands::delete_project())
+        .subcommand(project::cli_commands::set_project_feature_state())
+        .subcommand(user::cli_commands::get_account_id());
 }
