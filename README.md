@@ -37,6 +37,17 @@ SYY-1030
 SYY-1035
 ```
 
+### create_issue
+
+|    argument    | environment variable name | required |
+|:--------------:|:-------------------------:|:------:|
+|  `project_key`   | `JIRA_PROJECT_KEY` | x |
+| `issue_type` |        | x |
+| `issue_summary` | | x |
+| `issue_description` | | x |
+| `reporter_account_id` | | x |
+| `issue_priority` | | |
+
 ### create_project
 
 |           argument           |                       default value                       | specific list of values |
@@ -110,6 +121,15 @@ jira_cli generate zsh > ~/.zsh/completion/_jira_cli
 
 ### get_project_id
 
+|   argument    |
+|:-------------:|
+| `project_key` |
+
+### list_issue_priorities
+
+No argument
+
+### list_issue_types
 |   argument    |
 |:-------------:|
 | `project_key` |
