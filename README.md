@@ -39,14 +39,14 @@ SYY-1035
 
 ### create_issue
 
-|    argument    | environment variable name | required |
-|:--------------:|:-------------------------:|:------:|
-|  `project_key`   | `JIRA_PROJECT_KEY` | x |
-| `issue_type` |        | x |
-| `issue_summary` | | x |
-| `issue_description` | | x |
-| `reporter_account_id` | | x |
-| `issue_priority` | | |
+|       argument        | environment variable name | required |
+|:---------------------:|:-------------------------:|:--------:|
+|     `project_key`     |    `JIRA_PROJECT_KEY`     |    x     |
+|     `issue_type`      |                           |    x     |
+|    `issue_summary`    |                           |    x     |
+|  `issue_description`  |                           |    x     |
+| `reporter_account_id` |                           |    x     |
+|   `issue_priority`    |                           |          |
 
 ### create_project
 
@@ -130,6 +130,13 @@ jira_cli generate zsh > ~/.zsh/completion/_jira_cli
 No argument
 
 ### list_issue_types
+
+|   argument    |
+|:-------------:|
+| `project_key` |
+
+### list_project_features
+
 |   argument    |
 |:-------------:|
 | `project_key` |
