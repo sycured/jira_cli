@@ -55,6 +55,7 @@ pub fn build_cli() -> Command<'static> {
         .subcommand(project::cli_commands::create_version())
         .subcommand(project::cli_commands::create_project())
         .subcommand(project::cli_commands::delete_project())
+        .subcommand(project::cli_commands::list_project_features())
         .subcommand(project::cli_commands::set_project_feature_state())
         .subcommand(user::cli_commands::get_account_id());
 }

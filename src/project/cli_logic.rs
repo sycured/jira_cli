@@ -42,6 +42,15 @@ pub fn get_project_id(matches: &ArgMatches, args: &ArgMatches) {
     );
 }
 
+pub fn list_project_features(matches: &ArgMatches, args: &ArgMatches) {
+    functions::list_project_features(
+        matches.value_of("domain").unwrap(),
+        matches.value_of("user").unwrap(),
+        matches.value_of("token").unwrap(),
+        args.value_of("project_key").unwrap(),
+    );
+}
+
 pub fn set_project_feature_state(matches: &ArgMatches, args: &ArgMatches) {
     functions::set_project_feature_state(
         matches.value_of("domain").unwrap(),

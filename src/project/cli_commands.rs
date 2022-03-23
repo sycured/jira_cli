@@ -66,6 +66,13 @@ pub fn get_project_id() -> Command<'static> {
         .arg(Arg::new("project_key").help("Project key").required(true));
 }
 
+pub fn list_project_features() -> Command<'static> {
+    return Command::new("list_project_features")
+        .about("List project features")
+        .arg_required_else_help(true)
+        .arg(Arg::new("project_key").help("Project key").required(true));
+}
+
 pub fn set_project_feature_state() -> Command<'static> {
     return Command::new("set_project_feature_state")
         .about("Set project feature state")

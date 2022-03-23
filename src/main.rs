@@ -48,6 +48,9 @@ fn main() {
         Some(("list_issue_types", args)) => {
             issue::cli_logic::list_issue_types(&matches, args);
         }
+        Some(("list_project_features", args)) => {
+            project::cli_logic::list_project_features(&matches, args);
+        }
         Some(("set_project_feature_state", args)) => {
             project::cli_logic::set_project_feature_state(&matches, args);
         }
