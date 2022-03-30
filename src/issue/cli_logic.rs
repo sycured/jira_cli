@@ -1,6 +1,8 @@
-use crate::issue::functions;
-use clap::ArgMatches;
 use std::collections::HashMap;
+
+use clap::ArgMatches;
+
+use crate::issue::functions;
 
 pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::add_version(
@@ -36,5 +38,14 @@ pub fn list_types(global: &HashMap<&str, &str>, args: &ArgMatches) {
         global["user"],
         global["token"],
         args.value_of("project_key").unwrap(),
+    );
+}
+
+pub fn show_fixversions(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::show_fixversions(
+        global["domain"],
+        global["user"],
+        global["token"],
+        args.value_of("issue_key").unwrap(),
     );
 }

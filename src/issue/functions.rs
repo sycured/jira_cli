@@ -1,6 +1,7 @@
-use crate::lib::{get_request, post_request, put_request};
 use serde_json::Value;
 use ureq::{json, Response};
+
+use crate::lib::{get_request, post_request, put_request};
 
 pub fn add_version(
     jira_domain: &str,
@@ -85,6 +86,23 @@ pub fn list_types(jira_domain: &str, jira_user: &str, jira_token: &str, jira_pro
     let resp: Response = get_request(&url, jira_user, jira_token);
     let json: Value = resp.into_json().unwrap();
     json["projects"][0]["issuetypes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .for_each(|x| {
+            println!("{}", x["name"]);
+        });
+}
+
+pub fn show_fixversions(jira_domain: &str, jira_user: &str, jira_token: &str, jira_issue: &str) {
+    let url: String = format!(
+        "https://{domain}/rest/api/3/issue/{issue_key}",
+        domain = jira_domain,
+        issue_key = jira_issue
+    );
+    let resp: Response = get_request(&url, jira_user, jira_token);
+    let json: Value = resp.into_json().unwrap();
+    json["fields"]["fixVersions"]
         .as_array()
         .unwrap()
         .iter()

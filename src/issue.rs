@@ -1,5 +1,7 @@
-use clap::{ArgMatches, Command};
 use std::collections::HashMap;
+
+use clap::{ArgMatches, Command};
+
 pub mod cli_commands;
 pub mod cli_logic;
 pub mod functions;
@@ -12,7 +14,8 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::add_version())
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::list_priorities())
-        .subcommand(cli_commands::list_types());
+        .subcommand(cli_commands::list_types())
+        .subcommand(cli_commands::show_fixversions());
 }
 
 pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
@@ -28,6 +31,9 @@ pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
         }
         Some(("list_types", args)) => {
             cli_logic::list_types(&global, args);
+        }
+        Some(("show_fixversions", args)) => {
+            cli_logic::show_fixversions(&global, args);
         }
         _ => {
             unreachable!();

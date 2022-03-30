@@ -54,3 +54,10 @@ pub fn list_types() -> Command<'static> {
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
 }
+
+pub fn show_fixversions() -> Command<'static> {
+    return Command::new("show_fixversions")
+        .about("Show fix versions for this issue")
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true));
+}

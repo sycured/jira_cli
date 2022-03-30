@@ -117,6 +117,16 @@ List issue types for this project
 
 Usage: `jira_cli issue list_types SYY`
 
+#### show_fixversions
+
+List all fix versions for a specific issue
+
+|  argument   |
+|:-----------:|
+| `issue_key` |
+
+Usage: `jira_cli issue show_fixversions SYY-1025`
+
 ### project
 
 #### create
@@ -134,23 +144,6 @@ Create project
 To see the list of possible values: `jira_cli project create_project -h`
 
 Usage: `jira_cli project create "SYCURED_TEST" "SYY" lead_account_id`
-
-#### create_version
-
-Create version for a project
-
-|    argument    | environment variable name |
-|:--------------:|:-------------------------:|
-| `version_name` |    `JIRA_VERSION_NAME`    |
-|  `project_id`  |     `JIRA_PROJECT_ID`     |
-
-When creating multiple versions for the same project, it's quicker to do it like:
-
-```shell
-jira_cli project create_version v1.0
-jira_cli project create_version v1.1
-jira_cli project create_version v1.2
-```
 
 #### ⚠️ delete_project
 
@@ -190,6 +183,23 @@ List project features
 | `project_key` |
 
 Usage: `jira_cli project list_features SYY`
+
+#### new_version
+
+Create version for a project
+
+|    argument    | environment variable name |
+|:--------------:|:-------------------------:|
+| `version_name` |    `JIRA_VERSION_NAME`    |
+|  `project_id`  |     `JIRA_PROJECT_ID`     |
+
+When creating multiple versions for the same project, it's quicker to do it like:
+
+```shell
+jira_cli project new_version v1.0
+jira_cli project new_version v1.1
+jira_cli project new_version v1.2
+```
 
 #### set_feature_state
 
