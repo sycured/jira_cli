@@ -1,4 +1,3 @@
-use crate::lib::{delete_request, get_request, post_request, put_request};
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
@@ -7,7 +6,9 @@ use dialoguer::Confirm;
 use serde_json::Value;
 use ureq::{json, Response};
 
-pub fn create_project(
+use crate::lib::{delete_request, get_request, post_request, put_request};
+
+pub fn create(
     jira_domain: &str,
     jira_user: &str,
     jira_token: &str,
@@ -27,29 +28,6 @@ pub fn create_project(
         "assigneeType": "UNASSIGNED"
     });
     let success_message: String = format!("Project {} created", jira_project_key);
-    post_request(
-        &url,
-        payload,
-        jira_user,
-        jira_token,
-        &success_message,
-        false,
-    );
-}
-
-pub fn create_version(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_id: &str,
-    version_name: &str,
-) {
-    let url: String = format!("https://{domain}/rest/api/3/version", domain = jira_domain);
-    let payload: Value = json!({
-      "name": version_name,
-      "projectId": jira_project_id.parse::<i32>().unwrap()
-    });
-    let success_message: String = format!("Version created: {}", version_name);
     post_request(
         &url,
         payload,
@@ -86,12 +64,7 @@ pub fn delete_project(
     }
 }
 
-pub fn get_project_id(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_key: &str,
-) {
+pub fn get_id(jira_domain: &str, jira_user: &str, jira_token: &str, jira_project_key: &str) {
     let url: String = format!(
         "https://{domain}/rest/api/3/project/{key}",
         domain = jira_domain,
@@ -102,12 +75,7 @@ pub fn get_project_id(
     println!("{}", json["id"].as_str().unwrap().parse::<i32>().unwrap());
 }
 
-pub fn list_project_features(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_key: &str,
-) {
+pub fn list_features(jira_domain: &str, jira_user: &str, jira_token: &str, jira_project_key: &str) {
     let url: String = format!(
         "https://{domain}/rest/api/3/project/{key}/features",
         domain = jira_domain,
@@ -153,7 +121,30 @@ pub fn list_project_features(
     println!("{table}");
 }
 
-pub fn set_project_feature_state(
+pub fn new_version(
+    jira_domain: &str,
+    jira_user: &str,
+    jira_token: &str,
+    jira_project_id: &str,
+    version_name: &str,
+) {
+    let url: String = format!("https://{domain}/rest/api/3/version", domain = jira_domain);
+    let payload: Value = json!({
+      "name": version_name,
+      "projectId": jira_project_id.parse::<i32>().unwrap()
+    });
+    let success_message: String = format!("Version created: {}", version_name);
+    post_request(
+        &url,
+        payload,
+        jira_user,
+        jira_token,
+        &success_message,
+        false,
+    );
+}
+
+pub fn set_feature_state(
     jira_domain: &str,
     jira_user: &str,
     jira_token: &str,

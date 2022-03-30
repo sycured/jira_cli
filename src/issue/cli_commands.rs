@@ -2,7 +2,7 @@ use clap::{Arg, Command};
 
 pub fn add_version() -> Command<'static> {
     return Command::new("add_version")
-        .about("Add version to Jira issue")
+        .about("Add version to an issue")
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(
@@ -13,15 +13,16 @@ pub fn add_version() -> Command<'static> {
         );
 }
 
-pub fn create_issue() -> Command<'static> {
-    return Command::new("create_issue")
-        .about("Create Jira issue")
+pub fn create() -> Command<'static> {
+    return Command::new("create")
+        .about("Create an issue")
         .arg_required_else_help(true)
         .arg(
-            Arg::new("project_key")
-                .help("Project key")
-                .env("JIRA_PROJECT_KEY")
-                .required(true),
+            Arg::new("issue_priority")
+                .long("priority")
+                .short('p')
+                .takes_value(true)
+                .help("Issue priority"),
         )
         .arg(Arg::new("issue_type").help("Issue type").required(true))
         .arg(Arg::new("issue_summary").help("Summary").required(true))
@@ -35,16 +36,21 @@ pub fn create_issue() -> Command<'static> {
                 .help("Reporter account id")
                 .required(true),
         )
-        .arg(Arg::new("issue_priority").help("Issue priority"));
+        .arg(
+            Arg::new("project_key")
+                .help("Project key")
+                .env("JIRA_PROJECT_KEY")
+                .required(true),
+        );
 }
 
-pub fn list_issue_priorities() -> Command<'static> {
-    return Command::new("list_issue_priorities").about("Get Jira issue priorities");
+pub fn list_priorities() -> Command<'static> {
+    return Command::new("list_priorities").about("List issue priorities");
 }
 
-pub fn list_issue_types() -> Command<'static> {
-    return Command::new("get_issue_types")
-        .about("Get issue types from Jira project")
+pub fn list_types() -> Command<'static> {
+    return Command::new("list_types")
+        .about("List issue types for this project")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
 }

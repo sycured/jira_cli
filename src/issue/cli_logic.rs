@@ -1,21 +1,22 @@
 use crate::issue::functions;
 use clap::ArgMatches;
+use std::collections::HashMap;
 
-pub fn add_version(matches: &ArgMatches, args: &ArgMatches) {
+pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::add_version(
-        matches.value_of("domain").unwrap(),
-        matches.value_of("user").unwrap(),
-        matches.value_of("token").unwrap(),
+        global["domain"],
+        global["user"],
+        global["token"],
         args.value_of("version_name").unwrap(),
         args.value_of("issue_key").unwrap(),
     );
 }
 
-pub fn create_issue(matches: &ArgMatches, args: &ArgMatches) {
-    functions::create_issue(
-        matches.value_of("domain").unwrap(),
-        matches.value_of("user").unwrap(),
-        matches.value_of("token").unwrap(),
+pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::create(
+        global["domain"],
+        global["user"],
+        global["token"],
         args.value_of("reporter_account_id").unwrap(),
         args.value_of("project_key").unwrap(),
         args.value_of("issue_type").unwrap(),
@@ -25,19 +26,15 @@ pub fn create_issue(matches: &ArgMatches, args: &ArgMatches) {
     );
 }
 
-pub fn list_issue_priorities(matches: &ArgMatches) {
-    functions::list_issue_priorities(
-        matches.value_of("domain").unwrap(),
-        matches.value_of("user").unwrap(),
-        matches.value_of("token").unwrap(),
-    );
+pub fn list_priorities(global: &HashMap<&str, &str>) {
+    functions::list_priorities(global["domain"], global["user"], global["token"]);
 }
 
-pub fn list_issue_types(matches: &ArgMatches, args: &ArgMatches) {
-    functions::list_issue_types(
-        matches.value_of("domain").unwrap(),
-        matches.value_of("user").unwrap(),
-        matches.value_of("token").unwrap(),
+pub fn list_types(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::list_types(
+        global["domain"],
+        global["user"],
+        global["token"],
         args.value_of("project_key").unwrap(),
     );
 }

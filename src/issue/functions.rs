@@ -29,7 +29,7 @@ pub fn add_version(
     put_request(&url, payload, jira_user, jira_token, &success_message);
 }
 
-pub fn create_issue(
+pub fn create(
     jira_domain: &str,
     jira_user: &str,
     jira_token: &str,
@@ -56,7 +56,7 @@ pub fn create_issue(
     });
 
     if !issue_priority.is_empty() {
-        payload["fields"]["priority"]["name"] = issue_priority.parse().unwrap();
+        payload["fields"]["priority"] = json!({ "name": issue_priority });
     }
 
     let success_message = "";
@@ -67,7 +67,7 @@ pub fn create_issue(
     println!("Issue created: {}", json["key"]);
 }
 
-pub fn list_issue_priorities(jira_domain: &str, jira_user: &str, jira_token: &str) {
+pub fn list_priorities(jira_domain: &str, jira_user: &str, jira_token: &str) {
     let url: String = format!("https://{domain}/rest/api/3/priority", domain = jira_domain);
     let resp: Response = get_request(&url, jira_user, jira_token);
     let json: Value = resp.into_json().unwrap();
@@ -76,12 +76,7 @@ pub fn list_issue_priorities(jira_domain: &str, jira_user: &str, jira_token: &st
     });
 }
 
-pub fn list_issue_types(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_key: &str,
-) {
+pub fn list_types(jira_domain: &str, jira_user: &str, jira_token: &str, jira_project_key: &str) {
     let url: String = format!(
         "https://{domain}/rest/api/3/issue/createmeta?projectKeys={project_key}",
         domain = jira_domain,

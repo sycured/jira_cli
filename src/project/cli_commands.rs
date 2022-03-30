@@ -1,7 +1,7 @@
 use clap::{Arg, Command};
 
-pub fn create_project() -> Command<'static> {
-    return Command::new("create_project")
+pub fn create() -> Command<'static> {
+    return Command::new("create")
         .about("Create project")
         .arg_required_else_help(true)
         .arg(
@@ -33,8 +33,30 @@ pub fn create_project() -> Command<'static> {
         );
 }
 
-pub fn create_version() -> Command<'static> {
-    return Command::new("create_version")
+pub fn delete_project() -> Command<'static> {
+    return Command::new("delete_project")
+        .aliases(&["destroy", "destroy_project"])
+        .about("Delete project")
+        .arg_required_else_help(true)
+        .arg(Arg::new("project_key").help("Project key").required(true));
+}
+
+pub fn get_id() -> Command<'static> {
+    return Command::new("get_id")
+        .about("Get project id")
+        .arg_required_else_help(true)
+        .arg(Arg::new("project_key").help("Project key").required(true));
+}
+
+pub fn list_features() -> Command<'static> {
+    return Command::new("list_features")
+        .about("List project features")
+        .arg_required_else_help(true)
+        .arg(Arg::new("project_key").help("Project key").required(true));
+}
+
+pub fn new_version() -> Command<'static> {
+    return Command::new("new_version")
         .about("Create version")
         .arg_required_else_help(true)
         .arg(
@@ -51,30 +73,8 @@ pub fn create_version() -> Command<'static> {
         );
 }
 
-pub fn delete_project() -> Command<'static> {
-    return Command::new("delete_project")
-        .aliases(&["destroy", "destroy_project"])
-        .about("Delete project")
-        .arg_required_else_help(true)
-        .arg(Arg::new("project_key").help("Project key").required(true));
-}
-
-pub fn get_project_id() -> Command<'static> {
-    return Command::new("get_project_id")
-        .about("Get project id")
-        .arg_required_else_help(true)
-        .arg(Arg::new("project_key").help("Project key").required(true));
-}
-
-pub fn list_project_features() -> Command<'static> {
-    return Command::new("list_project_features")
-        .about("List project features")
-        .arg_required_else_help(true)
-        .arg(Arg::new("project_key").help("Project key").required(true));
-}
-
-pub fn set_project_feature_state() -> Command<'static> {
-    return Command::new("set_project_feature_state")
+pub fn set_feature_state() -> Command<'static> {
+    return Command::new("set_feature_state")
         .about("Set project feature state")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
