@@ -44,6 +44,15 @@ pub fn list_features(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
+pub fn list_versions(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::list_versions(
+        global["domain"],
+        global["user"],
+        global["token"],
+        args.value_of("project_key").unwrap(),
+    );
+}
+
 pub fn new_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::new_version(
         global["domain"],

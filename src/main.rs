@@ -1,6 +1,7 @@
+use std::{collections::HashMap, io::stdout};
+
 use clap::Command;
 use clap_complete::{generate, Generator, Shell};
-use std::{collections::HashMap, io::stdout};
 
 mod cli;
 mod issue;
@@ -29,8 +30,6 @@ fn main() {
         Some(("issue", args)) => issue::logic_commands(global, args),
         Some(("project", args)) => project::logic_commands(global, args),
         Some(("user", args)) => user::logic_commands(global, args),
-        _ => {
-            unreachable!();
-        }
+        _ => unreachable!(),
     }
 }

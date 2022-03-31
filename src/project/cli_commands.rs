@@ -55,6 +55,18 @@ pub fn list_features() -> Command<'static> {
         .arg(Arg::new("project_key").help("Project key").required(true));
 }
 
+pub fn list_versions() -> Command<'static> {
+    return Command::new("list_versions")
+        .about("List project versions")
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("project_key")
+                .help("Project key")
+                .env("JIRA_PROJECT_ID")
+                .required(true),
+        );
+}
+
 pub fn new_version() -> Command<'static> {
     return Command::new("new_version")
         .about("Create version")

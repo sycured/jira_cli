@@ -3,85 +3,65 @@ use comfy_table::{
     Table,
 };
 use dialoguer::Confirm;
+use itertools::Itertools;
 use serde_json::Value;
 use ureq::{json, Response};
 
 use crate::lib::{delete_request, get_request, post_request, put_request};
 
 pub fn create(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_name: &str,
-    jira_project_key: &str,
-    jira_project_leadaccountid: &str,
-    jira_project_type: &str,
-    jira_project_template: &str,
+    domain: &str,
+    user: &str,
+    token: &str,
+    project_name: &str,
+    project_key: &str,
+    project_leadaccountid: &str,
+    project_type: &str,
+    project_template: &str,
 ) {
-    let url: String = format!("https://{domain}/rest/api/3/project", domain = jira_domain);
+    let url: String = format!("https://{}/rest/api/3/project", domain);
     let payload: Value = json!({
-        "name": jira_project_name,
-        "key": jira_project_key,
-        "leadAccountId": jira_project_leadaccountid,
-        "projectTypeKey": jira_project_type,
-        "projectTemplateKey": jira_project_template,
+        "name": project_name,
+        "key": project_key,
+        "leadAccountId": project_leadaccountid,
+        "projectTypeKey": project_type,
+        "projectTemplateKey": project_template,
         "assigneeType": "UNASSIGNED"
     });
-    let success_message: String = format!("Project {} created", jira_project_key);
-    post_request(
-        &url,
-        payload,
-        jira_user,
-        jira_token,
-        &success_message,
-        false,
-    );
+    let success_message: String = format!("Project {} created", project_key);
+    post_request(&url, payload, user, token, &success_message, false);
 }
 
-pub fn delete_project(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_key: &str,
-) {
-    let url: String = format!(
-        "https://{domain}/rest/api/3/project/{key}",
-        domain = jira_domain,
-        key = jira_project_key
-    );
+pub fn delete_project(domain: &str, user: &str, token: &str, project_key: &str) {
+    let url: String = format!("https://{}/rest/api/3/project/{}", domain, project_key);
     if Confirm::new()
         .with_prompt(format!(
             "Are you sure you want to delete the project key: {}?",
-            jira_project_key
+            project_key
         ))
         .interact()
         .unwrap()
     {
-        let success_message: String = format!("Project {} deleted", jira_project_key);
-        delete_request(&url, jira_user, jira_token, &success_message);
+        let success_message: String = format!("Project {} deleted", project_key);
+        delete_request(&url, user, token, &success_message);
     } else {
-        println!("Project {} not deleted.", jira_project_key);
+        println!("Project {} not deleted.", project_key);
     }
 }
 
-pub fn get_id(jira_domain: &str, jira_user: &str, jira_token: &str, jira_project_key: &str) {
-    let url: String = format!(
-        "https://{domain}/rest/api/3/project/{key}",
-        domain = jira_domain,
-        key = jira_project_key
-    );
-    let resp: Response = get_request(&url, jira_user, jira_token);
+pub fn get_id(domain: &str, user: &str, token: &str, project_key: &str) {
+    let url: String = format!("https://{}/rest/api/3/project/{}", domain, project_key);
+    let resp: Response = get_request(&url, user, token);
     let json: Value = resp.into_json().unwrap();
     println!("{}", json["id"].as_str().unwrap().parse::<i32>().unwrap());
 }
 
-pub fn list_features(jira_domain: &str, jira_user: &str, jira_token: &str, jira_project_key: &str) {
+pub fn list_features(domain: &str, user: &str, token: &str, project_key: &str) {
     let url: String = format!(
-        "https://{domain}/rest/api/3/project/{key}/features",
-        domain = jira_domain,
-        key = jira_project_key
+        "https://{}/rest/api/3/project/{}/features",
+        domain, project_key
     );
-    let resp: Response = get_request(&url, jira_user, jira_token);
+    let resp: Response = get_request(&url, user, token);
     let json: Value = resp.into_json().unwrap();
     let mut table = Table::new();
     table
@@ -121,49 +101,96 @@ pub fn list_features(jira_domain: &str, jira_user: &str, jira_token: &str, jira_
     println!("{table}");
 }
 
-pub fn new_version(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_id: &str,
-    version_name: &str,
-) {
-    let url: String = format!("https://{domain}/rest/api/3/version", domain = jira_domain);
+pub fn list_versions(domain: &str, user: &str, token: &str, project_key: &str) {
+    let url: String = format!(
+        "https://{}/rest/api/3/project/{}/versions",
+        domain, project_key
+    );
+    let resp: Response = get_request(&url, user, token);
+    let json: Value = resp.into_json().unwrap();
+    let mut table = Table::new();
+    table
+        .set_header(vec!["Name", "Description", "Released", "Archived", "Id"])
+        .load_preset(UTF8_FULL)
+        .apply_modifier(UTF8_ROUND_CORNERS)
+        .set_content_arrangement(ContentArrangement::DynamicFullWidth);
+    table
+        .get_column_mut(0)
+        .unwrap()
+        .set_cell_alignment(CellAlignment::Center);
+    table
+        .get_column_mut(1)
+        .unwrap()
+        .set_cell_alignment(CellAlignment::Center);
+    table
+        .get_column_mut(2)
+        .unwrap()
+        .set_cell_alignment(CellAlignment::Center);
+    table
+        .get_column_mut(3)
+        .unwrap()
+        .set_cell_alignment(CellAlignment::Center);
+    table
+        .get_column_mut(4)
+        .unwrap()
+        .set_cell_alignment(CellAlignment::Center);
+    json.as_array()
+        .unwrap()
+        .iter()
+        .sorted_by_key(|item| item["name"].as_str().unwrap())
+        .for_each(|x| {
+            let id: &str = x["id"].as_str().unwrap();
+            let name: &str = x["name"].as_str().unwrap();
+            let description: &str = x["description"].as_str().unwrap_or("");
+            let released: bool = x["released"].as_bool().unwrap();
+            let archived: bool = x["archived"].as_bool().unwrap();
+            let released_color = if released {
+                comfy_table::Color::Green
+            } else {
+                comfy_table::Color::Red
+            };
+            let archived_color = if archived {
+                comfy_table::Color::Red
+            } else {
+                comfy_table::Color::Green
+            };
+            table.add_row(vec![
+                Cell::new(name),
+                Cell::new(description),
+                Cell::new(&released.to_string()).fg(released_color),
+                Cell::new(&archived.to_string()).fg(archived_color),
+                Cell::new(id),
+            ]);
+        });
+    println!("{table}");
+}
+
+pub fn new_version(domain: &str, user: &str, token: &str, project_id: &str, version_name: &str) {
+    let url: String = format!("https://{}/rest/api/3/version", domain);
     let payload: Value = json!({
       "name": version_name,
-      "projectId": jira_project_id.parse::<i32>().unwrap()
+      "projectId": project_id.parse::<i32>().unwrap()
     });
     let success_message: String = format!("Version created: {}", version_name);
-    post_request(
-        &url,
-        payload,
-        jira_user,
-        jira_token,
-        &success_message,
-        false,
-    );
+    post_request(&url, payload, user, token, &success_message, false);
 }
 
 pub fn set_feature_state(
-    jira_domain: &str,
-    jira_user: &str,
-    jira_token: &str,
-    jira_project_key: &str,
-    jira_project_feature_key: &str,
-    jira_project_feature_state: &str,
+    domain: &str,
+    user: &str,
+    token: &str,
+    project_key: &str,
+    project_feature_key: &str,
+    project_feature_state: &str,
 ) {
     let url: String = format!(
-        "https://{domain}/rest/api/3/project/{projectkey}/features/{featurekey}",
-        domain = jira_domain,
-        projectkey = jira_project_key,
-        featurekey = jira_project_feature_key
+        "https://{}/rest/api/3/project/{}/features/{}",
+        domain, project_key, project_feature_key
     );
-    let payload: Value = json!({ "state": jira_project_feature_state });
+    let payload: Value = json!({ "state": project_feature_state });
     let success_message: String = format!(
-        "Feature {feature_key} set to {feature_state} on project {project_key}",
-        feature_key = jira_project_feature_key,
-        feature_state = jira_project_feature_state,
-        project_key = jira_project_key
+        "Feature {} set to {} on project {}",
+        project_feature_key, project_feature_state, project_key
     );
-    put_request(&url, payload, jira_user, jira_token, &success_message);
+    put_request(&url, payload, user, token, &success_message);
 }

@@ -1,23 +1,20 @@
+use std::process::exit;
+
 use base64::encode as b64encode;
 use either::Either;
 use serde_json::Value;
-use std::process::exit;
 use ureq::{delete, get, post, put, Response};
 
-fn b64auth(jira_user: &str, jira_token: &str) -> String {
-    return b64encode(format!(
-        "{user}:{token}",
-        user = jira_user,
-        token = jira_token
-    ));
+fn b64auth(user: &str, token: &str) -> String {
+    return b64encode(format!("{}:{}", user, token));
 }
 
 #[inline]
-pub fn delete_request(url: &str, jira_user: &str, jira_token: &str, success_message: &str) {
+pub fn delete_request(url: &str, user: &str, token: &str, success_message: &str) {
     let resp = delete(url)
         .set(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(jira_user, jira_token)),
+            &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .call();
     match resp {
@@ -32,12 +29,12 @@ pub fn delete_request(url: &str, jira_user: &str, jira_token: &str, success_mess
 }
 
 #[inline]
-pub fn get_request(url: &str, jira_user: &str, jira_token: &str) -> Response {
+pub fn get_request(url: &str, user: &str, token: &str) -> Response {
     let resp = get(url)
         .set("Accept", "application/json")
         .set(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(jira_user, jira_token)),
+            &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .call();
     match resp {
@@ -53,8 +50,8 @@ pub fn get_request(url: &str, jira_user: &str, jira_token: &str) -> Response {
 pub fn post_request(
     url: &str,
     payload: Value,
-    jira_user: &str,
-    jira_token: &str,
+    user: &str,
+    token: &str,
     success_message: &str,
     return_response: bool,
 ) -> Either<(), Response> {
@@ -63,7 +60,7 @@ pub fn post_request(
         .set("Content-Type", "application/json")
         .set(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(jira_user, jira_token)),
+            &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .send_json(payload);
     match resp {
@@ -82,19 +79,13 @@ pub fn post_request(
 }
 
 #[inline]
-pub fn put_request(
-    url: &str,
-    payload: Value,
-    jira_user: &str,
-    jira_token: &str,
-    success_message: &str,
-) {
+pub fn put_request(url: &str, payload: Value, user: &str, token: &str, success_message: &str) {
     let resp = put(url)
         .set("Accept", "application/json")
         .set("Content-Type", "application/json")
         .set(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(jira_user, jira_token)),
+            &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .send_json(payload);
     match resp {

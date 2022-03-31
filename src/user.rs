@@ -1,5 +1,7 @@
-use clap::{ArgMatches, Command};
 use std::collections::HashMap;
+
+use clap::{ArgMatches, Command};
+
 pub mod cli_commands;
 pub mod cli_logic;
 pub mod functions;
@@ -14,11 +16,7 @@ pub fn cli_commands() -> Command<'static> {
 
 pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
     match args.subcommand() {
-        Some(("get_account_id", args)) => {
-            cli_logic::get_account_id(&global, args);
-        }
-        _ => {
-            unreachable!();
-        }
-    };
+        Some(("get_account_id", args)) => cli_logic::get_account_id(&global, args),
+        _ => unreachable!(),
+    }
 }

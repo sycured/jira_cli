@@ -20,23 +20,11 @@ pub fn cli_commands() -> Command<'static> {
 
 pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
     match args.subcommand() {
-        Some(("add_version", args)) => {
-            cli_logic::add_version(&global, args);
-        }
-        Some(("create", args)) => {
-            cli_logic::create(&global, args);
-        }
-        Some(("list_priorities", _)) => {
-            cli_logic::list_priorities(&global);
-        }
-        Some(("list_types", args)) => {
-            cli_logic::list_types(&global, args);
-        }
-        Some(("show_fixversions", args)) => {
-            cli_logic::show_fixversions(&global, args);
-        }
-        _ => {
-            unreachable!();
-        }
+        Some(("add_version", args)) => cli_logic::add_version(&global, args),
+        Some(("create", args)) => cli_logic::create(&global, args),
+        Some(("list_priorities", _)) => cli_logic::list_priorities(&global),
+        Some(("list_types", args)) => cli_logic::list_types(&global, args),
+        Some(("show_fixversions", args)) => cli_logic::show_fixversions(&global, args),
+        _ => unreachable!(),
     }
 }
