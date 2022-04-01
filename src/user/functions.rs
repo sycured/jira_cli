@@ -10,5 +10,8 @@ pub fn get_account_id(domain: &str, user: &str, token: &str, email_address: &str
     );
     let resp: Response = get_request(&url, user, token);
     let json: Value = resp.into_json().unwrap();
-    println!("{}", json["users"]["users"][0]["accountId"]);
+    println!(
+        "{}",
+        json["users"]["users"][0]["accountId"].as_str().unwrap()
+    );
 }
