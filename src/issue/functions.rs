@@ -3,6 +3,21 @@ use ureq::{json, Response};
 
 use crate::lib::{get_request, post_request, put_request};
 
+pub fn add_label(domain: &str, user: &str, token: &str, issue_key: &str, label: &str) {
+    let url: String = format!("https://{}/rest/api/3/issue/{}", domain, issue_key);
+    let payload: Value = json!({
+        "update": {
+            "labels": [
+                {
+                    "add": label
+                }
+            ]
+        }
+    });
+    let success_message: String = format!("Label {} added to issue {}", label, issue_key);
+    put_request(&url, payload, user, token, &success_message);
+}
+
 pub fn add_version(domain: &str, user: &str, token: &str, version_name: &str, issue_key: &str) {
     let url: String = format!("https://{}/rest/api/3/issue/{}", domain, issue_key);
     let payload: Value = json!({

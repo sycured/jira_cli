@@ -11,6 +11,7 @@ pub fn cli_commands() -> Command<'static> {
         .about("Manage issues")
         .subcommand_required(true)
         .arg_required_else_help(true)
+        .subcommand(cli_commands::add_label())
         .subcommand(cli_commands::add_version())
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::list_priorities())
@@ -20,6 +21,7 @@ pub fn cli_commands() -> Command<'static> {
 
 pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
     match args.subcommand() {
+        Some(("add_label", args)) => cli_logic::add_label(&global, args),
         Some(("add_version", args)) => cli_logic::add_version(&global, args),
         Some(("create", args)) => cli_logic::create(&global, args),
         Some(("list_priorities", _)) => cli_logic::list_priorities(&global),

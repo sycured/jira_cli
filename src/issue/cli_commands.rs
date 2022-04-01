@@ -1,5 +1,22 @@
 use clap::{Arg, Command};
 
+pub fn add_label() -> Command<'static> {
+    return Command::new("add_label")
+        .about("Add a label to an issue")
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("issue_key")
+                .help("The key of the issue")
+                .required(true),
+        )
+        .arg(
+            Arg::new("label")
+                .help("The label to add")
+                .env("JIRA_LABEL")
+                .required(true),
+        );
+}
+
 pub fn add_version() -> Command<'static> {
     return Command::new("add_version")
         .about("Add version to an issue")

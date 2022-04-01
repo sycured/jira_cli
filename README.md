@@ -51,6 +51,31 @@ For example to generate zsh autocompletion and save it to a file: `jira_cli gene
 
 ### issue
 
+#### add_label
+
+Add label to an issue
+
+|  argument   | environment variable name |
+|:-----------:|:-------------------------:|
+| `issue_key` |                           |
+|   `label`   |       `JIRA_LABEL`        |
+
+`JIRA_LABEL` exists because when I'm adding the same label to different issues, I can loop more quickly using this
+
+```shell
+export JIRA_LABEL=Security
+while read line; do jira_cli issue add_label $line; done < /tmp/issues.txt
+```
+
+Where /tmp/issues.list is like:
+
+```text
+SYY-1025
+SYY-1026
+SYY-1030
+SYY-1035
+```
+
 #### add_version
 
 Add version to an issue
@@ -60,7 +85,7 @@ Add version to an issue
 |  `issue_key`   |                           |
 | `version_name` |    `JIRA_VERSION_NAME`    |
 
-`JIRA_VERSION_NAME` exists because when I'm adding the same tag to a different issue, I can loop more quickly using this
+`JIRA_VERSION_NAME` exists because when I'm adding the same tag to different issues, I can loop more quickly using this
 syntax:
 
 ```shell
@@ -68,7 +93,7 @@ export JIRA_VERSION_NAME=v1.0.0
 while read line; do jira_cli issue add_version $line; done < /tmp/issues_list
 ```
 
-Where /tmp/issues_list is like:
+Where /tmp/issues.list is like:
 
 ```text
 SYY-1025
@@ -126,6 +151,12 @@ List all fix versions for a specific issue
 | `issue_key` |
 
 Usage: `jira_cli issue show_fixversions SYY-1025`
+
+### labels
+
+List available labels for the global label field"
+
+Usage: `jira_cli labels`
 
 ### project
 

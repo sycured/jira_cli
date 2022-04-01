@@ -1,6 +1,7 @@
-use crate::{issue, project, user};
 use clap::{crate_authors, crate_name, crate_version, Arg, Command};
 use clap_complete::Shell;
+
+use crate::{issue, labels, project, user};
 
 fn generate() -> Command<'static> {
     return Command::new("generate")
@@ -48,6 +49,7 @@ pub fn build_cli() -> Command<'static> {
         )
         .subcommand(generate())
         .subcommand(issue::cli_commands())
+        .subcommand(labels::cli_commands())
         .subcommand(project::cli_commands())
         .subcommand(user::cli_commands());
 }

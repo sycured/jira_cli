@@ -4,6 +4,16 @@ use clap::ArgMatches;
 
 use crate::issue::functions;
 
+pub fn add_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::add_label(
+        global["domain"],
+        global["user"],
+        global["token"],
+        args.value_of("issue_key").unwrap(),
+        args.value_of("label").unwrap(),
+    );
+}
+
 pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::add_version(
         global["domain"],
