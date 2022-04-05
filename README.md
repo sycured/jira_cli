@@ -5,7 +5,7 @@ A little CLI for Jira using the REST API.
 ## Best Practices
 
 Create a `.env` file in your parent project directory with the following variables:
-- JIRA_ADMIN: my_jira.atlassian.net
+- JIRA_DOMAIN: my_jira.atlassian.net
 - JIRA_USER: my_email_address
 - JIRA_USER_ACCOUNT_ID: output from `jira_cli user get_account_id my_email_address`
 - JIRA_TOKEN: my_api_token
