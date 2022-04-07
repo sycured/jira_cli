@@ -34,7 +34,7 @@ pub fn add_version(domain: &str, user: &str, token: &str, version_name: &str, is
     let success_message: String = format!("Version {} added to issue {}", version_name, issue_key);
     put_request(&url, payload, user, token, &success_message);
 }
-
+#[allow(clippy::too_many_arguments)]
 pub fn create(
     domain: &str,
     user: &str,
@@ -96,6 +96,39 @@ pub fn list_types(domain: &str, user: &str, token: &str, project_key: &str) {
         .for_each(|x| {
             println!("{}", x["name"]);
         });
+}
+
+pub fn remove_label(domain: &str, user: &str, token: &str, issue_key: &str, label: &str) {
+    let url: String = format!("https://{}/rest/api/3/issue/{}", domain, issue_key);
+    let payload: Value = json!({
+        "update": {
+            "labels": [
+                {
+                    "remove": label
+                }
+            ]
+        }
+    });
+    let success_message: String = format!("Label {} removed from issue {}", label, issue_key);
+    put_request(&url, payload, user, token, &success_message);
+}
+
+pub fn remove_version(domain: &str, user: &str, token: &str, version_name: &str, issue_key: &str) {
+    let url: String = format!("https://{}/rest/api/3/issue/{}", domain, issue_key);
+    let payload: Value = json!({
+        "update": {
+            "fixVersions": [
+                {
+                    "remove": {
+                        "name": version_name
+                    }
+                }
+            ]
+        }
+    });
+    let success_message: String =
+        format!("Version {} removed from issue {}", version_name, issue_key);
+    put_request(&url, payload, user, token, &success_message);
 }
 
 pub fn show_fixversions(domain: &str, user: &str, token: &str, issue_key: &str) {

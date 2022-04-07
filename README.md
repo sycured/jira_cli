@@ -158,6 +158,28 @@ List available labels for the global label field"
 
 Usage: `jira_cli labels`
 
+#### remove_label
+
+Remove a label from an issue
+
+|  argument   | environment variable name |
+|:-----------:|:-------------------------:|
+| `issue_key` |                           |
+|   `label`   |       `JIRA_LABEL`        |
+
+Usage: ` jira_cli issue add_label SYY-1337 Security`
+
+#### remove_version
+
+Remove a version from an issue
+
+|    argument    | environment variable name |
+|:--------------:|:-------------------------:|
+|  `issue_key`   |                           |
+| `version_name` |    `JIRA_VERSION_NAME`    |
+
+Usage: `jira_cli issue remove_version SYY-1337 v1.0.0`
+
 ### project
 
 #### create

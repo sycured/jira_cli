@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-export JIRA_CLI="./target/x86_64-unknown-linux-gnu/release/jira_cli"
+export JIRA_CLI="./target/debug/jira_cli"
 export JIRA_PROJECT_KEY="CITS"
 export JIRA_VERSION_NAME="v0.0.0"
 
@@ -41,6 +41,7 @@ $JIRA_CLI project set_feature_state $JIRA_PROJECT_KEY jsw.agility.releases ENABL
 ## new_version
 echo "project new_version"
 $JIRA_CLI project new_version
+$JIRA_CLI project new_version test
 ## list_versions
 echo "project list_versions"
 $JIRA_CLI project list_versions
@@ -55,9 +56,17 @@ $JIRA_CLI issue create Task "little test" "little test using jira_cli" "$JIRA_US
 ## add_version
 echo "issue add_version"
 $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-1 $JIRA_VERSION_NAME
+$JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-1 test
 ## add_label
 echo "issue add_label"
 $JIRA_CLI issue add_label "$JIRA_PROJECT_KEY"-1 "CI"
+$JIRA_CLI issue add_label "$JIRA_PROJECT_KEY"-1 "CI2"
+## remove_version
+echo "issue remove_version"
+$JIRA_CLI issue remove_version "$JIRA_PROJECT_KEY"-1 test
+## remove_label
+echo "issue remove_label"
+$JIRA_CLI issue remove_label "$JIRA_PROJECT_KEY"-1 "CI2"
 ## show_fixversions
 echo "issue show_fixversions"
 $JIRA_CLI issue show_fixversions "$JIRA_PROJECT_KEY"-1

@@ -9,6 +9,7 @@ use ureq::{json, Response};
 
 use crate::lib::{delete_request, get_request, post_request, put_request};
 
+#[allow(clippy::too_many_arguments)]
 pub fn create(
     domain: &str,
     user: &str,

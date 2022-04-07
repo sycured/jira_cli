@@ -1,4 +1,4 @@
-#!/usr/local/bin/expect -f
+#!/usr/bin/expect -f
 
 set force_conservative 0  ;# set to 1 to force conservative mode even if
                           ;# script wasn't run conservatively originally

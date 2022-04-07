@@ -16,6 +16,8 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::list_priorities())
         .subcommand(cli_commands::list_types())
+        .subcommand(cli_commands::remove_label())
+        .subcommand(cli_commands::remove_version())
         .subcommand(cli_commands::show_fixversions());
 }
 
@@ -26,6 +28,8 @@ pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
         Some(("create", args)) => cli_logic::create(&global, args),
         Some(("list_priorities", _)) => cli_logic::list_priorities(&global),
         Some(("list_types", args)) => cli_logic::list_types(&global, args),
+        Some(("remove_label", args)) => cli_logic::remove_label(&global, args),
+        Some(("remove_version", args)) => cli_logic::remove_version(&global, args),
         Some(("show_fixversions", args)) => cli_logic::show_fixversions(&global, args),
         _ => unreachable!(),
     }

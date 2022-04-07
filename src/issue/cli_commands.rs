@@ -19,7 +19,7 @@ pub fn add_label() -> Command<'static> {
 
 pub fn add_version() -> Command<'static> {
     return Command::new("add_version")
-        .about("Add version to an issue")
+        .about("Add a version to an issue")
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(
@@ -70,6 +70,36 @@ pub fn list_types() -> Command<'static> {
         .about("List issue types for this project")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
+}
+
+pub fn remove_label() -> Command<'static> {
+    return Command::new("remove_label")
+        .about("Remove a label from an issue")
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("issue_key")
+                .help("The key of the issue")
+                .required(true),
+        )
+        .arg(
+            Arg::new("label")
+                .help("The label to add")
+                .env("JIRA_LABEL")
+                .required(true),
+        );
+}
+
+pub fn remove_version() -> Command<'static> {
+    return Command::new("remove_version")
+        .about("Remove a version from an issue")
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true))
+        .arg(
+            Arg::new("version_name")
+                .help("Version name")
+                .env("JIRA_VERSION_NAME")
+                .required(true),
+        );
 }
 
 pub fn show_fixversions() -> Command<'static> {

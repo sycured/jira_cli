@@ -72,6 +72,7 @@ pub fn post_request(
             if return_response {
                 Either::Right(response)
             } else {
+                #[allow(clippy::unit_arg)]
                 Either::Left(println!("{}", success_message))
             }
         }

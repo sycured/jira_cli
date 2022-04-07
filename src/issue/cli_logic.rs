@@ -51,6 +51,26 @@ pub fn list_types(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
+pub fn remove_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::remove_label(
+        global["domain"],
+        global["user"],
+        global["token"],
+        args.value_of("issue_key").unwrap(),
+        args.value_of("label").unwrap(),
+    );
+}
+
+pub fn remove_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::remove_version(
+        global["domain"],
+        global["user"],
+        global["token"],
+        args.value_of("version_name").unwrap(),
+        args.value_of("issue_key").unwrap(),
+    );
+}
+
 pub fn show_fixversions(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::show_fixversions(
         global["domain"],
