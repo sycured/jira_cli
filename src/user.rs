@@ -9,6 +9,7 @@ pub mod functions;
 pub fn cli_commands() -> Command<'static> {
     return Command::new("user")
         .about("Manage users")
+        .visible_aliases(&["u", "usr"])
         .subcommand_required(true)
         .arg_required_else_help(true)
         .subcommand(cli_commands::get_account_id());

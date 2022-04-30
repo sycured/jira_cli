@@ -19,6 +19,7 @@ fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_result
 pub fn cli_commands() -> Command<'static> {
     return Command::new("labels")
         .about("List available labels for the global label field")
+        .visible_alias("l")
         .arg(
             Arg::new("max_results")
                 .value_name("max_results")

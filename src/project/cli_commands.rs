@@ -3,6 +3,7 @@ use clap::{Arg, Command};
 pub fn create() -> Command<'static> {
     return Command::new("create")
         .about("Create project")
+        .visible_alias("c")
         .arg_required_else_help(true)
         .arg(
             Arg::new("project_name")
@@ -35,7 +36,7 @@ pub fn create() -> Command<'static> {
 
 pub fn delete_project() -> Command<'static> {
     return Command::new("delete_project")
-        .aliases(&["destroy", "destroy_project"])
+        .visible_aliases(&["destroy", "destroy_project"])
         .about("Delete project")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
@@ -44,6 +45,7 @@ pub fn delete_project() -> Command<'static> {
 pub fn get_id() -> Command<'static> {
     return Command::new("get_id")
         .about("Get project id")
+        .visible_aliases(&["gi", "get-id"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
 }
@@ -51,6 +53,7 @@ pub fn get_id() -> Command<'static> {
 pub fn list_features() -> Command<'static> {
     return Command::new("list_features")
         .about("List project features")
+        .visible_aliases(&["lf", "list-features"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
 }
@@ -58,6 +61,7 @@ pub fn list_features() -> Command<'static> {
 pub fn list_versions() -> Command<'static> {
     return Command::new("list_versions")
         .about("List project versions")
+        .visible_aliases(&["lv", "list-versions"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("project_key")
@@ -70,6 +74,7 @@ pub fn list_versions() -> Command<'static> {
 pub fn new_version() -> Command<'static> {
     return Command::new("new_version")
         .about("Create version")
+        .visible_aliases(&["nv", "new-version"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("version_name")
@@ -88,6 +93,7 @@ pub fn new_version() -> Command<'static> {
 pub fn set_feature_state() -> Command<'static> {
     return Command::new("set_feature_state")
         .about("Set project feature state")
+        .visible_aliases(&["sfs", "set-feature-state"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
         .arg(Arg::new("feature_key").help("Feature key").required(true))

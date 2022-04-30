@@ -3,6 +3,7 @@ use clap::{Arg, Command};
 pub fn add_label() -> Command<'static> {
     return Command::new("add_label")
         .about("Add a label to an issue")
+        .visible_aliases(&["al", "add-label"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("issue_key")
@@ -20,6 +21,7 @@ pub fn add_label() -> Command<'static> {
 pub fn add_version() -> Command<'static> {
     return Command::new("add_version")
         .about("Add a version to an issue")
+        .visible_aliases(&["av", "add-version"])
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(
@@ -33,6 +35,7 @@ pub fn add_version() -> Command<'static> {
 pub fn create() -> Command<'static> {
     return Command::new("create")
         .about("Create an issue")
+        .visible_alias("c")
         .arg_required_else_help(true)
         .arg(
             Arg::new("issue_priority")
@@ -62,12 +65,15 @@ pub fn create() -> Command<'static> {
 }
 
 pub fn list_priorities() -> Command<'static> {
-    return Command::new("list_priorities").about("List issue priorities");
+    return Command::new("list_priorities")
+        .visible_alias("lp")
+        .about("List issue priorities");
 }
 
 pub fn list_types() -> Command<'static> {
     return Command::new("list_types")
         .about("List issue types for this project")
+        .visible_alias("lt")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
 }
@@ -75,6 +81,7 @@ pub fn list_types() -> Command<'static> {
 pub fn remove_label() -> Command<'static> {
     return Command::new("remove_label")
         .about("Remove a label from an issue")
+        .visible_aliases(&["rl", "remove-label"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("issue_key")
@@ -92,6 +99,7 @@ pub fn remove_label() -> Command<'static> {
 pub fn remove_version() -> Command<'static> {
     return Command::new("remove_version")
         .about("Remove a version from an issue")
+        .visible_aliases(&["rv", "remove-version"])
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(
@@ -105,6 +113,7 @@ pub fn remove_version() -> Command<'static> {
 pub fn show_fixversions() -> Command<'static> {
     return Command::new("show_fixversions")
         .about("Show fix versions for this issue")
+        .visible_aliases(&["sfv", "show-fixversions"])
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true));
 }
