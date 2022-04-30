@@ -8,6 +8,7 @@ pub fn add_label() -> Command<'static> {
         .arg(
             Arg::new("issue_key")
                 .help("The key of the issue")
+                .use_value_delimiter(true)
                 .required(true),
         )
         .arg(
@@ -23,7 +24,12 @@ pub fn add_version() -> Command<'static> {
         .about("Add a version to an issue")
         .visible_aliases(&["av", "add-version"])
         .arg_required_else_help(true)
-        .arg(Arg::new("issue_key").help("Issue key").required(true))
+        .arg(
+            Arg::new("issue_key")
+                .help("Issue key")
+                .use_value_delimiter(true)
+                .required(true),
+        )
         .arg(
             Arg::new("version_name")
                 .help("Version name")
@@ -86,6 +92,7 @@ pub fn remove_label() -> Command<'static> {
         .arg(
             Arg::new("issue_key")
                 .help("The key of the issue")
+                .use_value_delimiter(true)
                 .required(true),
         )
         .arg(
@@ -101,7 +108,12 @@ pub fn remove_version() -> Command<'static> {
         .about("Remove a version from an issue")
         .visible_aliases(&["rv", "remove-version"])
         .arg_required_else_help(true)
-        .arg(Arg::new("issue_key").help("Issue key").required(true))
+        .arg(
+            Arg::new("issue_key")
+                .help("Issue key")
+                .use_value_delimiter(true)
+                .required(true),
+        )
         .arg(
             Arg::new("version_name")
                 .help("Version name")

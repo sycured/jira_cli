@@ -96,7 +96,12 @@ pub fn set_feature_state() -> Command<'static> {
         .visible_aliases(&["sfs", "set-feature-state"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
-        .arg(Arg::new("feature_key").help("Feature key").required(true))
+        .arg(
+            Arg::new("feature_key")
+                .help("Feature key")
+                .use_value_delimiter(true)
+                .required(true),
+        )
         .arg(
             Arg::new("feature_state")
                 .help("Feature state")

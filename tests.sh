@@ -56,20 +56,29 @@ $JIRA_CLI issue list_types $JIRA_PROJECT_KEY
 ## create
 echo "issue create"
 $JIRA_CLI issue create Task "little test" "little test using jira_cli" "$JIRA_USER_ACCOUNT_ID" $JIRA_PROJECT_KEY
+$JIRA_CLI issue create Task "little test2" "little test using jira_cli" "$JIRA_USER_ACCOUNT_ID" $JIRA_PROJECT_KEY
+$JIRA_CLI issue create Task "little test3" "little test using jira_cli" "$JIRA_USER_ACCOUNT_ID" $JIRA_PROJECT_KEY
+$JIRA_CLI issue create Task "little test4" "little test using jira_cli" "$JIRA_USER_ACCOUNT_ID" $JIRA_PROJECT_KEY
+$JIRA_CLI issue create Task "little test5" "little test using jira_cli" "$JIRA_USER_ACCOUNT_ID" $JIRA_PROJECT_KEY
 ## add_version
 echo "issue add_version"
 $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-1 $JIRA_VERSION_NAME
 $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-1 test
+JIRA_VERSION_NAME=test $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-2,"$JIRA_PROJECT_KEY"-3
+$JIRA_CLI i av "$JIRA_PROJECT_KEY"-4,"$JIRA_PROJECT_KEY"-5
 ## add_label
 echo "issue add_label"
 $JIRA_CLI issue add_label "$JIRA_PROJECT_KEY"-1 "CI"
 $JIRA_CLI issue add_label "$JIRA_PROJECT_KEY"-1 "CI2"
+$JIRA_CLI issue al "$JIRA_PROJECT_KEY"-2,"$JIRA_PROJECT_KEY"-3 "CI3"
+$JIRA_CLI issue al "$JIRA_PROJECT_KEY"-4,"$JIRA_PROJECT_KEY"-5 "CI4"
 ## remove_version
 echo "issue remove_version"
 $JIRA_CLI issue remove_version "$JIRA_PROJECT_KEY"-1 test
 ## remove_label
 echo "issue remove_label"
 $JIRA_CLI issue remove_label "$JIRA_PROJECT_KEY"-1 "CI2"
+$JIRA_CLI i rl "$JIRA_PROJECT_KEY"-2,"$JIRA_PROJECT_KEY"-3 "CI3"
 ## show_fixversions
 echo "issue show_fixversions"
 $JIRA_CLI issue show_fixversions "$JIRA_PROJECT_KEY"-1

@@ -5,22 +5,21 @@ use comfy_table::{
 use dialoguer::Confirm;
 use itertools::Itertools;
 use serde_json::Value;
+use std::collections::HashMap;
 use ureq::{json, Response};
 
 use crate::lib::{delete_request, get_request, post_request, put_request};
 
 #[allow(clippy::too_many_arguments)]
 pub fn create(
-    domain: &str,
-    user: &str,
-    token: &str,
+    global: &HashMap<&str, &str>,
     project_name: &str,
     project_key: &str,
     project_leadaccountid: &str,
     project_type: &str,
     project_template: &str,
 ) {
-    let url: String = format!("https://{}/rest/api/3/project", domain);
+    let url: String = format!("https://{}/rest/api/3/project", global["domain"]);
     let payload: Value = json!({
         "name": project_name,
         "key": project_key,
@@ -30,11 +29,21 @@ pub fn create(
         "assigneeType": "UNASSIGNED"
     });
     let success_message: String = format!("Project {} created", project_key);
-    post_request(&url, payload, user, token, &success_message, false);
+    post_request(
+        &url,
+        payload,
+        global["user"],
+        global["token"],
+        &success_message,
+        false,
+    );
 }
 
-pub fn delete_project(domain: &str, user: &str, token: &str, project_key: &str) {
-    let url: String = format!("https://{}/rest/api/3/project/{}", domain, project_key);
+pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
+    let url: String = format!(
+        "https://{}/rest/api/3/project/{}",
+        global["domain"], project_key
+    );
     if Confirm::new()
         .with_prompt(format!(
             "Are you sure you want to delete the project key: {}?",
@@ -44,25 +53,28 @@ pub fn delete_project(domain: &str, user: &str, token: &str, project_key: &str) 
         .unwrap()
     {
         let success_message: String = format!("Project {} deleted", project_key);
-        delete_request(&url, user, token, &success_message);
+        delete_request(&url, global["user"], global["token"], &success_message);
     } else {
         println!("Project {} not deleted.", project_key);
     }
 }
 
-pub fn get_id(domain: &str, user: &str, token: &str, project_key: &str) {
-    let url: String = format!("https://{}/rest/api/3/project/{}", domain, project_key);
-    let resp: Response = get_request(&url, user, token);
+pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
+    let url: String = format!(
+        "https://{}/rest/api/3/project/{}",
+        global["domain"], project_key
+    );
+    let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
     println!("{}", json["id"].as_str().unwrap().parse::<i32>().unwrap());
 }
 
-pub fn list_features(domain: &str, user: &str, token: &str, project_key: &str) {
+pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
         "https://{}/rest/api/3/project/{}/features",
-        domain, project_key
+        global["domain"], project_key
     );
-    let resp: Response = get_request(&url, user, token);
+    let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
     let mut table = Table::new();
     table
@@ -102,12 +114,12 @@ pub fn list_features(domain: &str, user: &str, token: &str, project_key: &str) {
     println!("{table}");
 }
 
-pub fn list_versions(domain: &str, user: &str, token: &str, project_key: &str) {
+pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
         "https://{}/rest/api/3/project/{}/versions",
-        domain, project_key
+        global["domain"], project_key
     );
-    let resp: Response = get_request(&url, user, token);
+    let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
     let mut table = Table::new();
     table
@@ -166,32 +178,43 @@ pub fn list_versions(domain: &str, user: &str, token: &str, project_key: &str) {
     println!("{table}");
 }
 
-pub fn new_version(domain: &str, user: &str, token: &str, project_id: &str, version_name: &str) {
-    let url: String = format!("https://{}/rest/api/3/version", domain);
+pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name: &str) {
+    let url: String = format!("https://{}/rest/api/3/version", global["domain"]);
     let payload: Value = json!({
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
     });
     let success_message: String = format!("Version created: {}", version_name);
-    post_request(&url, payload, user, token, &success_message, false);
+    post_request(
+        &url,
+        payload,
+        global["user"],
+        global["token"],
+        &success_message,
+        false,
+    );
 }
 
 pub fn set_feature_state(
-    domain: &str,
-    user: &str,
-    token: &str,
+    global: &HashMap<&str, &str>,
     project_key: &str,
     project_feature_key: &str,
     project_feature_state: &str,
 ) {
     let url: String = format!(
         "https://{}/rest/api/3/project/{}/features/{}",
-        domain, project_key, project_feature_key
+        global["domain"], project_key, project_feature_key
     );
     let payload: Value = json!({ "state": project_feature_state });
     let success_message: String = format!(
         "Feature {} set to {} on project {}",
         project_feature_key, project_feature_state, project_key
     );
-    put_request(&url, payload, user, token, &success_message);
+    put_request(
+        &url,
+        payload,
+        global["user"],
+        global["token"],
+        &success_message,
+    );
 }
