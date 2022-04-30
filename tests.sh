@@ -10,6 +10,9 @@ $JIRA_CLI -V
 # help
 $JIRA_CLI help
 
+# check_version
+$JIRA_CLI check_version
+
 # generate
 $JIRA_CLI generate bash > /tmp/jira_cli.bash
 $JIRA_CLI generate elvish > /tmp/jira_cli.elvish

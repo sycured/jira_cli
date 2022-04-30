@@ -3,6 +3,7 @@ use std::{collections::HashMap, io::stdout};
 use clap::Command;
 use clap_complete::{generate, Generator, Shell};
 
+mod check_version;
 mod cli;
 mod issue;
 mod labels;
@@ -23,6 +24,9 @@ fn main() {
     ]);
 
     match matches.subcommand() {
+        Some(("check_version", _)) => {
+            check_version::logic_commands();
+        }
         Some(("generate", args)) => {
             let shell = args.value_of_t::<Shell>("shell").unwrap();
             let mut cmd = cli::build_cli();
