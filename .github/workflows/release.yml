@@ -8,11 +8,8 @@ defaults:
   run:
     shell: bash
 
-env:
-  RUSTFLAGS: "-C target-feature=+crt-static"
-
 jobs:
-  test:
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -28,6 +25,11 @@ jobs:
             other: x86_64-apple-darwin
             artifact_name: jira_cli
             asset_name: jira_cli-darwin_amd64
+          - os: macos-latest
+            rust: stable
+            other: aarch64-apple-darwin
+            artifact_name: jira_cli
+            asset_name: jira_cli-darwin_arm
           - os: windows-latest
             rust: stable-msvc
             other: x86_64-pc-windows-msvc
@@ -45,15 +47,58 @@ jobs:
         shell: bash
         if: startsWith(matrix.os, 'windows')
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+        name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.other }}
+        name: Add target
       - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
+        name: Install dependencies for Linux
         if: matrix.os == 'ubuntu-latest'
       - run: rustup component add rustfmt || echo "rustfmt not available"
+        name: Install rustfmt
       - run: cargo build --release --target ${{ matrix.other }}
+        name: Build for all architecture except Mac ARM
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
+        if: matrix.other != 'aarch64-apple-darwin'
+      - run: |
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path)
+          MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version)
+          cargo build --release --target ${{ matrix.other }}
+        name: Build for Mac ARM
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
+        if: matrix.other == 'aarch64-apple-darwin'
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: target/${{ matrix.other }}/release/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
+          tag: ${{ github.ref_name }}
+
+  sbom:
+    runs-on: ubuntu-latest
+    name: Generate SBOM
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: jira_cli
+          cache-on-failure: true
+      - run: cargo install cargo-cyclonedx
+        name: Install cargo-cyclonedx
+      - run: cargo cyclonedx -a --output-cdx
+        name: Generate SBOM
+      - name: Upload SBOM
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: bom.cdx.xml
+          asset_name: bom.cdx.xml
           tag: ${{ github.ref_name }}
