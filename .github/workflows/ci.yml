@@ -1,6 +1,8 @@
 name: CI
 on:
   push:
+    tags-ignore:
+      - '**'
     paths:
       - '.github/workflows/ci.yml'
       - '**/Cargo.toml'

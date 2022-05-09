@@ -1,8 +1,10 @@
-use crate::lib::get_request;
+use std::collections::HashMap;
+
 use clap::{Arg, ArgMatches, Command};
 use serde_json::Value;
-use std::collections::HashMap;
 use ureq::Response;
+
+use crate::lib::get_request;
 
 fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_results: &str) {
     let url: String = format!(

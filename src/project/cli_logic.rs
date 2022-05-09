@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use clap::ArgMatches;
-
 use rayon::prelude::*;
 
 use crate::project::functions;

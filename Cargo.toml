@@ -1,6 +1,6 @@
 [package]
 name = "jira_cli"
-version = "2.5.0"
+version = "2.6.0"
 edition = "2021"
 license = "GPL-2.0"
 readme = "README.md"
@@ -23,12 +23,12 @@ lto = true
 
 [dependencies]
 base64 = "0.13.0"
-clap = {version="3.1.6", features=["cargo", "env", "wrap_help"]}
-clap_complete = "3.1.1"
+clap = {version="3.1.17", features=["cargo", "env", "wrap_help"]}
+clap_complete = "3.1.4"
 comfy-table = "5.0.1"
-dialoguer = "0.10.0"
+dialoguer = "0.10.1"
 either = "1.6.1"
 itertools = "0.10.3"
 rayon = "1.5.2"
-serde_json = "1.0.79"
+serde_json = "1.0.81"
 ureq = {version="2.4.0", features=["default", "json", "native-certs"]}

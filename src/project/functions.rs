@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
@@ -5,7 +7,6 @@ use comfy_table::{
 use dialoguer::Confirm;
 use itertools::Itertools;
 use serde_json::Value;
-use std::collections::HashMap;
 use ureq::{json, Response};
 
 use crate::lib::{delete_request, get_request, post_request, put_request};

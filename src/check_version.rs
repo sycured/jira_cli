@@ -1,6 +1,7 @@
+use std::process::exit;
+
 use clap::{crate_version, Command};
 use serde_json::Value;
-use std::process::exit;
 use ureq::{get, Response};
 
 fn get_request(url: &str) -> Response {

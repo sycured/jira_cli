@@ -1,5 +1,6 @@
-use serde_json::Value;
 use std::collections::HashMap;
+
+use serde_json::Value;
 use ureq::{json, Response};
 
 use crate::lib::{get_request, post_request, put_request};
@@ -53,6 +54,7 @@ pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: 
         &success_message,
     );
 }
+
 #[allow(clippy::too_many_arguments)]
 pub fn create(
     global: &HashMap<&str, &str>,
