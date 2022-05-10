@@ -17,7 +17,7 @@ pub fn create() -> Command<'static> {
 
 pub fn delete() -> Command<'static> {
     return Command::new("delete")
-        .about("Deletes a user")
+        .about("Delete a user")
         .visible_aliases(&["d", "del", "rm"])
         .arg_required_else_help(true)
         .arg(
@@ -42,7 +42,7 @@ pub fn get_account_id() -> Command<'static> {
 pub fn get_user_groups() -> Command<'static> {
     return Command::new("get_user_groups")
         .about("Get user groups")
-        .visible_aliases(&["gg", "gug", "get-user-groups", "get-groups"])
+        .visible_aliases(&["gg", "gug", "get-user-groups", "get_groups", "get-groups"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("account_id")
