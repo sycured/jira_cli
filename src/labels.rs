@@ -4,12 +4,12 @@ use clap::{Arg, ArgMatches, Command};
 use serde_json::Value;
 use ureq::Response;
 
-use crate::lib::get_request;
+use super::{lib::get_request, urls::URLS};
 
 fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_results: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/label?startAt={}&maxResults={}",
-        domain, start_at, max_results
+        "https://{}{}?startAt={}&maxResults={}",
+        domain, URLS["label"], start_at, max_results
     );
     let resp: Response = get_request(&url, user, token);
     let json: Value = resp.into_json().unwrap();

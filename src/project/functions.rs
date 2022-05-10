@@ -9,7 +9,10 @@ use itertools::Itertools;
 use serde_json::Value;
 use ureq::{json, Response};
 
-use crate::lib::{delete_request, get_request, post_request, put_request};
+use crate::{
+    lib::{delete_request, get_request, post_request, put_request},
+    urls::URLS,
+};
 
 #[allow(clippy::too_many_arguments)]
 pub fn create(
@@ -20,7 +23,7 @@ pub fn create(
     project_type: &str,
     project_template: &str,
 ) {
-    let url: String = format!("https://{}/rest/api/3/project", global["domain"]);
+    let url: String = format!("https://{}{}", global["domain"], URLS["project"]);
     let payload: Value = json!({
         "name": project_name,
         "key": project_key,
@@ -42,8 +45,8 @@ pub fn create(
 
 pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/project/{}",
-        global["domain"], project_key
+        "https://{}{}/{}",
+        global["domain"], URLS["project"], project_key
     );
     if Confirm::new()
         .with_prompt(format!(
@@ -62,8 +65,8 @@ pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
 
 pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/project/{}",
-        global["domain"], project_key
+        "https://{}{}/{}",
+        global["domain"], URLS["project"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
@@ -72,8 +75,8 @@ pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
 
 pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/project/{}/features",
-        global["domain"], project_key
+        "https://{}{}/{}/features",
+        global["domain"], URLS["project"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
@@ -117,8 +120,8 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
 
 pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/project/{}/versions",
-        global["domain"], project_key
+        "https://{}{}/{}/versions",
+        global["domain"], URLS["project"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
@@ -180,7 +183,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
 }
 
 pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name: &str) {
-    let url: String = format!("https://{}/rest/api/3/version", global["domain"]);
+    let url: String = format!("https://{}{}", global["domain"], URLS["version"]);
     let payload: Value = json!({
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
@@ -203,8 +206,8 @@ pub fn set_feature_state(
     project_feature_state: &str,
 ) {
     let url: String = format!(
-        "https://{}/rest/api/3/project/{}/features/{}",
-        global["domain"], project_key, project_feature_key
+        "https://{}{}/{}/features/{}",
+        global["domain"], URLS["project"], project_key, project_feature_key
     );
     let payload: Value = json!({ "state": project_feature_state });
     let success_message: String = format!(

@@ -3,12 +3,15 @@ use std::collections::HashMap;
 use serde_json::Value;
 use ureq::{json, Response};
 
-use crate::lib::{get_request, post_request, put_request};
+use crate::{
+    lib::{get_request, post_request, put_request},
+    urls::URLS,
+};
 
 pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/issue/{}",
-        global["domain"], issue_key
+        "https://{}{}/{}",
+        global["domain"], URLS["issue"], issue_key
     );
     let payload: Value = json!({
         "update": {
@@ -31,8 +34,8 @@ pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
 
 pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/issue/{}",
-        global["domain"], issue_key
+        "https://{}{}/{}",
+        global["domain"], URLS["issue"], issue_key
     );
     let payload: Value = json!({
         "update": {
@@ -65,7 +68,7 @@ pub fn create(
     description: &str,
     priority: &str,
 ) {
-    let url: String = format!("https://{}/rest/api/3/issue", global["domain"]);
+    let url: String = format!("https://{}{}", global["domain"], URLS["issue"]);
     let mut payload: Value = json!({
         "fields":
         {
@@ -100,7 +103,7 @@ pub fn create(
 }
 
 pub fn list_priorities(global: &HashMap<&str, &str>) {
-    let url: String = format!("https://{}/rest/api/3/priority", global["domain"]);
+    let url: String = format!("https://{}{}", global["domain"], URLS["priority"]);
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
     json.as_array().unwrap().iter().for_each(|x| {
@@ -110,8 +113,8 @@ pub fn list_priorities(global: &HashMap<&str, &str>) {
 
 pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/issue/createmeta?projectKeys={}",
-        global["domain"], project_key
+        "https://{}{}/createmeta?projectKeys={}",
+        global["domain"], URLS["issue"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();
@@ -126,8 +129,8 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
 
 pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/issue/{}",
-        global["domain"], issue_key
+        "https://{}{}/{}",
+        global["domain"], URLS["issue"], issue_key
     );
     let payload: Value = json!({
         "update": {
@@ -150,8 +153,8 @@ pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) 
 
 pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/issue/{}",
-        global["domain"], issue_key
+        "https://{}{}/{}",
+        global["domain"], URLS["issue"], issue_key
     );
     let payload: Value = json!({
         "update": {
@@ -177,8 +180,8 @@ pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_ke
 
 pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
     let url: String = format!(
-        "https://{}/rest/api/3/issue/{}",
-        global["domain"], issue_key
+        "https://{}{}/{}",
+        global["domain"], URLS["issue"], issue_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.into_json().unwrap();

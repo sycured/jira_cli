@@ -352,6 +352,7 @@ dependencies = [
  "dialoguer",
  "either",
  "itertools",
+ "lazy_static",
  "rayon",
  "serde_json",
  "ureq",

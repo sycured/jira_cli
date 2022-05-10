@@ -9,6 +9,7 @@ mod issue;
 mod labels;
 mod lib;
 mod project;
+mod urls;
 mod user;
 
 fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
@@ -17,7 +18,7 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
 
 fn main() {
     let matches = cli::build_cli().get_matches();
-    let global = HashMap::from([
+    let global: HashMap<&str, &str> = HashMap::from([
         ("domain", matches.value_of("domain").unwrap()),
         ("token", matches.value_of("token").unwrap()),
         ("user", matches.value_of("user").unwrap()),
