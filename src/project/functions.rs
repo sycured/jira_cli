@@ -101,7 +101,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     json["features"].as_array().unwrap().iter().for_each(|x| {
         let state: &str = x["state"].as_str().unwrap();
         let key: &str = x["feature"].as_str().unwrap();
-        let description: &str = x["localisedDescription"].as_str().unwrap();
+        let description: &str = x["localizedDescription"].as_str().unwrap();
         let locked: bool = x["toggleLocked"].as_bool().unwrap();
         let locked_color = if locked {
             comfy_table::Color::Red
