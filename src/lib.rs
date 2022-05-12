@@ -1,14 +1,42 @@
 #![forbid(unsafe_code)]
 
+use std::collections::HashMap;
 use std::process::exit;
 
 use attohttpc::{delete, get, post, put, Response};
 use base64::encode as b64encode;
+use comfy_table::{
+    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
+    Table,
+};
 use either::Either;
 use serde_json::Value;
 
 fn b64auth(user: &str, token: &str) -> String {
     return b64encode(format!("{}:{}", user, token));
+}
+
+pub fn create_table(
+    header: Vec<&str>,
+    column_alignment: HashMap<usize, CellAlignment>,
+    rows: Vec<Vec<Cell>>,
+) -> Table {
+    let mut table = Table::new();
+    table
+        .set_header(header)
+        .load_preset(UTF8_FULL)
+        .apply_modifier(UTF8_ROUND_CORNERS)
+        .set_content_arrangement(ContentArrangement::DynamicFullWidth);
+    column_alignment.iter().for_each(|(key, value)| {
+        table
+            .get_column_mut(*key)
+            .unwrap()
+            .set_cell_alignment(*value);
+    });
+    rows.into_iter().for_each(|row| {
+        table.add_row(row);
+    });
+    return table;
 }
 
 #[inline]

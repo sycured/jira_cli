@@ -1,16 +1,13 @@
 use std::collections::HashMap;
 
 use attohttpc::Response;
-use comfy_table::{
-    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
-    Table,
-};
+use comfy_table::{Cell, CellAlignment};
 use dialoguer::Confirm;
 use itertools::Itertools;
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{delete_request, get_request, post_request, put_request},
+    lib::{create_table, delete_request, get_request, post_request, put_request},
     urls::URLS,
 };
 
@@ -80,24 +77,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut table = Table::new();
-    table
-        .set_header(vec!["Key", "Description", "State", "Locked"])
-        .load_preset(UTF8_FULL)
-        .apply_modifier(UTF8_ROUND_CORNERS)
-        .set_content_arrangement(ContentArrangement::DynamicFullWidth);
-    table
-        .get_column_mut(0)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
-    table
-        .get_column_mut(2)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
-    table
-        .get_column_mut(3)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
+    let mut rows: Vec<Vec<Cell>> = Vec::new();
     json["features"].as_array().unwrap().iter().for_each(|x| {
         let state: &str = x["state"].as_str().unwrap();
         let key: &str = x["feature"].as_str().unwrap();
@@ -108,14 +88,23 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
         } else {
             comfy_table::Color::Green
         };
-        table.add_row(vec![
+        rows.push(vec![
             Cell::new(key),
             Cell::new(description),
             Cell::new(state),
             Cell::new(&locked.to_string()).fg(locked_color),
         ]);
     });
-    println!("{table}");
+    let table = create_table(
+        vec!["Key", "Description", "State", "Locked"],
+        HashMap::from([
+            (0, CellAlignment::Center),
+            (2, CellAlignment::Center),
+            (3, CellAlignment::Center),
+        ]),
+        rows,
+    );
+    println!("{}", table);
 }
 
 pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
@@ -125,32 +114,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut table = Table::new();
-    table
-        .set_header(vec!["Name", "Description", "Released", "Archived", "Id"])
-        .load_preset(UTF8_FULL)
-        .apply_modifier(UTF8_ROUND_CORNERS)
-        .set_content_arrangement(ContentArrangement::DynamicFullWidth);
-    table
-        .get_column_mut(0)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
-    table
-        .get_column_mut(1)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
-    table
-        .get_column_mut(2)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
-    table
-        .get_column_mut(3)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
-    table
-        .get_column_mut(4)
-        .unwrap()
-        .set_cell_alignment(CellAlignment::Center);
+    let mut rows: Vec<Vec<Cell>> = Vec::new();
     json.as_array()
         .unwrap()
         .iter()
@@ -171,7 +135,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
             } else {
                 comfy_table::Color::Green
             };
-            table.add_row(vec![
+            rows.push(vec![
                 Cell::new(name),
                 Cell::new(description),
                 Cell::new(&released.to_string()).fg(released_color),
@@ -179,7 +143,18 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
                 Cell::new(id),
             ]);
         });
-    println!("{table}");
+    let table = create_table(
+        vec!["Name", "Description", "Released", "Archived", "Id"],
+        HashMap::from([
+            (0, CellAlignment::Center),
+            (1, CellAlignment::Center),
+            (2, CellAlignment::Center),
+            (3, CellAlignment::Center),
+            (4, CellAlignment::Center),
+        ]),
+        rows,
+    );
+    println!("{}", table);
 }
 
 pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name: &str) {
