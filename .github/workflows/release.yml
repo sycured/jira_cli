@@ -50,6 +50,10 @@ jobs:
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.other }}
         name: Add target
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: jira_cli
+          cache-on-failure: true
       - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
         name: Install dependencies for Linux
         if: matrix.os == 'ubuntu-latest'
