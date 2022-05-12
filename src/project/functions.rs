@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
+use attohttpc::Response;
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
 };
 use dialoguer::Confirm;
 use itertools::Itertools;
-use serde_json::Value;
-use ureq::{json, Response};
+use serde_json::{json, Value};
 
 use crate::{
     lib::{delete_request, get_request, post_request, put_request},
@@ -35,7 +35,7 @@ pub fn create(
     let success_message: String = format!("Project {} created", project_key);
     post_request(
         &url,
-        payload,
+        &payload,
         global["user"],
         global["token"],
         &success_message,
@@ -69,7 +69,7 @@ pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
         global["domain"], URLS["project"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.into_json().unwrap();
+    let json: Value = resp.json().unwrap();
     println!("{}", json["id"].as_str().unwrap().parse::<i32>().unwrap());
 }
 
@@ -79,7 +79,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
         global["domain"], URLS["project"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.into_json().unwrap();
+    let json: Value = resp.json().unwrap();
     let mut table = Table::new();
     table
         .set_header(vec!["Key", "Description", "State", "Locked"])
@@ -124,7 +124,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
         global["domain"], URLS["project"], project_key
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.into_json().unwrap();
+    let json: Value = resp.json().unwrap();
     let mut table = Table::new();
     table
         .set_header(vec!["Name", "Description", "Released", "Archived", "Id"])
@@ -191,7 +191,7 @@ pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name:
     let success_message: String = format!("Version created: {}", version_name);
     post_request(
         &url,
-        payload,
+        &payload,
         global["user"],
         global["token"],
         &success_message,
@@ -216,7 +216,7 @@ pub fn set_feature_state(
     );
     put_request(
         &url,
-        payload,
+        &payload,
         global["user"],
         global["token"],
         &success_message,

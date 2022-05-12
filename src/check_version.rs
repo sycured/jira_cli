@@ -1,11 +1,11 @@
 use std::process::exit;
 
+use attohttpc::{get, Response};
 use clap::{crate_version, Command};
 use serde_json::Value;
-use ureq::{get, Response};
 
 fn get_request(url: &str) -> Response {
-    let resp = get(url).set("Accept", "application/json").call();
+    let resp = get(url).header("Accept", "application/json").send();
     match resp {
         Err(err) => {
             eprintln!("{}", err);
@@ -21,7 +21,7 @@ fn check_version() {
     let api_url: String =
         repository_url.replace("github.com", "api.github.com/repos") + "/releases/latest";
     let resp: Response = get_request(&api_url);
-    let json: Value = resp.into_json().unwrap();
+    let json: Value = resp.json().unwrap();
     let latest_version: &str = json["tag_name"]
         .as_str()
         .unwrap()

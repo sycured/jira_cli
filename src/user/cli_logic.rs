@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use clap::ArgMatches;
 
-use crate::user::functions;
+use super::functions;
 
 pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::create(

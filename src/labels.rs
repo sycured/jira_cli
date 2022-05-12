@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
+use attohttpc::Response;
 use clap::{Arg, ArgMatches, Command};
 use serde_json::Value;
-use ureq::Response;
 
 use super::{lib::get_request, urls::URLS};
 
@@ -12,7 +12,7 @@ fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_result
         domain, URLS["label"], start_at, max_results
     );
     let resp: Response = get_request(&url, user, token);
-    let json: Value = resp.into_json().unwrap();
+    let json: Value = resp.json().unwrap();
     json["values"].as_array().unwrap().iter().for_each(|x| {
         println!("{}", x);
     });

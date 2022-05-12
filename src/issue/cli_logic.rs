@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use clap::ArgMatches;
 use rayon::prelude::*;
 
-use crate::issue::functions;
+use super::functions;
 
 pub fn add_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
     args.values_of("issue_key")

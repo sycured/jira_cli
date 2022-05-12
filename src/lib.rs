@@ -1,9 +1,9 @@
 use std::process::exit;
 
+use attohttpc::{delete, get, post, put, Response};
 use base64::encode as b64encode;
 use either::Either;
 use serde_json::Value;
-use ureq::{delete, get, post, put, Response};
 
 fn b64auth(user: &str, token: &str) -> String {
     return b64encode(format!("{}:{}", user, token));
@@ -12,11 +12,11 @@ fn b64auth(user: &str, token: &str) -> String {
 #[inline]
 pub fn delete_request(url: &str, user: &str, token: &str, success_message: &str) {
     let resp = delete(url)
-        .set(
+        .header(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .call();
+        .send();
     match resp {
         Err(err) => {
             eprintln!("{}", err);
@@ -31,12 +31,12 @@ pub fn delete_request(url: &str, user: &str, token: &str, success_message: &str)
 #[inline]
 pub fn get_request(url: &str, user: &str, token: &str) -> Response {
     let resp = get(url)
-        .set("Accept", "application/json")
-        .set(
+        .header("Accept", "application/json")
+        .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .call();
+        .send();
     match resp {
         Err(err) => {
             eprintln!("{}", err);
@@ -49,20 +49,22 @@ pub fn get_request(url: &str, user: &str, token: &str) -> Response {
 #[inline]
 pub fn post_request(
     url: &str,
-    payload: Value,
+    payload: &Value,
     user: &str,
     token: &str,
     success_message: &str,
     return_response: bool,
 ) -> Either<(), Response> {
     let resp = post(url)
-        .set("Accept", "application/json")
-        .set("Content-Type", "application/json")
-        .set(
+        .header("Accept", "application/json")
+        .header("Content-Type", "application/json")
+        .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .send_json(payload);
+        .json(payload)
+        .unwrap()
+        .send();
     match resp {
         Err(err) => {
             eprintln!("{}", err);
@@ -80,15 +82,17 @@ pub fn post_request(
 }
 
 #[inline]
-pub fn put_request(url: &str, payload: Value, user: &str, token: &str, success_message: &str) {
+pub fn put_request(url: &str, payload: &Value, user: &str, token: &str, success_message: &str) {
     let resp = put(url)
-        .set("Accept", "application/json")
-        .set("Content-Type", "application/json")
-        .set(
+        .header("Accept", "application/json")
+        .header("Content-Type", "application/json")
+        .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .send_json(payload);
+        .json(payload)
+        .unwrap()
+        .send();
     match resp {
         Err(err) => {
             eprintln!("{}", err);
