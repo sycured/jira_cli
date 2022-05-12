@@ -36,7 +36,7 @@ pub fn create_table(
     rows.into_iter().for_each(|row| {
         table.add_row(row);
     });
-    return table;
+    table
 }
 
 #[inline]
