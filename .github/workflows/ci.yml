@@ -1,6 +1,8 @@
 name: CI
 on:
   push:
+    branches-ignore:
+      - main
     branches:
       - '**'
     tags-ignore:
@@ -45,6 +47,12 @@ jobs:
           sharedKey: jira_cli
           cache-on-failure: true
 
+      - name: Audit check
+        run: |
+          curl --location --output /tmp/cargo-audit.tar.gz https://github.com/rustsec/rustsec/releases/download/cargo-audit%2Fv0.16.0/cargo-audit-x86_64-unknown-linux-musl-v0.16.0.tgz
+          tar --extract --verbose --gzip --file /tmp/cargo-audit.tar.gz --directory /usr/local/bin/ --strip-components=1 cargo-audit-x86_64-unknown-linux-musl-v0.16.0/cargo-audit
+          cargo audit --json > $HOME/audit.json || exit 0
+
       - name: Check a local package and all of its dependencies for errors
         uses: actions-rs/cargo@v1
         with:
@@ -56,6 +64,43 @@ jobs:
         with:
           command: fmt
           args: --all --check
+
+      - name: Outdated check
+        run: |
+          curl --output /usr/local/bin/cargo-outdated https://www.tuziwo.info/cargo-outdated-v0.10.2-x86_64-unknown-linux-gnu
+          chmod a+x /usr/local/bin/cargo-outdated
+          cargo outdated --depth 1 --format json > $HOME/outdated.json
+
+      - name: Udeps check
+        run: |
+          curl --location --output /tmp/cargo-udeps.tar.gz https://github.com/est31/cargo-udeps/releases/download/v0.1.26/cargo-udeps-v0.1.26-x86_64-unknown-linux-gnu.tar.gz
+          tar --extract --verbose --gzip --file /tmp/cargo-udeps.tar.gz --directory /usr/local/bin/ --strip-components=2 ./cargo-udeps-v0.1.26-x86_64-unknown-linux-gnu/cargo-udeps
+          rustup install nightly
+          cargo +nightly udeps --quiet --workspace --all-features --all-targets --output json > udeps.json || exit 0
+
+      - name: Clippy check
+        run: |
+          rustup component add clippy
+          cargo clippy --all-features --all-targets --message-format=json > $HOME/clippy.json || exit 0
+
+      - name: Sonar converter
+        working-directory: $HOME
+        run: |
+          cargo install cargo-sonar
+          cargo sonar --issues audit,clippy,outdated,udeps
+
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+
+      - name: Run sonarqube
+        run: |
+          sonar-scanner
+          -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+          -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+          -Dsonar.sources=$GITHUB_WORKSPACE
+          -Dsonar.host.url=${{ secrets.SONAR_URL }}
+          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.externalIssuesReportPaths=$HOME/sonar.json
 
   test:
     runs-on: ${{ matrix.os }}
@@ -90,6 +135,10 @@ jobs:
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.other }}
         name: Add target
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: jira_cli
+          cache-on-failure: true
       - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
         name: Install dependencies for Linux
         if: matrix.os == 'ubuntu-latest'
