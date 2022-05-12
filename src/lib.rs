@@ -1,3 +1,5 @@
+#![forbid(unsafe_code)]
+
 use std::process::exit;
 
 use attohttpc::{delete, get, post, put, Response};
