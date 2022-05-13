@@ -7,6 +7,7 @@ use clap_complete::{generate, Generator, Shell};
 
 mod check_version;
 mod cli;
+mod group;
 mod issue;
 mod labels;
 mod lib;
@@ -35,6 +36,7 @@ fn main() {
             let mut cmd = cli::build_cli();
             print_completions(shell, &mut cmd);
         }
+        Some(("group", args)) => group::logic_commands(global, args),
         Some(("issue", args)) => issue::logic_commands(global, args),
         Some(("labels", args)) => labels::logic_commands(global, args),
         Some(("project", args)) => project::logic_commands(global, args),
