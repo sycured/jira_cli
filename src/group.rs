@@ -9,7 +9,7 @@ pub mod functions;
 pub fn cli_commands() -> Command<'static> {
     return Command::new("group")
         .about("Manage groups of users")
-        .visible_alias("g")
+        .visible_alias("gr")
         .subcommand_required(true)
         .arg_required_else_help(true)
         .subcommand(cli_commands::add_user())

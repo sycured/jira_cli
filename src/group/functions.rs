@@ -118,26 +118,30 @@ pub fn list_users(
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
     let mut rows: Vec<Vec<Cell>> = Vec::new();
-    json["values"].as_array().unwrap().iter().for_each(|x| {
-        let name: &str = x["name"].as_str().unwrap();
-        let account_id: &str = x["accountId"].as_str().unwrap();
-        let display_name: &str = x["displayName"].as_str().unwrap();
-        rows.push(vec![
-            Cell::new(name),
-            Cell::new(account_id),
-            Cell::new(display_name),
-        ]);
-    });
-    let table = create_table(
-        vec!["Name", "Account ID", "Display Name"],
-        HashMap::from([
-            (0, CellAlignment::Center),
-            (1, CellAlignment::Center),
-            (2, CellAlignment::Center),
-        ]),
-        rows,
-    );
-    println!("{}", table);
+    if json["values"] != json!(null) {
+        json["values"].as_array().unwrap().iter().for_each(|x| {
+            let name: &str = x["name"].as_str().unwrap_or("");
+            let account_id: &str = x["accountId"].as_str().unwrap();
+            let display_name: &str = x["displayName"].as_str().unwrap_or("");
+            rows.push(vec![
+                Cell::new(name),
+                Cell::new(account_id),
+                Cell::new(display_name),
+            ]);
+        });
+        let table = create_table(
+            vec!["Name", "Account ID", "Display Name"],
+            HashMap::from([
+                (0, CellAlignment::Center),
+                (1, CellAlignment::Center),
+                (2, CellAlignment::Center),
+            ]),
+            rows,
+        );
+        println!("{}", table);
+    } else {
+        println!("No users found.");
+    }
 }
 
 pub fn remove_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) {
