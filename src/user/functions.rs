@@ -66,7 +66,11 @@ pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    json["name"].as_array().unwrap().iter().for_each(|x| {
-        println!("{}", x);
-    });
+    if json["name"] != json!(null) {
+        json["name"].as_array().unwrap().iter().for_each(|x| {
+            println!("{}", x);
+        });
+    } else {
+        println!("No groups found for account id {}", account_id);
+    }
 }
