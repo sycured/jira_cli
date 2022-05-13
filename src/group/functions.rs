@@ -77,7 +77,7 @@ pub fn find(global: &HashMap<&str, &str>, query: &str) {
     });
     let table = create_table(
         vec!["Group Name", "Group ID"],
-        HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
+        &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
         rows,
     );
     println!("{}", table);
@@ -98,7 +98,7 @@ pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &s
     });
     let table = create_table(
         vec!["Group Name", "Group ID"],
-        HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
+        &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
         rows,
     );
     println!("{}", table);
@@ -131,7 +131,7 @@ pub fn list_users(
         });
         let table = create_table(
             vec!["Name", "Account ID", "Display Name"],
-            HashMap::from([
+            &HashMap::from([
                 (0, CellAlignment::Center),
                 (1, CellAlignment::Center),
                 (2, CellAlignment::Center),

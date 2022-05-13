@@ -97,7 +97,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     });
     let table = create_table(
         vec!["Key", "Description", "State", "Locked"],
-        HashMap::from([
+        &HashMap::from([
             (0, CellAlignment::Center),
             (2, CellAlignment::Center),
             (3, CellAlignment::Center),
@@ -145,7 +145,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
         });
     let table = create_table(
         vec!["Name", "Description", "Released", "Archived", "Id"],
-        HashMap::from([
+        &HashMap::from([
             (0, CellAlignment::Center),
             (1, CellAlignment::Center),
             (2, CellAlignment::Center),
