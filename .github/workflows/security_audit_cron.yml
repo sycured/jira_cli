@@ -11,6 +11,76 @@ jobs:
         with:
           sharedKey: jira_cli
           cache-on-failure: true
+
       - uses: actions-rs/audit-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install nightly toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          override: false
+
+      - name: Update Rustup (temporary workaround)
+        run: |
+          rm /home/runner/.cargo/bin/cargo-fmt
+          rm /home/runner/.cargo/bin/rustfmt
+          rustup self update
+          rustup update --no-self-update
+
+      - name: Audit check
+        run: |
+          curl --location --output /tmp/cargo-audit.tar.gz https://github.com/rustsec/rustsec/releases/download/cargo-audit%2Fv0.16.0/cargo-audit-x86_64-unknown-linux-musl-v0.16.0.tgz
+          tar --extract --verbose --gzip --file /tmp/cargo-audit.tar.gz --directory /usr/local/bin/ --strip-components=1 cargo-audit-x86_64-unknown-linux-musl-v0.16.0/cargo-audit
+          cargo audit --json > $HOME/audit.json || exit 0
+
+      - name: Check a local package and all of its dependencies for errors
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --all
+
+      - name: Lint check
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all --check
+
+      - name: Outdated check
+        run: |
+          curl --output /usr/local/bin/cargo-outdated https://www.tuziwo.info/cargo-outdated-v0.10.2-x86_64-unknown-linux-gnu
+          chmod a+x /usr/local/bin/cargo-outdated
+          cargo outdated --depth 1 --format json > $HOME/outdated.json
+
+      - name: Udeps check
+        run: |
+          curl --location --output /tmp/cargo-udeps.tar.gz https://github.com/est31/cargo-udeps/releases/download/v0.1.28/cargo-udeps-v0.1.28-x86_64-unknown-linux-gnu.tar.gz
+          tar --extract --verbose --gzip --file /tmp/cargo-udeps.tar.gz --directory /usr/local/bin/ --strip-components=2 ./cargo-udeps-v0.1.28-x86_64-unknown-linux-gnu/cargo-udeps
+          cargo +nightly udeps --quiet --workspace --all-features --all-targets --output json > $HOME/udeps.json || exit 0
+
+      - name: Clippy check
+        run: |
+          rustup component add clippy
+          cargo clippy --all-features --all-targets --message-format=json > $HOME/clippy.json || exit 0
+
+      - name: Sonar converter
+        run: |
+          cargo install cargo-sonar
+          cargo sonar --issues audit,clippy,outdated,udeps --audit-path $HOME/audit.json --clippy-path $HOME/clippy.json --outdated-path $HOME/outdated.json --udeps-path $HOME/udeps.json --issues-path $HOME/sonar.json
+
+      - name: Setup sonarqube
+        uses: warchant/setup-sonar-scanner@v3
+
+      - name: Run sonarqube
+        run: sonar-scanner -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.sources=$GITHUB_WORKSPACE -Dsonar.host.url=${{ secrets.SONAR_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.externalIssuesReportPaths=$HOME/sonar.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
