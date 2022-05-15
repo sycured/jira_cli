@@ -25,6 +25,7 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
     );
 }
 
+#[allow(clippy::unit_arg)]
 pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
     let url = format!(
         "https://{}{}?accountId={}",
@@ -39,7 +40,7 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
         ),
         delete_request(&url, global["user"], global["token"], &success_message),
         println!("User {} not deleted.", account_id),
-    );
+    )
 }
 
 pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {

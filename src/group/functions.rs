@@ -41,6 +41,7 @@ pub fn create(global: &HashMap<&str, &str>, name: &str) {
     );
 }
 
+#[allow(clippy::unit_arg)]
 pub fn delete(global: &HashMap<&str, &str>, group_id: &str) {
     let url: String = format!(
         "https://{}{}?groupId={}",
@@ -139,6 +140,7 @@ pub fn list_users(
     }
 }
 
+#[allow(clippy::unit_arg)]
 pub fn remove_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) {
     let url: String = format!(
         "https://{}{}/user?groupId={}&accountId={}",

@@ -39,6 +39,7 @@ pub fn create(
     );
 }
 
+#[allow(clippy::unit_arg)]
 pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
         "https://{}{}/{}",
