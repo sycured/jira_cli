@@ -6,11 +6,11 @@ jobs:
   security_audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
       - uses: Swatinem/rust-cache@v1
         with:
           sharedKey: jira_cli
           cache-on-failure: true
+      - uses: actions/checkout@v1
 
       - uses: actions-rs/audit-check@v1
         with:
