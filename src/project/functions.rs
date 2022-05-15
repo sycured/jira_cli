@@ -2,12 +2,11 @@ use std::collections::HashMap;
 
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
-use dialoguer::Confirm;
 use itertools::Itertools;
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{create_table, delete_request, get_request, post_request, put_request},
+    lib::{confirm, create_table, delete_request, get_request, post_request, put_request},
     urls::URLS,
 };
 
@@ -45,19 +44,15 @@ pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["project"], project_key
     );
-    if Confirm::new()
-        .with_prompt(format!(
+    let success_message: String = format!("Project {} deleted", project_key);
+    confirm(
+        format!(
             "Are you sure you want to delete the project key: {}?",
             project_key
-        ))
-        .interact()
-        .unwrap()
-    {
-        let success_message: String = format!("Project {} deleted", project_key);
-        delete_request(&url, global["user"], global["token"], &success_message);
-    } else {
-        println!("Project {} not deleted.", project_key);
-    }
+        ),
+        delete_request(&url, global["user"], global["token"], &success_message),
+        println!("Project {} not deleted.", project_key),
+    )
 }
 
 pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {

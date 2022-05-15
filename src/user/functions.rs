@@ -1,11 +1,10 @@
 use std::collections::HashMap;
 
 use attohttpc::Response;
-use dialoguer::Confirm;
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{delete_request, get_request, post_request},
+    lib::{confirm, delete_request, get_request, post_request},
     urls::URLS,
 };
 
@@ -31,19 +30,16 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
         "https://{}{}?accountId={}",
         global["domain"], URLS["user"], account_id
     );
-    if Confirm::new()
-        .with_prompt(format!(
+
+    let success_message: String = format!("User {} deleted", account_id);
+    confirm(
+        format!(
             "Are you sure you want to delete the account id: {}?",
             account_id
-        ))
-        .interact()
-        .unwrap()
-    {
-        let success_message: String = format!("User {} deleted", account_id);
-        delete_request(&url, global["user"], global["token"], &success_message);
-    } else {
-        println!("User {} not deleted.", account_id);
-    }
+        ),
+        delete_request(&url, global["user"], global["token"], &success_message),
+        println!("User {} not deleted.", account_id),
+    );
 }
 
 pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {

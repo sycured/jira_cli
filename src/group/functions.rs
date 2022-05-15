@@ -2,11 +2,10 @@ use std::collections::HashMap;
 
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
-use dialoguer::Confirm;
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{create_table, delete_request, get_request, post_request},
+    lib::{confirm, create_table, delete_request, get_request, post_request},
     urls::URLS,
 };
 
@@ -47,19 +46,15 @@ pub fn delete(global: &HashMap<&str, &str>, group_id: &str) {
         "https://{}{}?groupId={}",
         global["domain"], URLS["group"], group_id
     );
-    if Confirm::new()
-        .with_prompt(format!(
+    let success_message: String = format!("Group id {} deleted", group_id);
+    confirm(
+        format!(
             "Are you sure you want to delete the group id: {}?",
             group_id
-        ))
-        .interact()
-        .unwrap()
-    {
-        let success_message: String = format!("Group id {} deleted", group_id);
-        delete_request(&url, global["user"], global["token"], &success_message);
-    } else {
-        println!("Group id {} not deleted.", group_id);
-    }
+        ),
+        delete_request(&url, global["user"], global["token"], &success_message),
+        println!("Group id {} not deleted.", group_id),
+    );
 }
 
 pub fn find(global: &HashMap<&str, &str>, query: &str) {
@@ -149,23 +144,19 @@ pub fn remove_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &st
         "https://{}{}/user?groupId={}&accountId={}",
         global["domain"], URLS["group"], group_id, account_id
     );
-    if Confirm::new()
-        .with_prompt(format!(
+    let success_message: String = format!(
+        "Account id {} removed from group id {}",
+        account_id, group_id
+    );
+    confirm(
+        format!(
             "Are you sure you want to remove account id {} from group id: {}?",
             account_id, group_id
-        ))
-        .interact()
-        .unwrap()
-    {
-        let success_message: String = format!(
-            "Account id {} removed from group id {}",
-            account_id, group_id
-        );
-        delete_request(&url, global["user"], global["token"], &success_message);
-    } else {
+        ),
+        delete_request(&url, global["user"], global["token"], &success_message),
         println!(
             "Account id {} not removed from group id {}",
             account_id, group_id
-        );
-    }
+        ),
+    );
 }

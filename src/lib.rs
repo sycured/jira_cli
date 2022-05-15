@@ -9,11 +9,20 @@ use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
 };
+use dialoguer::Confirm;
 use either::Either;
 use serde_json::Value;
 
 fn b64auth(user: &str, token: &str) -> String {
     return b64encode(format!("{}:{}", user, token));
+}
+
+pub fn confirm(prompt: String, yes: (), no: ()) {
+    if Confirm::new().with_prompt(prompt).interact().unwrap() {
+        yes
+    } else {
+        no
+    }
 }
 
 #[must_use]
