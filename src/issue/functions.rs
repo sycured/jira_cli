@@ -4,7 +4,7 @@ use attohttpc::Response;
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{get_request, post_request, put_request},
+    lib::{delete_request, get_request, post_request, put_request},
     urls::URLS,
 };
 
@@ -100,6 +100,18 @@ pub fn create(
     .unwrap();
     let json: Value = resp.json().unwrap();
     println!("Issue created: {}", json["key"]);
+}
+
+pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &str) {
+    let url: String = format!(
+        "https://{}{}/{}?deleteSubtasks={}",
+        global["domain"], URLS["issue"], issue_key, delete_subtasks
+    );
+    let mut success_message: String = format!("Issue {} deleted", issue_key);
+    if delete_subtasks == "true" {
+        success_message += " with its subtasks";
+    }
+    delete_request(&url, global["user"], global["token"], &success_message);
 }
 
 pub fn list_priorities(global: &HashMap<&str, &str>) {

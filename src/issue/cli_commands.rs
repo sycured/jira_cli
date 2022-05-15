@@ -70,6 +70,20 @@ pub fn create() -> Command<'static> {
         );
 }
 
+pub fn delete() -> Command<'static> {
+    return Command::new("delete")
+        .about("Delete an issue")
+        .visible_alias("d")
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true))
+        .arg(
+            Arg::new("delete_subtasks")
+                .help("Delete subtasks")
+                .default_value("false")
+                .possible_values(&["true", "false"]),
+        );
+}
+
 pub fn list_priorities() -> Command<'static> {
     return Command::new("list_priorities")
         .visible_alias("lp")

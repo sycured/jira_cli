@@ -37,6 +37,14 @@ pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
+pub fn delete(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::delete(
+        global,
+        args.value_of("issue_key").unwrap(),
+        args.value_of("delete_subtasks").unwrap(),
+    );
+}
+
 pub fn list_priorities(global: &HashMap<&str, &str>) {
     functions::list_priorities(global);
 }
