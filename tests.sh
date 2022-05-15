@@ -82,6 +82,9 @@ $JIRA_CLI i rl "$JIRA_PROJECT_KEY"-2,"$JIRA_PROJECT_KEY"-3 "CI3"
 ## show_fixversions
 echo "issue show_fixversions"
 $JIRA_CLI issue show_fixversions "$JIRA_PROJECT_KEY"-1
+## delete an issue
+echo "issue delete"
+$JIRA_CLI issue delete "$JIRA_PROJECT_KEY"-5
 
 # labels
 echo "labels"
