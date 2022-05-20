@@ -1,6 +1,8 @@
 use std::collections::HashMap;
 
 use attohttpc::Response;
+use comfy_table::{Cell, CellAlignment};
+use jira_cli::create_table;
 use serde_json::{json, Value};
 
 use crate::{
@@ -49,6 +51,22 @@ pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: 
         }
     });
     let success_message: String = format!("Version {} added to issue {}", version_name, issue_key);
+    put_request(
+        &url,
+        &payload,
+        global["user"],
+        global["token"],
+        &success_message,
+    );
+}
+
+pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
+    let url: String = format!(
+        "https://{}{}/{}/votes",
+        global["domain"], URLS["issue"], issue_key
+    );
+    let payload: Value = json!({});
+    let success_message: String = format!("Vote added to issue {}", issue_key);
     put_request(
         &url,
         &payload,
@@ -139,6 +157,41 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
         });
 }
 
+pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
+    let url: String = format!(
+        "https://{}{}/{}/votes",
+        global["domain"], URLS["issue"], issue_key
+    );
+    let resp: Response = get_request(&url, global["user"], global["token"]);
+    let json: Value = resp.json().unwrap();
+    if json["hasVoted"] == "true" {
+        let mut rows: Vec<Vec<Cell>> = Vec::new();
+        println!("Votes: {}", json["votes"]);
+        json["voters"].as_array().unwrap().iter().for_each(|x| {
+            let name: &str = x["name"].as_str().unwrap_or("");
+            let account_id: &str = x["accountId"].as_str().unwrap();
+            let display_name: &str = x["displayName"].as_str().unwrap_or("");
+            rows.push(vec![
+                Cell::new(name),
+                Cell::new(account_id),
+                Cell::new(display_name),
+            ]);
+        });
+        let table = create_table(
+            vec!["Name", "Account ID", "Display Name"],
+            &HashMap::from([
+                (0, CellAlignment::Center),
+                (1, CellAlignment::Center),
+                (2, CellAlignment::Center),
+            ]),
+            rows,
+        );
+        println!("{}", table);
+    } else {
+        println!("Issue {} has 0 vote", issue_key);
+    }
+}
+
 pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
     let url: String = format!(
         "https://{}{}/{}",
@@ -188,6 +241,15 @@ pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_ke
         global["token"],
         &success_message,
     );
+}
+
+pub fn remove_vote(global: &HashMap<&str, &str>, issue_key: &str) {
+    let url: String = format!(
+        "https://{}{}/{}/votes",
+        global["domain"], URLS["issue"], issue_key
+    );
+    let success_message: String = format!("Vote removed from issue {}", issue_key);
+    delete_request(&url, global["user"], global["token"], &success_message);
 }
 
 pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {

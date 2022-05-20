@@ -25,6 +25,14 @@ pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
         });
 }
 
+pub fn add_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    args.values_of("issue_key")
+        .unwrap()
+        .collect::<Vec<&str>>()
+        .par_iter()
+        .for_each(|issue_key| functions::add_vote(global, issue_key));
+}
+
 pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::create(
         global,
@@ -53,6 +61,10 @@ pub fn list_types(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::list_types(global, args.value_of("project_key").unwrap());
 }
 
+pub fn list_votes(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::list_votes(global, args.value_of("issue_key").unwrap());
+}
+
 pub fn remove_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
     args.values_of("issue_key")
         .unwrap()
@@ -71,6 +83,10 @@ pub fn remove_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
         .for_each(|issue_key| {
             functions::remove_version(global, args.value_of("version_name").unwrap(), issue_key)
         });
+}
+
+pub fn remove_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::remove_vote(global, args.value_of("issue_key").unwrap());
 }
 
 pub fn show_fixversions(global: &HashMap<&str, &str>, args: &ArgMatches) {

@@ -66,6 +66,10 @@ $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-1 $JIRA_VERSION_NAME
 $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-1 test
 JIRA_VERSION_NAME=test $JIRA_CLI issue add_version "$JIRA_PROJECT_KEY"-2,"$JIRA_PROJECT_KEY"-3
 $JIRA_CLI i av "$JIRA_PROJECT_KEY"-4,"$JIRA_PROJECT_KEY"-5
+## add_vote
+echo "issue add_vote"
+$JIRA_CLI issue add_vote "$JIRA_PROJECT_KEY"-1
+$JIRA_CLI issue add_vote "$JIRA_PROJECT_KEY"-3
 ## add_label
 echo "issue add_label"
 $JIRA_CLI issue add_label "$JIRA_PROJECT_KEY"-1 "CI"
@@ -75,6 +79,12 @@ $JIRA_CLI issue al "$JIRA_PROJECT_KEY"-4,"$JIRA_PROJECT_KEY"-5 "CI4"
 ## remove_version
 echo "issue remove_version"
 $JIRA_CLI issue remove_version "$JIRA_PROJECT_KEY"-1 test
+## remove_vote
+echo "issue remove_vote"
+$JIRA_CLI issue remove_vote "$JIRA_PROJECT_KEY"-1
+## list_votes
+echo "issue list_votes"
+$JIRA_CLI issue list_votes "$JIRA_PROJECT_KEY"-3
 ## remove_label
 echo "issue remove_label"
 $JIRA_CLI issue remove_label "$JIRA_PROJECT_KEY"-1 "CI2"

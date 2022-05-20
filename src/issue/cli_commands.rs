@@ -38,6 +38,19 @@ pub fn add_version() -> Command<'static> {
         );
 }
 
+pub fn add_vote() -> Command<'static> {
+    return Command::new("add_vote")
+        .about("Add a vote to an issue")
+        .visible_aliases(&["avo", "add-vote"])
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("issue_key")
+                .help("Issue key")
+                .use_value_delimiter(true)
+                .required(true),
+        );
+}
+
 pub fn create() -> Command<'static> {
     return Command::new("create")
         .about("Create an issue")
@@ -73,7 +86,7 @@ pub fn create() -> Command<'static> {
 pub fn delete() -> Command<'static> {
     return Command::new("delete")
         .about("Delete an issue")
-        .visible_alias("d")
+        .visible_aliases(&["d", "del", "rm"])
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(
@@ -86,16 +99,24 @@ pub fn delete() -> Command<'static> {
 
 pub fn list_priorities() -> Command<'static> {
     return Command::new("list_priorities")
-        .visible_alias("lp")
+        .visible_aliases(&["lp", "list-priorities"])
         .about("List issue priorities");
 }
 
 pub fn list_types() -> Command<'static> {
     return Command::new("list_types")
         .about("List issue types for this project")
-        .visible_alias("lt")
+        .visible_aliases(&["lt", "list-types"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true));
+}
+
+pub fn list_votes() -> Command<'static> {
+    return Command::new("list_votes")
+        .about("List votes for an issue")
+        .visible_aliases(&["list-votes", "lv"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true));
 }
 
 pub fn remove_label() -> Command<'static> {
@@ -134,6 +155,14 @@ pub fn remove_version() -> Command<'static> {
                 .env("JIRA_VERSION_NAME")
                 .required(true),
         );
+}
+
+pub fn remove_vote() -> Command<'static> {
+    return Command::new("remove_vote")
+        .about("Remove a vote from an issue")
+        .visible_aliases(&["rvo", "remove-vote"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true));
 }
 
 pub fn show_fixversions() -> Command<'static> {
