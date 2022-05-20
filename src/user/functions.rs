@@ -14,15 +14,13 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
         "emailAddress": email,
         "displayName": display_name
     });
-    let success_message: String = format!("User {} created", email);
-    post_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-        false,
-    );
+    if {
+        post_request(&url, &payload, global["user"], global["token"], false)
+            .left()
+            .unwrap()
+    } {
+        println!("User {} created", email)
+    }
 }
 
 #[allow(clippy::unit_arg)]

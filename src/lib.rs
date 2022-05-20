@@ -88,14 +88,14 @@ pub fn get_request(url: &str, user: &str, token: &str) -> Response {
 }
 
 #[inline]
+#[must_use]
 pub fn post_request(
     url: &str,
     payload: &Value,
     user: &str,
     token: &str,
-    success_message: &str,
     return_response: bool,
-) -> Either<(), Response> {
+) -> Either<bool, Response> {
     let resp = post(url)
         .header("Accept", "application/json")
         .header_append(
@@ -114,8 +114,7 @@ pub fn post_request(
             if return_response {
                 Either::Right(response)
             } else {
-                #[allow(clippy::unit_arg)]
-                Either::Left(println!("{}", success_message))
+                Either::Left(response.status().is_success())
             }
         }
     }

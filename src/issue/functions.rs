@@ -105,17 +105,9 @@ pub fn create(
         payload["fields"]["priority"] = json!({ "name": priority });
     }
 
-    let success_message = "";
-    let resp = post_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        success_message,
-        true,
-    )
-    .right()
-    .unwrap();
+    let resp = post_request(&url, &payload, global["user"], global["token"], true)
+        .right()
+        .unwrap();
     let json: Value = resp.json().unwrap();
     println!("Issue created: {}", json["key"]);
 }

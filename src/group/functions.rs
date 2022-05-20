@@ -15,30 +15,25 @@ pub fn add_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) 
         global["domain"], URLS["group"], group_id
     );
     let payload: Value = json!({ "accountId": account_id });
-    let success_message: String =
-        format!("Account id {} added to group id {}", account_id, group_id);
-    post_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-        false,
-    );
+    if {
+        post_request(&url, &payload, global["user"], global["token"], false)
+            .left()
+            .unwrap()
+    } {
+        println!("Account id {} added to group id {}", account_id, group_id);
+    }
 }
 
 pub fn create(global: &HashMap<&str, &str>, name: &str) {
     let url: String = format!("https://{}{}", global["domain"], URLS["group"]);
     let payload: Value = json!({ "name": name });
-    let success_message: String = format!("Group {} created", name);
-    post_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-        false,
-    );
+    if {
+        post_request(&url, &payload, global["user"], global["token"], false)
+            .left()
+            .unwrap()
+    } {
+        println!("Group {} created", name);
+    }
 }
 
 #[allow(clippy::unit_arg)]

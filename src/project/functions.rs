@@ -28,15 +28,13 @@ pub fn create(
         "projectTemplateKey": project_template,
         "assigneeType": "UNASSIGNED"
     });
-    let success_message: String = format!("Project {} created", project_key);
-    post_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-        false,
-    );
+    if {
+        post_request(&url, &payload, global["user"], global["token"], false)
+            .left()
+            .unwrap()
+    } {
+        println!("Project {} created", project_key);
+    }
 }
 
 #[allow(clippy::unit_arg)]
@@ -159,15 +157,13 @@ pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name:
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
     });
-    let success_message: String = format!("Version created: {}", version_name);
-    post_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-        false,
-    );
+    if {
+        post_request(&url, &payload, global["user"], global["token"], false)
+            .left()
+            .unwrap()
+    } {
+        println!("Version created: {}", version_name);
+    }
 }
 
 pub fn set_feature_state(
