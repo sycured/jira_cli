@@ -14,11 +14,10 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
         "emailAddress": email,
         "displayName": display_name
     });
-    if {
-        post_request(&url, &payload, global["user"], global["token"], false)
-            .left()
-            .unwrap()
-    } {
+    if post_request(&url, &payload, global["user"], global["token"], false)
+        .left()
+        .unwrap()
+    {
         println!("User {} created", email)
     }
 }

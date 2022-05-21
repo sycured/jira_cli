@@ -17,6 +17,7 @@ fn b64auth(user: &str, token: &str) -> String {
     return b64encode(format!("{}:{}", user, token));
 }
 
+#[inline]
 pub fn confirm(prompt: String, yes: (), no: ()) {
     if Confirm::new().with_prompt(prompt).interact().unwrap() {
         yes
@@ -25,6 +26,7 @@ pub fn confirm(prompt: String, yes: (), no: ()) {
     }
 }
 
+#[inline]
 #[must_use]
 pub fn create_table(
     header: Vec<&str>,
