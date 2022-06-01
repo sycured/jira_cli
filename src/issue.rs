@@ -17,6 +17,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::add_vote())
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::delete())
+        .subcommand(cli_commands::list_link_types())
         .subcommand(cli_commands::list_priorities())
         .subcommand(cli_commands::list_votes())
         .subcommand(cli_commands::list_types())
@@ -33,6 +34,7 @@ pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
         Some(("add_vote", args)) => cli_logic::add_vote(&global, args),
         Some(("create", args)) => cli_logic::create(&global, args),
         Some(("delete", args)) => cli_logic::delete(&global, args),
+        Some(("list_link_types", _)) => cli_logic::list_link_types(&global),
         Some(("list_priorities", _)) => cli_logic::list_priorities(&global),
         Some(("list_votes", args)) => cli_logic::list_votes(&global, args),
         Some(("list_types", args)) => cli_logic::list_types(&global, args),

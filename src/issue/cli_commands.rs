@@ -97,6 +97,12 @@ pub fn delete() -> Command<'static> {
         );
 }
 
+pub fn list_link_types() -> Command<'static> {
+    return Command::new("list_link_types")
+        .visible_aliases(&["llt", "list-link-types"])
+        .about("List issue types");
+}
+
 pub fn list_priorities() -> Command<'static> {
     return Command::new("list_priorities")
         .visible_aliases(&["lp", "list-priorities"])

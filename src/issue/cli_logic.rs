@@ -53,6 +53,10 @@ pub fn delete(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
+pub fn list_link_types(global: &HashMap<&str, &str>) {
+    functions::list_link_types(global);
+}
+
 pub fn list_priorities(global: &HashMap<&str, &str>) {
     functions::list_priorities(global);
 }

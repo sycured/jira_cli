@@ -35,6 +35,9 @@ echo "project get_id"
 $JIRA_CLI project get_id $JIRA_PROJECT_KEY
 JIRA_PROJECT_ID=$($JIRA_CLI project get_id $JIRA_PROJECT_KEY)
 export JIRA_PROJECT_ID
+## list_link_types
+echo "list_link_types"
+$JIRA_CLI issue list_link_types
 ## list_features
 echo "project list_features"
 $JIRA_CLI project list_features $JIRA_PROJECT_KEY

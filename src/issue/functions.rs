@@ -124,6 +124,40 @@ pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &s
     delete_request(&url, global["user"], global["token"], &success_message);
 }
 
+pub fn list_link_types(global: &HashMap<&str, &str>) {
+    let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
+    let resp: Response = get_request(&url, global["user"], global["token"]);
+    let json: Value = resp.json().unwrap();
+    let mut rows: Vec<Vec<Cell>> = Vec::new();
+    json["issueLinkTypes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .for_each(|x| {
+            let id: &str = x["id"].as_str().unwrap();
+            let name: &str = x["name"].as_str().unwrap();
+            let inward: &str = x["inward"].as_str().unwrap_or("");
+            let outward: &str = x["outward"].as_str().unwrap_or("");
+            rows.push(vec![
+                Cell::new(id),
+                Cell::new(name),
+                Cell::new(inward),
+                Cell::new(outward),
+            ]);
+        });
+    let table = create_table(
+        vec!["ID", "Name", "Inward", "Outward"],
+        &HashMap::from([
+            (0, CellAlignment::Center),
+            (1, CellAlignment::Center),
+            (2, CellAlignment::Center),
+            (3, CellAlignment::Center),
+        ]),
+        rows,
+    );
+    println!("{}", table);
+}
+
 pub fn list_priorities(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["priority"]);
     let resp: Response = get_request(&url, global["user"], global["token"]);

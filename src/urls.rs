@@ -8,6 +8,7 @@ lazy_static! {
         ("group_user_picker", "/rest/api/3/groupuserpicker"),
         ("groups", "/rest/api/3/groups"),
         ("issue", "/rest/api/3/issue"),
+        ("issue_link_types", "/rest/api/3/issueLinkType"),
         ("label", "/rest/api/3/label"),
         ("priority", "/rest/api/3/priority"),
         ("project", "/rest/api/3/project"),
