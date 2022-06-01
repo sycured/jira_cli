@@ -40,10 +40,7 @@ pub fn create_table(
         .apply_modifier(UTF8_ROUND_CORNERS)
         .set_content_arrangement(ContentArrangement::DynamicFullWidth);
     for (key, value) in column_alignment.iter() {
-        table
-            .get_column_mut(*key)
-            .unwrap()
-            .set_cell_alignment(*value);
+        table.column_mut(*key).unwrap().set_cell_alignment(*value);
     }
     for row in rows {
         table.add_row(row);
