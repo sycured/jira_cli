@@ -105,11 +105,25 @@ pub fn create(
         payload["fields"]["priority"] = json!({ "name": priority });
     }
 
-    let resp = post_request(&url, &payload, global["user"], global["token"], true)
-        .right()
-        .unwrap();
+    let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
     let json: Value = resp.json().unwrap();
     println!("Issue created: {}", json["key"]);
+}
+
+pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, outward: &str) {
+    let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
+    let payload: Value = json!({
+        "name": name,
+        "inward": inward,
+        "outward": outward
+    });
+    let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
+    let json: Value = resp.json().unwrap();
+    println!(
+        "New link type {} (id: {} ) created",
+        json["name"].as_str().unwrap(),
+        json["id"].as_str().unwrap()
+    );
 }
 
 pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &str) {
@@ -122,6 +136,48 @@ pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &s
         success_message += " with its subtasks";
     }
     delete_request(&url, global["user"], global["token"], &success_message);
+}
+
+pub fn delete_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
+    let url: String = format!(
+        "https://{}{}/{}",
+        global["domain"], URLS["issue_link_types"], link_type_id
+    );
+    let success_message: String = format!("Link type {} deleted", link_type_id);
+    delete_request(&url, global["user"], global["token"], &success_message);
+}
+
+pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
+    let url: String = format!(
+        "https://{}{}/{}",
+        global["domain"], URLS["issue_link_types"], link_type_id
+    );
+    let resp = get_request(&url, global["user"], global["token"]);
+    let json: Value = resp.json().unwrap();
+    let mut rows: Vec<Vec<Cell>> = Vec::new();
+    let id: &str = json["id"].as_str().unwrap();
+    let name: &str = json["name"].as_str().unwrap();
+    let inward: &str = json["inward"].as_str().unwrap_or("");
+    let outward: &str = json["outward"].as_str().unwrap_or("");
+    rows.push(vec![
+        Cell::new(id),
+        Cell::new(name),
+        Cell::new(inward),
+        Cell::new(outward),
+    ]);
+
+    let table = create_table(
+        vec!["ID", "Name", "Inward", "Outward"],
+        &HashMap::from([
+            (0, CellAlignment::Center),
+            (1, CellAlignment::Center),
+            (2, CellAlignment::Center),
+            (3, CellAlignment::Center),
+        ]),
+        rows,
+    );
+
+    println!("{}", table);
 }
 
 pub fn list_link_types(global: &HashMap<&str, &str>) {
@@ -292,4 +348,30 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
         .for_each(|x| {
             println!("{}", x["name"]);
         });
+}
+
+pub fn update_link_type(
+    global: &HashMap<&str, &str>,
+    link_type_id: &str,
+    link_type_name: &str,
+    link_type_inward: &str,
+    link_type_outward: &str,
+) {
+    let url: String = format!(
+        "https://{}{}/{}",
+        global["domain"], URLS["issue_link_types"], link_type_id
+    );
+    let payload: Value = json!({
+        "name": link_type_name,
+        "inward": link_type_inward,
+        "outward": link_type_outward
+    });
+    let success_message: String = format!("Link type {} updated", link_type_id);
+    put_request(
+        &url,
+        &payload,
+        global["user"],
+        global["token"],
+        &success_message,
+    );
 }

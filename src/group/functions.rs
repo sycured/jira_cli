@@ -15,10 +15,7 @@ pub fn add_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) 
         global["domain"], URLS["group"], group_id
     );
     let payload: Value = json!({ "accountId": account_id });
-    if post_request(&url, &payload, global["user"], global["token"], false)
-        .left()
-        .unwrap()
-    {
+    if post_request(&url, &payload, global["user"], global["token"], false).unwrap_left() {
         println!("Account id {} added to group id {}", account_id, group_id);
     }
 }
@@ -26,10 +23,7 @@ pub fn add_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) 
 pub fn create(global: &HashMap<&str, &str>, name: &str) {
     let url: String = format!("https://{}{}", global["domain"], URLS["group"]);
     let payload: Value = json!({ "name": name });
-    if post_request(&url, &payload, global["user"], global["token"], false)
-        .left()
-        .unwrap()
-    {
+    if post_request(&url, &payload, global["user"], global["token"], false).unwrap_left() {
         println!("Group {} created", name);
     }
 }

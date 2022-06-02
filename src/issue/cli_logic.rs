@@ -45,12 +45,29 @@ pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
+pub fn create_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::create_link_type(
+        global,
+        args.value_of("name").unwrap(),
+        args.value_of("outward").unwrap(),
+        args.value_of("inward").unwrap(),
+    );
+}
+
 pub fn delete(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::delete(
         global,
         args.value_of("issue_key").unwrap(),
         args.value_of("delete_subtasks").unwrap(),
     );
+}
+
+pub fn delete_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::delete_link_type(global, args.value_of("id").unwrap());
+}
+
+pub fn get_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::get_link_type(global, args.value_of("id").unwrap());
 }
 
 pub fn list_link_types(global: &HashMap<&str, &str>) {
@@ -95,4 +112,14 @@ pub fn remove_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
 
 pub fn show_fixversions(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::show_fixversions(global, args.value_of("issue_key").unwrap());
+}
+
+pub fn update_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::update_link_type(
+        global,
+        args.value_of("id").unwrap(),
+        args.value_of("name").unwrap(),
+        args.value_of("outward").unwrap(),
+        args.value_of("inward").unwrap(),
+    );
 }

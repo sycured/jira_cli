@@ -38,6 +38,19 @@ export JIRA_PROJECT_ID
 ## list_link_types
 echo "list_link_types"
 $JIRA_CLI issue list_link_types
+## create_link_type
+echo "create_link_type"
+JIRA_LINK_TYPE_ID=$($JIRA_CLI i clt test test test | awk '{print $6}')
+export JIRA_LINK_TYPE_ID
+## update_link_type
+echo "update_link_type"
+$JIRA_CLI i ult "$JIRA_LINK_TYPE_ID" test "is tested by" "tests"
+## get_link_type
+echo "get_link_type"
+$JIRA_CLI i glt "$JIRA_LINK_TYPE_ID"
+## delete_link_type
+echo "delete_link_type"
+$JIRA_CLI i dlt "$JIRA_LINK_TYPE_ID"
 ## list_features
 echo "project list_features"
 $JIRA_CLI project list_features $JIRA_PROJECT_KEY

@@ -28,10 +28,7 @@ pub fn create(
         "projectTemplateKey": project_template,
         "assigneeType": "UNASSIGNED"
     });
-    if post_request(&url, &payload, global["user"], global["token"], false)
-        .left()
-        .unwrap()
-    {
+    if post_request(&url, &payload, global["user"], global["token"], false).unwrap_left() {
         println!("Project {} created", project_key);
     }
 }
@@ -156,10 +153,7 @@ pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name:
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
     });
-    if post_request(&url, &payload, global["user"], global["token"], false)
-        .left()
-        .unwrap()
-    {
+    if post_request(&url, &payload, global["user"], global["token"], false).unwrap_left() {
         println!("Version created: {}", version_name);
     }
 }

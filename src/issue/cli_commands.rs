@@ -83,6 +83,16 @@ pub fn create() -> Command<'static> {
         );
 }
 
+pub fn create_link_type() -> Command<'static> {
+    return Command::new("create_link_type")
+        .about("Create a link type")
+        .visible_aliases(&["clt", "create-link-type"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("name").help("Link type name").required(true))
+        .arg(Arg::new("outward").help("Outward name").required(true))
+        .arg(Arg::new("inward").help("Inward name").required(true));
+}
+
 pub fn delete() -> Command<'static> {
     return Command::new("delete")
         .about("Delete an issue")
@@ -95,6 +105,22 @@ pub fn delete() -> Command<'static> {
                 .default_value("false")
                 .possible_values(&["true", "false"]),
         );
+}
+
+pub fn delete_link_type() -> Command<'static> {
+    return Command::new("delete_link_type")
+        .about("Delete a link type")
+        .visible_aliases(&["dlt", "delete-link-type"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("id").help("Link type id").required(true));
+}
+
+pub fn get_link_type() -> Command<'static> {
+    return Command::new("get_link_type")
+        .about("Get a link type")
+        .visible_aliases(&["glt", "get-link-type"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("id").help("Link type id").required(true));
 }
 
 pub fn list_link_types() -> Command<'static> {
@@ -177,4 +203,15 @@ pub fn show_fixversions() -> Command<'static> {
         .visible_aliases(&["sfv", "show-fixversions"])
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true));
+}
+
+pub fn update_link_type() -> Command<'static> {
+    return Command::new("update_link_type")
+        .about("Update a link type")
+        .visible_aliases(&["ult", "update-link-type"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("id").help("Link type id").required(true))
+        .arg(Arg::new("name").help("Link type name").required(true))
+        .arg(Arg::new("outward").help("Outward name").required(true))
+        .arg(Arg::new("inward").help("Inward name").required(true));
 }
