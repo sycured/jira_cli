@@ -119,11 +119,15 @@ pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, 
     });
     let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
     let json: Value = resp.json().unwrap();
-    println!(
-        "New link type {} (id: {} ) created",
-        json["name"].as_str().unwrap(),
-        json["id"].as_str().unwrap()
-    );
+    if json["errorMessages"].is_null() {
+        println!(
+            "New link type {} (id: {} ) created",
+            json["name"].as_str().unwrap(),
+            json["id"].as_str().unwrap()
+        );
+    } else {
+        println!("{}", json["errorMessages"][0].as_str().unwrap());
+    }
 }
 
 pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &str) {
