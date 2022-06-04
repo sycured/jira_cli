@@ -4,6 +4,7 @@ use std::{collections::HashMap, io::stdout};
 
 use clap::Command;
 use clap_complete::{generate, Generator, Shell};
+use human_panic::setup_panic;
 
 mod check_version;
 mod cli;
@@ -20,6 +21,7 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
 }
 
 fn main() {
+    setup_panic!();
     let matches = cli::build_cli().get_matches();
     let global: HashMap<&str, &str> = HashMap::from([
         ("domain", matches.value_of("domain").unwrap()),
