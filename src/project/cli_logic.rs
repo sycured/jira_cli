@@ -8,49 +8,63 @@ use super::functions;
 pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::create(
         global,
-        args.value_of("project_name").unwrap(),
-        args.value_of("project_key").unwrap(),
-        args.value_of("jira_project_leadaccountid").unwrap(),
-        args.value_of("project_type").unwrap(),
-        args.value_of("project_template").unwrap(),
+        args.get_one::<String>("project_name").unwrap().as_str(),
+        args.get_one::<String>("project_key").unwrap().as_str(),
+        args.get_one::<String>("jira_project_leadaccountid")
+            .unwrap()
+            .as_str(),
+        args.get_one::<String>("project_type").unwrap().as_str(),
+        args.get_one::<String>("project_template").unwrap().as_str(),
     );
 }
 
 pub fn delete_project(global: &HashMap<&str, &str>, args: &ArgMatches) {
-    functions::delete_project(global, args.value_of("project_key").unwrap());
+    functions::delete_project(
+        global,
+        args.get_one::<String>("project_key").unwrap().as_str(),
+    );
 }
 
 pub fn get_id(global: &HashMap<&str, &str>, args: &ArgMatches) {
-    functions::get_id(global, args.value_of("project_key").unwrap());
+    functions::get_id(
+        global,
+        args.get_one::<String>("project_key").unwrap().as_str(),
+    );
 }
 
 pub fn list_features(global: &HashMap<&str, &str>, args: &ArgMatches) {
-    functions::list_features(global, args.value_of("project_key").unwrap());
+    functions::list_features(
+        global,
+        args.get_one::<String>("project_key").unwrap().as_str(),
+    );
 }
 
 pub fn list_versions(global: &HashMap<&str, &str>, args: &ArgMatches) {
-    functions::list_versions(global, args.value_of("project_key").unwrap());
+    functions::list_versions(
+        global,
+        args.get_one::<String>("project_key").unwrap().as_str(),
+    );
 }
 
 pub fn new_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::new_version(
         global,
-        args.value_of("project_id").unwrap(),
-        args.value_of("version_name").unwrap(),
+        args.get_one::<String>("project_id").unwrap().as_str(),
+        args.get_one::<String>("version_name").unwrap().as_str(),
     );
 }
 
 pub fn set_feature_state(global: &HashMap<&str, &str>, args: &ArgMatches) {
-    args.values_of("feature_key")
-        .unwrap()
-        .collect::<Vec<&str>>()
-        .par_iter()
-        .for_each(|feature_key| {
-            functions::set_feature_state(
-                global,
-                args.value_of("project_key").unwrap(),
-                feature_key,
-                args.value_of("feature_state").unwrap(),
-            )
-        });
+    let feature_keys: Vec<&String> = args
+        .get_many::<String>("feature_key")
+        .map(|vals| vals.collect::<Vec<_>>())
+        .unwrap();
+    feature_keys.par_iter().for_each(|feature_key| {
+        functions::set_feature_state(
+            global,
+            args.get_one::<String>("project_key").unwrap().as_str(),
+            feature_key.as_str(),
+            args.get_one::<String>("feature_state").unwrap().as_str(),
+        )
+    });
 }

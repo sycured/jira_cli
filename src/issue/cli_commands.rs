@@ -103,7 +103,7 @@ pub fn delete() -> Command<'static> {
             Arg::new("delete_subtasks")
                 .help("Delete subtasks")
                 .default_value("false")
-                .possible_values(&["true", "false"]),
+                .value_parser(["true", "false"]),
         );
 }
 

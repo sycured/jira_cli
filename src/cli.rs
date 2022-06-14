@@ -1,4 +1,4 @@
-use clap::{crate_authors, crate_name, crate_version, Arg, Command};
+use clap::{crate_authors, crate_name, crate_version, value_parser, Arg, Command};
 use clap_complete::Shell;
 
 use crate::{check_version, group, issue, labels, project, user};
@@ -10,7 +10,7 @@ fn generate() -> Command<'static> {
         .arg_required_else_help(true)
         .arg(
             Arg::new("shell")
-                .possible_values(Shell::possible_values())
+                .value_parser(value_parser!(Shell))
                 .required(true),
         );
 }

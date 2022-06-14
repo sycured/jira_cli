@@ -87,7 +87,7 @@ pub fn list_users() -> Command<'static> {
         .arg(
             Arg::new("include_inactive")
                 .help("Include inactive users")
-                .possible_values(&["true", "false"])
+                .value_parser(["true", "false"])
                 .default_value("false"),
         )
         .arg(

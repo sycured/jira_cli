@@ -24,9 +24,15 @@ fn main() {
     setup_panic!();
     let matches = cli::build_cli().get_matches();
     let global: HashMap<&str, &str> = HashMap::from([
-        ("domain", matches.value_of("domain").unwrap()),
-        ("token", matches.value_of("token").unwrap()),
-        ("user", matches.value_of("user").unwrap()),
+        (
+            "domain",
+            matches.get_one::<String>("domain").unwrap().as_str(),
+        ),
+        (
+            "token",
+            matches.get_one::<String>("token").unwrap().as_str(),
+        ),
+        ("user", matches.get_one::<String>("user").unwrap().as_str()),
     ]);
 
     match matches.subcommand() {
@@ -34,9 +40,9 @@ fn main() {
             check_version::logic_commands();
         }
         Some(("generate", args)) => {
-            let shell = args.value_of_t::<Shell>("shell").unwrap();
+            let shell = args.get_one::<Shell>("shell").unwrap();
             let mut cmd = cli::build_cli();
-            print_completions(shell, &mut cmd);
+            print_completions(*shell, &mut cmd);
         }
         Some(("group", args)) => group::logic_commands(global, args),
         Some(("issue", args)) => issue::logic_commands(global, args),
