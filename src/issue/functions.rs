@@ -184,6 +184,36 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
     println!("{}", table);
 }
 
+pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
+    let url: String = format!(
+        "https://{}{}/{}/transitions",
+        global["domain"], URLS["issue"], issue_key
+    );
+    let resp: Response = get_request(&url, global["user"], global["token"]);
+    let json: Value = resp.json().unwrap();
+    let mut rows: Vec<Vec<Cell>> = Vec::new();
+    json["transitions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .for_each(|x| {
+            let id: &str = x["id"].as_str().unwrap();
+            let name: &str = x["name"].as_str().unwrap();
+            let to_name: &str = x["to"]["name"].as_str().unwrap_or("");
+            rows.push(vec![Cell::new(id), Cell::new(name), Cell::new(to_name)]);
+        });
+    let table = create_table(
+        vec!["ID", "Name", "To Name"],
+        &HashMap::from([
+            (0, CellAlignment::Center),
+            (1, CellAlignment::Center),
+            (2, CellAlignment::Center),
+        ]),
+        rows,
+    );
+    println!("{}", table);
+}
+
 pub fn list_link_types(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
     let resp: Response = get_request(&url, global["user"], global["token"]);

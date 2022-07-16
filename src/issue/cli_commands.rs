@@ -123,6 +123,14 @@ pub fn get_link_type() -> Command<'static> {
         .arg(Arg::new("id").help("Link type id").required(true));
 }
 
+pub fn get_transitions() -> Command<'static> {
+    return Command::new("get_transitions")
+        .about("Get transactions")
+        .visible_aliases(&["gt", "get-transactions"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true));
+}
+
 pub fn list_link_types() -> Command<'static> {
     return Command::new("list_link_types")
         .visible_aliases(&["llt", "list-link-types"])

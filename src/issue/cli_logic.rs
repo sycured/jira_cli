@@ -86,6 +86,13 @@ pub fn get_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::get_link_type(global, args.get_one::<String>("id").unwrap().as_str());
 }
 
+pub fn get_transitions(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::get_transitions(
+        global,
+        args.get_one::<String>("issue_key").unwrap().as_str(),
+    );
+}
+
 pub fn list_link_types(global: &HashMap<&str, &str>) {
     functions::list_link_types(global);
 }

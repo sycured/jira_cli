@@ -111,6 +111,9 @@ $JIRA_CLI issue show_fixversions "$JIRA_PROJECT_KEY"-1
 ## delete an issue
 echo "issue delete"
 $JIRA_CLI issue delete "$JIRA_PROJECT_KEY"-5
+## get transitions
+echo "get transitions"
+$JIRA_CLI issue get_transitions "$JIRA_PROJECT_KEY"-1
 
 # labels
 echo "labels"
