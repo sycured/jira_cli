@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use attohttpc::Response;
+use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
@@ -58,7 +59,7 @@ pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
     if json["name"] != json!(null) {
-        json["name"].as_array().unwrap().iter().for_each(|x| {
+        json["name"].as_array().unwrap().par_iter().for_each(|x| {
             println!("{}", x);
         });
     } else {
