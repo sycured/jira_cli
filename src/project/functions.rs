@@ -6,7 +6,9 @@ use itertools::Itertools;
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{confirm, create_table, delete_request, get_request, post_request, put_request},
+    lib::{
+        confirm, create_and_print_table, delete_request, get_request, post_request, put_request,
+    },
     urls::URLS,
 };
 
@@ -85,7 +87,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
             Cell::new(&locked.to_string()).fg(locked_color),
         ]);
     });
-    let table = create_table(
+    create_and_print_table(
         vec!["Key", "Description", "State", "Locked"],
         &HashMap::from([
             (0, CellAlignment::Center),
@@ -93,8 +95,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
             (3, CellAlignment::Center),
         ]),
         rows,
-    );
-    println!("{}", table);
+    )
 }
 
 pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
@@ -133,7 +134,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
                 Cell::new(id),
             ]);
         });
-    let table = create_table(
+    create_and_print_table(
         vec!["Name", "Description", "Released", "Archived", "Id"],
         &HashMap::from([
             (0, CellAlignment::Center),
@@ -143,8 +144,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
             (4, CellAlignment::Center),
         ]),
         rows,
-    );
-    println!("{}", table);
+    )
 }
 
 pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name: &str) {

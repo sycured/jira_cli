@@ -28,11 +28,11 @@ pub fn confirm(prompt: String, yes: (), no: ()) {
 
 #[inline]
 #[must_use]
-pub fn create_table(
+pub fn create_and_print_table(
     header: Vec<&str>,
     column_alignment: &HashMap<usize, CellAlignment>,
     rows: Vec<Vec<Cell>>,
-) -> Table {
+) {
     let mut table = Table::new();
     table
         .set_header(header)
@@ -45,7 +45,7 @@ pub fn create_table(
     for row in rows {
         table.add_row(row);
     }
-    table
+    println!("{}", table)
 }
 
 #[inline]

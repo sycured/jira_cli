@@ -5,7 +5,7 @@ use comfy_table::{Cell, CellAlignment};
 use serde_json::{json, Value};
 
 use crate::{
-    lib::{confirm, create_table, delete_request, get_request, post_request},
+    lib::{confirm, create_and_print_table, delete_request, get_request, post_request},
     urls::URLS,
 };
 
@@ -45,6 +45,7 @@ pub fn delete(global: &HashMap<&str, &str>, group_id: &str) {
     );
 }
 
+//noinspection DuplicatedCode
 pub fn find(global: &HashMap<&str, &str>, query: &str) {
     let url: String = format!(
         "https://{}{}/picker?query={}",
@@ -58,14 +59,14 @@ pub fn find(global: &HashMap<&str, &str>, query: &str) {
         let group_id: &str = x["groupId"].as_str().unwrap();
         rows.push(vec![Cell::new(name), Cell::new(group_id)]);
     });
-    let table = create_table(
+    create_and_print_table(
         vec!["Group Name", "Group ID"],
         &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
         rows,
-    );
-    println!("{}", table);
+    )
 }
 
+//noinspection DuplicatedCode
 pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &str) {
     let url: String = format!(
         "https://{}{}/bulk?startAt={}&maxResults={}",
@@ -79,14 +80,14 @@ pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &s
         let group_id: &str = x["groupId"].as_str().unwrap();
         rows.push(vec![Cell::new(name), Cell::new(group_id)]);
     });
-    let table = create_table(
+    create_and_print_table(
         vec!["Group Name", "Group ID"],
         &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
         rows,
-    );
-    println!("{}", table);
+    )
 }
 
+//noinspection DuplicatedCode
 pub fn list_users(
     global: &HashMap<&str, &str>,
     group_id: &str,
@@ -112,7 +113,7 @@ pub fn list_users(
                 Cell::new(display_name),
             ]);
         });
-        let table = create_table(
+        create_and_print_table(
             vec!["Name", "Account ID", "Display Name"],
             &HashMap::from([
                 (0, CellAlignment::Center),
@@ -120,8 +121,7 @@ pub fn list_users(
                 (2, CellAlignment::Center),
             ]),
             rows,
-        );
-        println!("{}", table);
+        )
     } else {
         println!("No users found.");
     }

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
-use jira_cli::create_table;
+use jira_cli::create_and_print_table;
 use serde_json::{json, Value};
 
 use crate::{
@@ -151,6 +151,7 @@ pub fn delete_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
     delete_request(&url, global["user"], global["token"], &success_message);
 }
 
+//noinspection DuplicatedCode
 pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
     let url: String = format!(
         "https://{}{}/{}",
@@ -169,8 +170,7 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
         Cell::new(inward),
         Cell::new(outward),
     ]);
-
-    let table = create_table(
+    create_and_print_table(
         vec!["ID", "Name", "Inward", "Outward"],
         &HashMap::from([
             (0, CellAlignment::Center),
@@ -179,9 +179,7 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
             (3, CellAlignment::Center),
         ]),
         rows,
-    );
-
-    println!("{}", table);
+    )
 }
 
 pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
@@ -202,7 +200,7 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
             let to_name: &str = x["to"]["name"].as_str().unwrap_or("");
             rows.push(vec![Cell::new(id), Cell::new(name), Cell::new(to_name)]);
         });
-    let table = create_table(
+    create_and_print_table(
         vec!["ID", "Name", "To Name"],
         &HashMap::from([
             (0, CellAlignment::Center),
@@ -210,10 +208,10 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
             (2, CellAlignment::Center),
         ]),
         rows,
-    );
-    println!("{}", table);
+    )
 }
 
+//noinspection DuplicatedCode
 pub fn list_link_types(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
     let resp: Response = get_request(&url, global["user"], global["token"]);
@@ -235,7 +233,7 @@ pub fn list_link_types(global: &HashMap<&str, &str>) {
                 Cell::new(outward),
             ]);
         });
-    let table = create_table(
+    create_and_print_table(
         vec!["ID", "Name", "Inward", "Outward"],
         &HashMap::from([
             (0, CellAlignment::Center),
@@ -244,8 +242,7 @@ pub fn list_link_types(global: &HashMap<&str, &str>) {
             (3, CellAlignment::Center),
         ]),
         rows,
-    );
-    println!("{}", table);
+    )
 }
 
 pub fn list_priorities(global: &HashMap<&str, &str>) {
@@ -273,6 +270,7 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
         });
 }
 
+//noinspection DuplicatedCode
 pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{}/votes",
@@ -293,7 +291,7 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
                 Cell::new(display_name),
             ]);
         });
-        let table = create_table(
+        create_and_print_table(
             vec!["Name", "Account ID", "Display Name"],
             &HashMap::from([
                 (0, CellAlignment::Center),
@@ -301,8 +299,7 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
                 (2, CellAlignment::Center),
             ]),
             rows,
-        );
-        println!("{}", table);
+        )
     } else {
         println!("Issue {} has 0 vote", issue_key);
     }
