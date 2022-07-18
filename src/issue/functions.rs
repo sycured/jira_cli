@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
 use jira_cli::create_and_print_table;
+use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
@@ -249,7 +250,7 @@ pub fn list_priorities(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["priority"]);
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    json.as_array().unwrap().iter().for_each(|x| {
+    json.as_array().unwrap().par_iter().for_each(|x| {
         println!("{}", x["name"]);
     });
 }
@@ -264,7 +265,7 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
     json["projects"][0]["issuetypes"]
         .as_array()
         .unwrap()
-        .iter()
+        .par_iter()
         .for_each(|x| {
             println!("{}", x["name"]);
         });
@@ -375,7 +376,7 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
     json["fields"]["fixVersions"]
         .as_array()
         .unwrap()
-        .iter()
+        .par_iter()
         .for_each(|x| {
             println!("{}", x["name"]);
         });
