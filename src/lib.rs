@@ -27,7 +27,6 @@ pub fn confirm(prompt: String, yes: (), no: ()) {
 }
 
 #[inline]
-#[must_use]
 pub fn create_and_print_table(
     header: Vec<&str>,
     column_alignment: &HashMap<usize, CellAlignment>,
