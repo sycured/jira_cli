@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
+use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
@@ -53,12 +54,17 @@ pub fn find(global: &HashMap<&str, &str>, query: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
-    json["groups"].as_array().unwrap().iter().for_each(|x| {
-        let name: &str = x["name"].as_str().unwrap();
-        let group_id: &str = x["groupId"].as_str().unwrap();
-        rows.push(vec![Cell::new(name), Cell::new(group_id)]);
-    });
+    let rows: Vec<Vec<Cell>> = json["groups"]
+        .as_array()
+        .unwrap()
+        .par_iter()
+        .map(|x| {
+            vec![
+                Cell::new(x["name"].as_str().unwrap()),
+                Cell::new(x["groupId"].as_str().unwrap()),
+            ]
+        })
+        .collect();
     create_and_print_table(
         vec!["Group Name", "Group ID"],
         &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
@@ -74,12 +80,17 @@ pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &s
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
-    json["values"].as_array().unwrap().iter().for_each(|x| {
-        let name: &str = x["name"].as_str().unwrap();
-        let group_id: &str = x["groupId"].as_str().unwrap();
-        rows.push(vec![Cell::new(name), Cell::new(group_id)]);
-    });
+    let rows: Vec<Vec<Cell>> = json["values"]
+        .as_array()
+        .unwrap()
+        .par_iter()
+        .map(|x| {
+            vec![
+                Cell::new(x["name"].as_str().unwrap()),
+                Cell::new(x["groupId"].as_str().unwrap()),
+            ]
+        })
+        .collect();
     create_and_print_table(
         vec!["Group Name", "Group ID"],
         &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
@@ -101,18 +112,19 @@ pub fn list_users(
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
     if json["values"] != json!(null) {
-        json["values"].as_array().unwrap().iter().for_each(|x| {
-            let name: &str = x["name"].as_str().unwrap_or("");
-            let account_id: &str = x["accountId"].as_str().unwrap();
-            let display_name: &str = x["displayName"].as_str().unwrap_or("");
-            rows.push(vec![
-                Cell::new(name),
-                Cell::new(account_id),
-                Cell::new(display_name),
-            ]);
-        });
+        let rows: Vec<Vec<Cell>> = json["values"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|x| {
+                vec![
+                    Cell::new(x["name"].as_str().unwrap_or("")),
+                    Cell::new(x["accountId"].as_str().unwrap()),
+                    Cell::new(x["displayName"].as_str().unwrap_or("")),
+                ]
+            })
+            .collect();
         create_and_print_table(
             vec!["Name", "Account ID", "Display Name"],
             &HashMap::from([

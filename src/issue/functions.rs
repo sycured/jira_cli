@@ -190,17 +190,18 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
-    json["transitions"]
+    let rows: Vec<Vec<Cell>> = json["transitions"]
         .as_array()
         .unwrap()
-        .iter()
-        .for_each(|x| {
-            let id: &str = x["id"].as_str().unwrap();
-            let name: &str = x["name"].as_str().unwrap();
-            let to_name: &str = x["to"]["name"].as_str().unwrap_or("");
-            rows.push(vec![Cell::new(id), Cell::new(name), Cell::new(to_name)]);
-        });
+        .par_iter()
+        .map(|x| {
+            vec![
+                Cell::new(x["id"].as_str().unwrap()),
+                Cell::new(x["name"].as_str().unwrap()),
+                Cell::new(x["to"]["name"].as_str().unwrap_or("")),
+            ]
+        })
+        .collect();
     create_and_print_table(
         vec!["ID", "Name", "To Name"],
         &HashMap::from([
@@ -217,23 +218,19 @@ pub fn list_link_types(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
-    json["issueLinkTypes"]
+    let rows: Vec<Vec<Cell>> = json["issueLinkTypes"]
         .as_array()
         .unwrap()
-        .iter()
-        .for_each(|x| {
-            let id: &str = x["id"].as_str().unwrap();
-            let name: &str = x["name"].as_str().unwrap();
-            let inward: &str = x["inward"].as_str().unwrap_or("");
-            let outward: &str = x["outward"].as_str().unwrap_or("");
-            rows.push(vec![
-                Cell::new(id),
-                Cell::new(name),
-                Cell::new(inward),
-                Cell::new(outward),
-            ]);
-        });
+        .par_iter()
+        .map(|x| {
+            vec![
+                Cell::new(x["id"].as_str().unwrap()),
+                Cell::new(x["name"].as_str().unwrap()),
+                Cell::new(x["inward"].as_str().unwrap_or("")),
+                Cell::new(x["outward"].as_str().unwrap_or("")),
+            ]
+        })
+        .collect();
     create_and_print_table(
         vec!["ID", "Name", "Inward", "Outward"],
         &HashMap::from([
@@ -280,18 +277,19 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
     if json["hasVoted"] == "true" {
-        let mut rows: Vec<Vec<Cell>> = Vec::new();
         println!("Votes: {}", json["votes"]);
-        json["voters"].as_array().unwrap().iter().for_each(|x| {
-            let name: &str = x["name"].as_str().unwrap_or("");
-            let account_id: &str = x["accountId"].as_str().unwrap();
-            let display_name: &str = x["displayName"].as_str().unwrap_or("");
-            rows.push(vec![
-                Cell::new(name),
-                Cell::new(account_id),
-                Cell::new(display_name),
-            ]);
-        });
+        let rows: Vec<Vec<Cell>> = json["voters"]
+            .as_array()
+            .unwrap()
+            .par_iter()
+            .map(|x| {
+                vec![
+                    Cell::new(x["name"].as_str().unwrap_or("")),
+                    Cell::new(x["accountId"].as_str().unwrap()),
+                    Cell::new(x["displayName"].as_str().unwrap_or("")),
+                ]
+            })
+            .collect();
         create_and_print_table(
             vec!["Name", "Account ID", "Display Name"],
             &HashMap::from([

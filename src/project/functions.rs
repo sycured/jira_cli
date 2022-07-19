@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
 use itertools::Itertools;
+use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
@@ -69,24 +70,25 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
-    json["features"].as_array().unwrap().iter().for_each(|x| {
-        let state: &str = x["state"].as_str().unwrap();
-        let key: &str = x["feature"].as_str().unwrap();
-        let description: &str = x["localisedDescription"].as_str().unwrap();
-        let locked: bool = x["toggleLocked"].as_bool().unwrap();
-        let locked_color = if locked {
-            comfy_table::Color::Red
-        } else {
-            comfy_table::Color::Green
-        };
-        rows.push(vec![
-            Cell::new(key),
-            Cell::new(description),
-            Cell::new(state),
-            Cell::new(&locked.to_string()).fg(locked_color),
-        ]);
-    });
+    let rows: Vec<Vec<Cell>> = json["features"]
+        .as_array()
+        .unwrap()
+        .par_iter()
+        .map(|x| {
+            let locked: bool = x["toggleLocked"].as_bool().unwrap();
+            let locked_color = if locked {
+                comfy_table::Color::Red
+            } else {
+                comfy_table::Color::Green
+            };
+            vec![
+                Cell::new(x["feature"].as_str().unwrap()),
+                Cell::new(x["localisedDescription"].as_str().unwrap()),
+                Cell::new(x["state"].as_str().unwrap()),
+                Cell::new(&locked.to_string()).fg(locked_color),
+            ]
+        })
+        .collect();
     create_and_print_table(
         vec!["Key", "Description", "State", "Locked"],
         &HashMap::from([
