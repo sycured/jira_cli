@@ -380,6 +380,26 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
         });
 }
 
+pub fn transition(global: &HashMap<&str, &str>, issue_key: &str, transition_id: &str) {
+    let url: String = format!(
+        "https://{}{}/{}/transitions",
+        global["domain"], URLS["issue"], issue_key
+    );
+    let payload: Value = json!({
+        "transition": {
+            "id": transition_id
+        }
+    });
+    let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
+    match resp.status().as_str() {
+        "204" => println!("Success"),
+        "400" => println!("Request failed or is invalid"),
+        "401" => eprintln!("Authentication credentials are incorrect or missing"),
+        "404" => println!("The issue is not found or the user does not have permission to view it"),
+        _ => panic!("Status code unknown"),
+    }
+}
+
 pub fn update_link_type(
     global: &HashMap<&str, &str>,
     link_type_id: &str,

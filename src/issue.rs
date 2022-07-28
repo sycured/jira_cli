@@ -29,6 +29,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::remove_version())
         .subcommand(cli_commands::remove_vote())
         .subcommand(cli_commands::show_fixversions())
+        .subcommand(cli_commands::transition())
         .subcommand(cli_commands::update_link_type());
 }
 
@@ -51,6 +52,7 @@ pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
         Some(("remove_version", args)) => cli_logic::remove_version(&global, args),
         Some(("remove_vote", args)) => cli_logic::remove_vote(&global, args),
         Some(("show_fixversions", args)) => cli_logic::show_fixversions(&global, args),
+        Some(("transition", args)) => cli_logic::transition(&global, args),
         Some(("update_link_type", args)) => cli_logic::update_link_type(&global, args),
         _ => unreachable!(),
     }

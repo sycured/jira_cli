@@ -213,6 +213,14 @@ pub fn show_fixversions() -> Command<'static> {
         .arg(Arg::new("issue_key").help("Issue key").required(true));
 }
 
+pub fn transition() -> Command<'static> {
+    return Command::new("transition").about("Performs an issue transition and, if the transition has a screen, updates the fields from the transition screen")
+        .visible_aliases(&["t", "transit"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("issue_key").help("Issue key").required(true))
+        .arg(Arg::new("transition_id").help("Transition id").required(true));
+}
+
 pub fn update_link_type() -> Command<'static> {
     return Command::new("update_link_type")
         .about("Update a link type")

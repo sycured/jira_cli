@@ -157,6 +157,14 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
+pub fn transition(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    functions::transition(
+        global,
+        args.get_one::<String>("issue_key").unwrap().as_str(),
+        args.get_one::<String>("transition_id").unwrap().as_str(),
+    );
+}
+
 pub fn update_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::update_link_type(
         global,
