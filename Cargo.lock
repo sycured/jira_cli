@@ -424,7 +424,7 @@ checksum = "1aab8fc367588b89dcee83ab0fd66b72b50b72fa1904d7095045ace2b0c81c35"
 
 [[package]]
 name = "jira_cli"
-version = "2.8.1"
+version = "2.9.0"
 dependencies = [
  "attohttpc",
  "base64",
