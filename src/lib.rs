@@ -17,13 +17,11 @@ fn b64auth(user: &str, token: &str) -> String {
     return b64encode(format!("{}:{}", user, token));
 }
 
-#[inline]
-pub fn confirm(prompt: String, yes: (), no: ()) {
-    if Confirm::new().with_prompt(prompt).interact().unwrap() {
-        yes
-    } else {
-        no
-    }
+pub fn confirm(prompt: String) -> bool {
+    return match Confirm::new().with_prompt(prompt).interact().unwrap() {
+        true => true,
+        false => false,
+    };
 }
 
 #[inline]

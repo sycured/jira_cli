@@ -28,14 +28,13 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
     );
 
     let success_message: String = format!("User {} deleted", account_id);
-    confirm(
-        format!(
-            "Are you sure you want to delete the account id: {}?",
-            account_id
-        ),
-        delete_request(&url, global["user"], global["token"], &success_message),
-        println!("User {} not deleted.", account_id),
-    )
+    match confirm(format!(
+        "Are you sure you want to delete the account id: {}?",
+        account_id
+    )) {
+        true => delete_request(&url, global["user"], global["token"], &success_message),
+        false => println!("User {} not deleted.", account_id),
+    }
 }
 
 pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {

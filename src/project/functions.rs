@@ -43,14 +43,13 @@ pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
         global["domain"], URLS["project"], project_key
     );
     let success_message: String = format!("Project {} deleted", project_key);
-    confirm(
-        format!(
-            "Are you sure you want to delete the project key: {}?",
-            project_key
-        ),
-        delete_request(&url, global["user"], global["token"], &success_message),
-        println!("Project {} not deleted.", project_key),
-    )
+    match confirm(format!(
+        "Are you sure you want to delete the project key: {}?",
+        project_key
+    )) {
+        true => delete_request(&url, global["user"], global["token"], &success_message),
+        false => println!("Project {} not deleted.", project_key),
+    }
 }
 
 pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
