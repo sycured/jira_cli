@@ -85,8 +85,8 @@ jobs:
 
       - name: Udeps check
         run: |
-          curl --location --output /tmp/cargo-udeps.tar.gz https://github.com/est31/cargo-udeps/releases/download/v0.1.28/cargo-udeps-v0.1.28-x86_64-unknown-linux-gnu.tar.gz
-          tar --extract --verbose --gzip --file /tmp/cargo-udeps.tar.gz --directory /usr/local/bin/ --strip-components=2 ./cargo-udeps-v0.1.28-x86_64-unknown-linux-gnu/cargo-udeps
+          curl --location --output /tmp/cargo-udeps.tar.gz https://github.com/est31/cargo-udeps/releases/download/v0.1.30/cargo-udeps-v0.1.30-x86_64-unknown-linux-gnu.tar.gz
+          tar --extract --verbose --gzip --file /tmp/cargo-udeps.tar.gz --directory /usr/local/bin/ --strip-components=2 ./cargo-udeps-v0.1.30-x86_64-unknown-linux-gnu/cargo-udeps
           cargo +nightly udeps --quiet --workspace --all-features --all-targets --output json > $HOME/udeps.json || exit 0
 
       - name: Clippy check
