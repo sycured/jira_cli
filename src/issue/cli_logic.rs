@@ -43,6 +43,21 @@ pub fn add_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
         .for_each(|issue_key| functions::add_vote(global, issue_key.as_str()));
 }
 
+pub fn assign(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    let issue_keys: Vec<&String> = args
+        .get_many::<String>("issue_key")
+        .map(|vals| vals.collect::<Vec<_>>())
+        .unwrap();
+    issue_keys.par_iter().for_each(|issue_key| {
+        functions::assign(
+            global,
+            args.get_one::<String>("issue_key").unwrap().as_str(),
+            args.get_one::<String>("account_id").unwrap().as_str(),
+            format!("Issue {} assigned", issue_key).as_str(),
+        )
+    });
+}
+
 pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     functions::create(
         global,
@@ -163,6 +178,21 @@ pub fn transition(global: &HashMap<&str, &str>, args: &ArgMatches) {
         args.get_one::<String>("issue_key").unwrap().as_str(),
         args.get_one::<String>("transition_id").unwrap().as_str(),
     );
+}
+
+pub fn unassign(global: &HashMap<&str, &str>, args: &ArgMatches) {
+    let issue_keys: Vec<&String> = args
+        .get_many::<String>("issue_key")
+        .map(|vals| vals.collect::<Vec<_>>())
+        .unwrap();
+    issue_keys.par_iter().for_each(|issue_key| {
+        functions::assign(
+            global,
+            args.get_one::<String>("issue_key").unwrap().as_str(),
+            "null",
+            format!("Issue {} unassigned", issue_key).as_str(),
+        )
+    });
 }
 
 pub fn update_link_type(global: &HashMap<&str, &str>, args: &ArgMatches) {

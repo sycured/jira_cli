@@ -15,6 +15,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::add_label())
         .subcommand(cli_commands::add_version())
         .subcommand(cli_commands::add_vote())
+        .subcommand(cli_commands::assign())
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::create_link_type())
         .subcommand(cli_commands::delete())
@@ -30,6 +31,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::remove_vote())
         .subcommand(cli_commands::show_fixversions())
         .subcommand(cli_commands::transition())
+        .subcommand(cli_commands::unassign())
         .subcommand(cli_commands::update_link_type());
 }
 
@@ -38,6 +40,7 @@ pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
         Some(("add_label", args)) => cli_logic::add_label(&global, args),
         Some(("add_version", args)) => cli_logic::add_version(&global, args),
         Some(("add_vote", args)) => cli_logic::add_vote(&global, args),
+        Some(("assign", args)) => cli_logic::assign(&global, args),
         Some(("create", args)) => cli_logic::create(&global, args),
         Some(("create_link_type", args)) => cli_logic::create_link_type(&global, args),
         Some(("delete", args)) => cli_logic::delete(&global, args),
@@ -53,6 +56,7 @@ pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
         Some(("remove_vote", args)) => cli_logic::remove_vote(&global, args),
         Some(("show_fixversions", args)) => cli_logic::show_fixversions(&global, args),
         Some(("transition", args)) => cli_logic::transition(&global, args),
+        Some(("unassign", args)) => cli_logic::unassign(&global, args),
         Some(("update_link_type", args)) => cli_logic::update_link_type(&global, args),
         _ => unreachable!(),
     }

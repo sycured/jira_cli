@@ -51,6 +51,25 @@ pub fn add_vote() -> Command<'static> {
         );
 }
 
+pub fn assign() -> Command<'static> {
+    return Command::new("assign")
+        .about("Assigns an issue to a user")
+        .visible_alias("a")
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("issue_key")
+                .help("Issue key")
+                .use_value_delimiter(true)
+                .required(true),
+        )
+        .arg(
+            Arg::new("account_id")
+                .help("Account id of the user")
+                .env("JIRA_ASSIGN_ACCOUNT_ID")
+                .required(true),
+        );
+}
+
 pub fn create() -> Command<'static> {
     return Command::new("create")
         .about("Create an issue")
@@ -219,6 +238,19 @@ pub fn transition() -> Command<'static> {
         .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(Arg::new("transition_id").help("Transition id").required(true));
+}
+
+pub fn unassign() -> Command<'static> {
+    return Command::new("unassign")
+        .about("The issue is set to unassigned")
+        .visible_aliases(&["ua", "una"])
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("issue_key")
+                .help("Issue key")
+                .use_value_delimiter(true)
+                .required(true),
+        );
 }
 
 pub fn update_link_type() -> Command<'static> {

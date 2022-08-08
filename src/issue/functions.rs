@@ -77,6 +77,26 @@ pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
     );
 }
 
+pub fn assign(
+    global: &HashMap<&str, &str>,
+    issue_key: &str,
+    account_id: &str,
+    success_message: &str,
+) {
+    let url: String = format!(
+        "https://{}{}/{}/assignee",
+        global["domain"], URLS["issue"], issue_key
+    );
+    let payload: Value = json!({ "accountId": account_id });
+    put_request(
+        &url,
+        &payload,
+        global["user"],
+        global["token"],
+        success_message,
+    );
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn create(
     global: &HashMap<&str, &str>,
