@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+
+#
+# Copyright (c) 2022, sycured
+# All rights reserved
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
+
 set -e
 export JIRA_CLI="./target/debug/jira_cli"
 export JIRA_PROJECT_KEY="CITS"
@@ -14,11 +22,11 @@ $JIRA_CLI help
 $JIRA_CLI check_version
 
 # generate
-$JIRA_CLI generate bash > /tmp/jira_cli.bash
-$JIRA_CLI generate elvish > /tmp/jira_cli.elvish
-$JIRA_CLI generate fish > /tmp/jira_cli.fish
-$JIRA_CLI generate powershell > /tmp/jira_cli.ps1
-$JIRA_CLI generate zsh > /tmp/jira_cli.zsh
+$JIRA_CLI generate bash >/tmp/jira_cli.bash
+$JIRA_CLI generate elvish >/tmp/jira_cli.elvish
+$JIRA_CLI generate fish >/tmp/jira_cli.fish
+$JIRA_CLI generate powershell >/tmp/jira_cli.ps1
+$JIRA_CLI generate zsh >/tmp/jira_cli.zsh
 
 # user
 ## get_id

@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2022, sycured
+ * All rights reserved
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ */
+
 #![forbid(unsafe_code)]
 
 use std::{collections::HashMap, io::stdout};

@@ -1,5 +1,12 @@
 #!/usr/bin/expect -f
 
+#
+# Copyright (c) 2022, sycured
+# All rights reserved
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
+
 set force_conservative 0  ;# set to 1 to force conservative mode even if
                           ;# script wasn't run conservatively originally
 if {$force_conservative} {

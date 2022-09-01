@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2022, sycured
+ * All rights reserved
+ *
+ * SPDX-License-Identifier: GPL-2.0-only
+ */
+
 use clap::{crate_authors, crate_name, crate_version, value_parser, Arg, Command};
 use clap_complete::Shell;
 
