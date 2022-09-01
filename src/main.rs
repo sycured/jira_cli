@@ -19,6 +19,7 @@ mod group;
 mod issue;
 mod labels;
 mod lib;
+mod license;
 mod project;
 mod urls;
 mod user;
@@ -54,6 +55,7 @@ fn main() {
         Some(("group", args)) => group::logic_commands(global, args),
         Some(("issue", args)) => issue::logic_commands(global, args),
         Some(("labels", args)) => labels::logic_commands(global, args),
+        Some(("license", _)) => license::logic_commands(),
         Some(("project", args)) => project::logic_commands(global, args),
         Some(("user", args)) => user::logic_commands(global, args),
         _ => unreachable!(),
