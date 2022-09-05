@@ -11,10 +11,9 @@ use attohttpc::Response;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use crate::{
-    lib::{confirm, delete_request, get_request, post_request},
-    urls::URLS,
-};
+use jira_cli::{confirm, delete_request, get_request, post_request};
+
+use crate::urls::URLS;
 
 pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
     let url = format!("https://{}{}", global["domain"], URLS["user"]);

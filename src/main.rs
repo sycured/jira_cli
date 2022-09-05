@@ -18,7 +18,6 @@ mod cli;
 mod group;
 mod issue;
 mod labels;
-mod lib;
 mod license;
 mod project;
 mod urls;

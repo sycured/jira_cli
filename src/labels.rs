@@ -12,7 +12,9 @@ use clap::{Arg, ArgMatches, Command};
 use rayon::prelude::*;
 use serde_json::Value;
 
-use super::{lib::get_request, urls::URLS};
+use jira_cli::get_request;
+
+use crate::urls::URLS;
 
 fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_results: &str) {
     let url: String = format!(

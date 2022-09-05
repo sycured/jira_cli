@@ -12,10 +12,9 @@ use comfy_table::{Cell, CellAlignment};
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use crate::{
-    lib::{confirm, create_and_print_table, delete_request, get_request, post_request},
-    urls::URLS,
-};
+use jira_cli::{confirm, create_and_print_table, delete_request, get_request, post_request};
+
+use crate::urls::URLS;
 
 pub fn add_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) {
     let url: String = format!(

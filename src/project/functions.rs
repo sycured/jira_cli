@@ -13,12 +13,11 @@ use itertools::Itertools;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use crate::{
-    lib::{
-        confirm, create_and_print_table, delete_request, get_request, post_request, put_request,
-    },
-    urls::URLS,
+use jira_cli::{
+    confirm, create_and_print_table, delete_request, get_request, post_request, put_request,
 };
+
+use crate::urls::URLS;
 
 #[allow(clippy::too_many_arguments)]
 pub fn create(

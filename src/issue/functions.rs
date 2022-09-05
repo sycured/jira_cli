@@ -9,14 +9,12 @@ use std::collections::HashMap;
 
 use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
-use jira_cli::create_and_print_table;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use crate::{
-    lib::{delete_request, get_request, post_request, put_request},
-    urls::URLS,
-};
+use jira_cli::{create_and_print_table, delete_request, get_request, post_request, put_request};
+
+use crate::urls::URLS;
 
 pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
     let url: String = format!(
