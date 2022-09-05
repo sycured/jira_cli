@@ -6,7 +6,7 @@
  */
 
 use clap::{
-    Arg, Command, crate_authors, crate_description, crate_name, crate_version, value_parser,
+    crate_authors, crate_description, crate_name, crate_version, value_parser, Arg, Command,
 };
 use clap_complete::Shell;
 

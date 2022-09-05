@@ -8,7 +8,7 @@
 use std::process::exit;
 
 use attohttpc::{get, Response};
-use clap::{Command, crate_version};
+use clap::{crate_version, Command};
 use serde_json::Value;
 
 fn get_request(url: &str) -> Response {
