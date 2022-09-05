@@ -21,7 +21,7 @@ use either::Either;
 use serde_json::Value;
 
 fn b64auth(user: &str, token: &str) -> String {
-    return b64encode(format!("{}:{}", user, token));
+    b64encode(format!("{}:{}", user, token))
 }
 
 pub fn confirm(prompt: String) -> bool {
