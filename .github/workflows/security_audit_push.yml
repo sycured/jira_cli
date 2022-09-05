@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: jira_cli
+          sharedKey: jira_cli-check-security-audit
           cache-on-failure: true
       - uses: actions/checkout@v1
 

@@ -35,7 +35,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: jira_cli
+          sharedKey: jira_cli-check-security-audit
           cache-on-failure: true
 
       - name: Install stable toolchain
@@ -130,7 +130,7 @@ jobs:
     steps:
       - uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: jira_cli
+          sharedKey: jira_cli-${{ matrix.target }}
           cache-on-failure: true
       - uses: actions/checkout@v2
       - name: Update Rustup (temporary workaround)
