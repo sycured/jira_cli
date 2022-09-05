@@ -107,7 +107,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  test:
+  native:
     runs-on: ${{ matrix.os }}
     needs:
       - check
@@ -117,19 +117,16 @@ jobs:
         include:
           - os: ubuntu-latest
             rust: stable
-            other: x86_64-unknown-linux-gnu
+            target: x86_64-unknown-linux-gnu
           - os: macos-latest
             rust: stable
-            other: x86_64-apple-darwin
-          - os: macos-latest
-            rust: stable
-            other: aarch64-apple-darwin
+            target: x86_64-apple-darwin
           - os: windows-latest
             rust: stable-msvc
-            other: x86_64-pc-windows-msvc
+            target: x86_64-pc-windows-msvc
           - os: windows-latest
             rust: stable-gnu
-            other: x86_64-pc-windows-gnu
+            target: x86_64-pc-windows-gnu
     steps:
       - uses: Swatinem/rust-cache@v1
         with:
@@ -142,7 +139,7 @@ jobs:
         if: startsWith(matrix.os, 'windows')
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
         name: Update Rustup and define default toolchain
-      - run: rustup target add ${{ matrix.other }}
+      - run: rustup target add ${{ matrix.target }}
         name: Add target
       - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
         name: Install dependencies for Linux
@@ -150,14 +147,7 @@ jobs:
       - run: rustup component add rustfmt || echo "rustfmt not available"
         name: Install rustfmt
       - run: cargo build
-        name: Build for all architecture except Mac ARM
-        if: matrix.other != 'aarch64-apple-darwin'
-      - run: |
-          SDKROOT=$(xcrun -sdk macosx --show-sdk-path)
-          MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version)
-          cargo build --target=aarch64-apple-darwin
-        name: Build for Mac ARM
-        if: matrix.other == 'aarch64-apple-darwin'
+        name: Build
       - run: ./tests.sh
         name: Run tests.sh
         env:
@@ -166,3 +156,47 @@ jobs:
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
           JIRA_USER_ACCOUNT_ID: ${{ secrets.JIRA_USER_ACCOUNT_ID }}
         if: matrix.os == 'ubuntu-latest'
+
+  cross:
+    runs-on: ${{ matrix.os }}
+    needs:
+      - check
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rust: stable
+            target: aarch64-unknown-linux-gnu
+            linker: gcc-aarch64-linux-gnu
+          - os: macos-latest
+            rust: stable
+            target: aarch64-apple-darwin
+    steps:
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: jira_cli
+          cache-on-failure: true
+      - uses: actions/checkout@v2
+      - name: Update Rustup (temporary workaround)
+        run: rustup self update
+        shell: bash
+        if: startsWith(matrix.os, 'windows')
+      - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+        name: Update Rustup and define default toolchain
+      - run: rustup target add ${{ matrix.target }}
+        name: Add target
+      - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
+        name: Install dependencies for Linux
+        if: matrix.os == 'ubuntu-latest'
+      - run: rustup component add rustfmt || echo "rustfmt not available"
+        name: Install rustfmt
+      - run: cargo build --target ${{ matrix.target }}
+        name: Build for all architecture except Mac ARM
+        if: matrix.target != 'aarch64-apple-darwin'
+      - run: |
+          SDKROOT=$(xcrun -sdk macosx --show-sdk-path)
+          MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version)
+          cargo build --target=aarch64-apple-darwin
+        name: Build for Mac ARM
+        if: matrix.target == 'aarch64-apple-darwin'
