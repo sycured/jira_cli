@@ -137,19 +137,19 @@ jobs:
         run: rustup self update
         shell: bash
         if: startsWith(matrix.os, 'windows')
-      - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
-        name: Update Rustup and define default toolchain
-      - run: rustup target add ${{ matrix.target }}
-        name: Add target
-      - run: sudo apt update -y && sudo apt dist-upgrade -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
-        name: Install dependencies for Linux
+      - name: Update Rustup and define default toolchain
+        run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+      - name: Add target
+        run: rustup target add ${{ matrix.target }}
+      - name: Install dependencies for Linux
+        run: sudo apt update -y && sudo apt dist-upgrade -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
         if: matrix.os == 'ubuntu-latest'
-      - run: rustup component add rustfmt || echo "rustfmt not available"
-        name: Install rustfmt
-      - run: cargo build
-        name: Build
-      - run: ./tests.sh
-        name: Run tests.sh
+      - name: Install rustfmt
+        run: rustup component add rustfmt || echo "rustfmt not available"
+      - name: Build
+        run: cargo build
+      - name: Run tests.sh
+        run: ./tests.sh
         env:
           JIRA_DOMAIN: ${{ secrets.JIRA_DOMAIN }}
           JIRA_USER: ${{ secrets.JIRA_USER }}
@@ -181,21 +181,21 @@ jobs:
         run: rustup self update
         shell: bash
         if: startsWith(matrix.os, 'windows')
-      - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
-        name: Update Rustup and define default toolchain
-      - run: rustup target add ${{ matrix.target }}
-        name: Add target
-      - run: sudo apt update -y && sudo apt dist-upgrade -y && sudo apt install expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu libsecret-1-0 libsecret-1-dev -y
-        name: Install dependencies for Linux
+      - name: Update Rustup and define default toolchain
+        run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+      - name: Add target
+        run: rustup target add ${{ matrix.target }}
+      - name: Install dependencies for Linux
+        run: sudo apt update -y && sudo apt dist-upgrade -y && sudo apt install expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu libsecret-1-0 libsecret-1-dev -y
         if: matrix.os == 'ubuntu-latest'
-      - run: rustup component add rustfmt || echo "rustfmt not available"
-        name: Install rustfmt
-      - run: cargo build --target ${{ matrix.target }}
-        name: Build for all architecture except Mac ARM
+      - name: Install rustfmt
+        run: rustup component add rustfmt || echo "rustfmt not available"
+      - name: Build for all architecture except Mac ARM
+        run: cargo build --target ${{ matrix.target }}
         if: matrix.target != 'aarch64-apple-darwin'
-      - run: |
+      - name: Build for Mac ARM
+        run: |
           SDKROOT=$(xcrun -sdk macosx --show-sdk-path)
           MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version)
           cargo build --target=aarch64-apple-darwin
-        name: Build for Mac ARM
         if: matrix.target == 'aarch64-apple-darwin'
