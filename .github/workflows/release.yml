@@ -9,7 +9,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  native:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -17,29 +17,71 @@ jobs:
         include:
           - os: ubuntu-latest
             rust: stable
-            other: x86_64-unknown-linux-gnu
+            target: x86_64-unknown-linux-gnu
             artifact_name: jira_cli
             asset_name: jira_cli-linux_amd64
           - os: macos-latest
             rust: stable
-            other: x86_64-apple-darwin
+            target: x86_64-apple-darwin
             artifact_name: jira_cli
             asset_name: jira_cli-darwin_amd64
-          - os: macos-latest
-            rust: stable
-            other: aarch64-apple-darwin
-            artifact_name: jira_cli
-            asset_name: jira_cli-darwin_arm
           - os: windows-latest
             rust: stable-msvc
-            other: x86_64-pc-windows-msvc
+            target: x86_64-pc-windows-msvc
             artifact_name: jira_cli.exe
             asset_name: jira_cli-windows_msvc_amd64.exe
           - os: windows-latest
             rust: stable-gnu
-            other: x86_64-pc-windows-gnu
+            target: x86_64-pc-windows-gnu
             artifact_name: jira_cli.exe
             asset_name: jira_cli-windows_gnu_amd64.exe
+    steps:
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: jira_cli-${{ matrix.target }}
+          cache-on-failure: true
+      - uses: actions/checkout@v2
+      - name: Update Rustup (temporary workaround)
+        run: rustup self update
+        shell: bash
+        if: startsWith(matrix.os, 'windows')
+      - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
+        name: Update Rustup and define default toolchain
+      - run: rustup target add ${{ matrix.target }}
+        name: Add target
+      - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
+        name: Install dependencies for Linux
+        if: matrix.os == 'ubuntu-latest'
+      - run: rustup component add rustfmt || echo "rustfmt not available"
+        name: Install rustfmt
+      - run: cargo build --release --target ${{ matrix.target }}
+        name: Build
+        env:
+          RUSTFLAGS: "-C target-feature=+crt-static"
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.asset_name }}
+          tag: ${{ github.ref_name }}
+
+  cross:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            rust: stable
+            target: aarch64-unknown-linux-gnu
+            artifact_name: jira_cli
+            asset_name: jira_cli-linux_aarch64
+          - os: macos-latest
+            rust: stable
+            target: aarch64-apple-darwin
+            artifact_name: jira_cli
+            asset_name: jira_cli-darwin_arm
     steps:
       - uses: Swatinem/rust-cache@v1
         with:
@@ -52,31 +94,31 @@ jobs:
         if: startsWith(matrix.os, 'windows')
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
         name: Update Rustup and define default toolchain
-      - run: rustup target add ${{ matrix.other }}
+      - run: rustup target add ${{ matrix.target }}
         name: Add target
-      - run: sudo apt update -y && sudo apt install expect gcc-multilib libsecret-1-0 libsecret-1-dev -y
+      - run: sudo apt update -y && sudo apt dist-upgrade -y && sudo apt install expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu gcc-multilib libsecret-1-0 libsecret-1-dev -y
         name: Install dependencies for Linux
         if: matrix.os == 'ubuntu-latest'
       - run: rustup component add rustfmt || echo "rustfmt not available"
         name: Install rustfmt
-      - run: cargo build --release --target ${{ matrix.other }}
+      - run: cargo build --release --target ${{ matrix.target }}
         name: Build for all architecture except Mac ARM
         env:
           RUSTFLAGS: "-C target-feature=+crt-static"
-        if: matrix.other != 'aarch64-apple-darwin'
+        if: matrix.target != 'aarch64-apple-darwin'
       - run: |
           SDKROOT=$(xcrun -sdk macosx --show-sdk-path)
           MACOSX_DEPLOYMENT_TARGET=$(xcrun -sdk macosx --show-sdk-platform-version)
-          cargo build --release --target ${{ matrix.other }}
+          cargo build --release --target ${{ matrix.target }}
         name: Build for Mac ARM
         env:
           RUSTFLAGS: "-C target-feature=+crt-static"
-        if: matrix.other == 'aarch64-apple-darwin'
+        if: matrix.target == 'aarch64-apple-darwin'
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/${{ matrix.other }}/release/${{ matrix.artifact_name }}
+          file: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref_name }}
 
@@ -93,12 +135,12 @@ jobs:
           override: true
       - uses: Swatinem/rust-cache@v1
         with:
-          sharedKey: jira_cli
+          sharedKey: jira_cli-sbom
           cache-on-failure: true
-      - run: cargo install cargo-cyclonedx
-        name: Install cargo-cyclonedx
-      - run: cargo cyclonedx -a --output-cdx
-        name: Generate SBOM
+      - name: Install cargo-cyclonedx
+        run: cargo install cargo-cyclonedx
+      - name: Generate SBOM
+        run: cargo cyclonedx -a --output-cdx
       - name: Upload SBOM
         uses: svenstaro/upload-release-action@v1-release
         with:
