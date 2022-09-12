@@ -1,0 +1,28 @@
+name: FreeBSD - CI
+on:
+  workflow_dispatch:
+
+jobs:
+  freebsd-x86-64:
+    name: FreeBSD 64 bit
+    runs-on: macos-12
+    steps:
+    - uses: actions/checkout@v2
+    - uses: vmactions/freebsd-vm@v0
+      with:
+        mem: 4096
+        usesh: true
+        prepare: |
+          mkdir -p /usr/local/etc/pkg/repos/
+          cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
+          sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
+          pkg upgrade -y
+          pkg install -y gmake rust
+        run: |
+          cargo build --target x86_64-unknown-freebsd
+          cargo run -- -h
+          ls -lh target/x86_64-unknown-freebsd/
+    - name: check post-build
+      run: |
+        pwd
+        ls *
