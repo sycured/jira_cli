@@ -20,7 +20,7 @@ jobs:
           pkg install -y gmake rust
         run: |
           cargo build --target x86_64-unknown-freebsd
-          cargo run -- -h
+          cargo run --target x86_64-unknown-freebsd -- -h
           ls -lh target/x86_64-unknown-freebsd/
     - name: check post-build
       run: |
