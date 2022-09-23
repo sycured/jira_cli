@@ -93,7 +93,7 @@ jobs:
       - name: Clippy check
         run: |
           rustup component add clippy
-          cargo clippy --all-features --all-targets --message-format=json > $HOME/clippy.json || exit 0
+          cargo clippy --all-features --all-targets --message-format=json -- -Dclippy::all -Dclippy::nursery -Dclippy::pedantic > $HOME/clippy.json || exit 0
 
       - name: Sonar converter
         run: |
