@@ -24,17 +24,15 @@ fn b64auth(user: &str, token: &str) -> String {
     b64encode(format!("{}:{}", user, token))
 }
 
+#[must_use]
 pub fn confirm(prompt: String) -> bool {
-    return match Confirm::new().with_prompt(prompt).interact().unwrap() {
-        true => true,
-        false => false,
-    };
+    Confirm::new().with_prompt(prompt).interact().unwrap()
 }
 
 #[inline]
-pub fn create_and_print_table(
+pub fn create_and_print_table<S: std::hash::BuildHasher>(
     header: Vec<&str>,
-    column_alignment: &HashMap<usize, CellAlignment>,
+    column_alignment: &HashMap<usize, CellAlignment, S>,
     rows: Vec<Vec<Cell>>,
 ) {
     let mut table = Table::new();
@@ -49,7 +47,7 @@ pub fn create_and_print_table(
     for row in rows {
         table.add_row(row);
     }
-    println!("{}", table)
+    println!("{}", table);
 }
 
 #[inline]
