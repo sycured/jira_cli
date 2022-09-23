@@ -15,21 +15,21 @@ use super::functions;
 pub fn add_user(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let account_ids: Vec<&String> = args
         .get_many::<String>("account_id")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     account_ids.par_iter().for_each(|account_id| {
         functions::add_user(
             global,
             account_id.as_str(),
             args.get_one::<String>("group_id").unwrap().as_str(),
-        )
+        );
     });
 }
 
 pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let account_ids: Vec<&String> = args
         .get_many::<String>("name")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     account_ids
         .par_iter()
@@ -68,13 +68,13 @@ pub fn list_users(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn remove_user(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let account_ids: Vec<&String> = args
         .get_many::<String>("account_id")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     account_ids.par_iter().for_each(|account_id| {
         functions::remove_user(
             global,
             account_id.as_str(),
             args.get_one::<String>("group_id").unwrap().as_str(),
-        )
+        );
     });
 }

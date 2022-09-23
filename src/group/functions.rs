@@ -42,12 +42,13 @@ pub fn delete(global: &HashMap<&str, &str>, group_id: &str) {
         global["domain"], URLS["group"], group_id
     );
     let success_message: String = format!("Group id {} deleted", group_id);
-    match confirm(format!(
+    if confirm(format!(
         "Are you sure you want to delete the group id: {}?",
         group_id
     )) {
-        true => delete_request(&url, global["user"], global["token"], &success_message),
-        false => println!("Group id {} not deleted.", group_id),
+        delete_request(&url, global["user"], global["token"], &success_message);
+    } else {
+        println!("Group id {} not deleted.", group_id);
     }
 }
 
@@ -74,7 +75,7 @@ pub fn find(global: &HashMap<&str, &str>, query: &str) {
         vec!["Group Name", "Group ID"],
         &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
         rows,
-    )
+    );
 }
 
 //noinspection DuplicatedCode
@@ -100,7 +101,7 @@ pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &s
         vec!["Group Name", "Group ID"],
         &HashMap::from([(0, CellAlignment::Center), (1, CellAlignment::Center)]),
         rows,
-    )
+    );
 }
 
 //noinspection DuplicatedCode
@@ -117,7 +118,9 @@ pub fn list_users(
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    if json["values"] != json!(null) {
+    if json["values"] == json!(null) {
+        println!("No users found.");
+    } else {
         let rows: Vec<Vec<Cell>> = json["values"]
             .as_array()
             .unwrap()
@@ -138,9 +141,7 @@ pub fn list_users(
                 (2, CellAlignment::Center),
             ]),
             rows,
-        )
-    } else {
-        println!("No users found.");
+        );
     }
 }
 
@@ -154,14 +155,15 @@ pub fn remove_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &st
         "Account id {} removed from group id {}",
         account_id, group_id
     );
-    match confirm(format!(
+    if confirm(format!(
         "Are you sure you want to remove account id {} from group id: {}?",
         account_id, group_id
     )) {
-        true => delete_request(&url, global["user"], global["token"], &success_message),
-        false => println!(
+        delete_request(&url, global["user"], global["token"], &success_message);
+    } else {
+        println!(
             "Account id {} not removed from group id {}",
             account_id, group_id
-        ),
+        );
     }
 }

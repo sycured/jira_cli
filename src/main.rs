@@ -58,12 +58,12 @@ fn main() {
             let mut cmd = cli::build_cli();
             print_completions(*shell, &mut cmd);
         }
-        Some(("group", args)) => group::logic_commands(global, args),
-        Some(("issue", args)) => issue::logic_commands(global, args),
-        Some(("labels", args)) => labels::logic_commands(global, args),
+        Some(("group", args)) => group::logic_commands(&global, args),
+        Some(("issue", args)) => issue::logic_commands(&global, args),
+        Some(("labels", args)) => labels::logic_commands(&global, args),
         Some(("license", _)) => license::logic_commands(),
-        Some(("project", args)) => project::logic_commands(global, args),
-        Some(("user", args)) => user::logic_commands(global, args),
+        Some(("project", args)) => project::logic_commands(&global, args),
+        Some(("user", args)) => user::logic_commands(&global, args),
         _ => unreachable!(),
     }
 }

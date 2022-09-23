@@ -24,11 +24,13 @@ fn b64auth(user: &str, token: &str) -> String {
     b64encode(format!("{}:{}", user, token))
 }
 
+#[allow(clippy::missing_panics_doc)]
 #[must_use]
 pub fn confirm(prompt: String) -> bool {
     Confirm::new().with_prompt(prompt).interact().unwrap()
 }
 
+#[allow(clippy::missing_panics_doc)]
 #[inline]
 pub fn create_and_print_table<S: std::hash::BuildHasher>(
     header: Vec<&str>,
@@ -88,6 +90,7 @@ pub fn get_request(url: &str, user: &str, token: &str) -> Response {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 #[inline]
 #[must_use]
 pub fn post_request(
@@ -121,6 +124,7 @@ pub fn post_request(
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 #[inline]
 pub fn put_request(url: &str, payload: &Value, user: &str, token: &str, success_message: &str) {
     let resp = put(url)

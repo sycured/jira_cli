@@ -22,7 +22,7 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
         "displayName": display_name
     });
     if post_request(&url, &payload, global["user"], global["token"], false).unwrap_left() {
-        println!("User {} created", email)
+        println!("User {} created", email);
     }
 }
 
@@ -34,12 +34,13 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
     );
 
     let success_message: String = format!("User {} deleted", account_id);
-    match confirm(format!(
+    if confirm(format!(
         "Are you sure you want to delete the account id: {}?",
         account_id
     )) {
-        true => delete_request(&url, global["user"], global["token"], &success_message),
-        false => println!("User {} not deleted.", account_id),
+        delete_request(&url, global["user"], global["token"], &success_message);
+    } else {
+        println!("User {} not deleted.", account_id);
     }
 }
 
@@ -63,11 +64,11 @@ pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
     );
     let resp: Response = get_request(&url, global["user"], global["token"]);
     let json: Value = resp.json().unwrap();
-    if json["name"] != json!(null) {
+    if json["name"] == json!(null) {
+        println!("No groups found for account id {}", account_id);
+    } else {
         json["name"].as_array().unwrap().par_iter().for_each(|x| {
             println!("{}", x);
         });
-    } else {
-        println!("No groups found for account id {}", account_id);
     }
 }

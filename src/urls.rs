@@ -23,6 +23,6 @@ lazy_static! {
         ("version", "/rest/api/3/version"),
     ]
     .iter()
-    .cloned()
+    .copied()
     .collect();
 }

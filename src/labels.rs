@@ -46,7 +46,7 @@ pub fn cli_commands() -> Command<'static> {
         );
 }
 
-pub fn logic_commands(global: HashMap<&str, &str>, args: &ArgMatches) {
+pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {
     list_labels(
         global["domain"],
         global["user"],

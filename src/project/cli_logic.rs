@@ -64,7 +64,7 @@ pub fn new_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn set_feature_state(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let feature_keys: Vec<&String> = args
         .get_many::<String>("feature_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     feature_keys.par_iter().for_each(|feature_key| {
         functions::set_feature_state(
@@ -72,6 +72,6 @@ pub fn set_feature_state(global: &HashMap<&str, &str>, args: &ArgMatches) {
             args.get_one::<String>("project_key").unwrap().as_str(),
             feature_key.as_str(),
             args.get_one::<String>("feature_state").unwrap().as_str(),
-        )
+        );
     });
 }

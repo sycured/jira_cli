@@ -205,7 +205,7 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
             (3, CellAlignment::Center),
         ]),
         rows,
-    )
+    );
 }
 
 pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
@@ -235,7 +235,7 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
             (2, CellAlignment::Center),
         ]),
         rows,
-    )
+    );
 }
 
 //noinspection DuplicatedCode
@@ -265,7 +265,7 @@ pub fn list_link_types(global: &HashMap<&str, &str>) {
             (3, CellAlignment::Center),
         ]),
         rows,
-    )
+    );
 }
 
 pub fn list_priorities(global: &HashMap<&str, &str>) {
@@ -323,7 +323,7 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
                 (2, CellAlignment::Center),
             ]),
             rows,
-        )
+        );
     } else {
         println!("Issue {} has 0 vote", issue_key);
     }

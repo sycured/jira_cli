@@ -15,35 +15,35 @@ use super::functions;
 pub fn add_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::add_label(
             global,
             issue_key.as_str(),
             args.get_one::<String>("label").unwrap().as_str(),
-        )
+        );
     });
 }
 
 pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::add_version(
             global,
             args.get_one::<String>("version_name").unwrap().as_str(),
             issue_key.as_str(),
-        )
+        );
     });
 }
 
 pub fn add_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys
         .par_iter()
@@ -53,7 +53,7 @@ pub fn add_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn assign(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::assign(
@@ -61,7 +61,7 @@ pub fn assign(global: &HashMap<&str, &str>, args: &ArgMatches) {
             args.get_one::<String>("issue_key").unwrap().as_str(),
             args.get_one::<String>("account_id").unwrap().as_str(),
             format!("Issue {} assigned", issue_key).as_str(),
-        )
+        );
     });
 }
 
@@ -140,28 +140,28 @@ pub fn list_votes(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn remove_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::remove_label(
             global,
             issue_key.as_str(),
             args.get_one::<String>("label").unwrap().as_str(),
-        )
+        );
     });
 }
 
 pub fn remove_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::remove_version(
             global,
             args.get_one::<String>("version_name").unwrap().as_str(),
             issue_key.as_str(),
-        )
+        );
     });
 }
 
@@ -190,7 +190,7 @@ pub fn transition(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn unassign(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(|vals| vals.collect::<Vec<_>>())
+        .map(std::iter::Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::assign(
@@ -198,7 +198,7 @@ pub fn unassign(global: &HashMap<&str, &str>, args: &ArgMatches) {
             args.get_one::<String>("issue_key").unwrap().as_str(),
             "null",
             format!("Issue {} unassigned", issue_key).as_str(),
-        )
+        );
     });
 }
 

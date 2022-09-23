@@ -24,6 +24,7 @@ fn generate() -> Command<'static> {
         );
 }
 
+#[allow(clippy::module_name_repetitions)]
 pub fn build_cli() -> Command<'static> {
     return Command::new(crate_name!())
         .version(crate_version!())
