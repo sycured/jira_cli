@@ -27,10 +27,10 @@ fn license() {
     );
 }
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("license")
+pub fn cli_commands() -> Command {
+    Command::new("license")
         .visible_alias("L")
-        .about("Show copyright and license");
+        .about("Show copyright and license")
 }
 
 pub fn logic_commands() {

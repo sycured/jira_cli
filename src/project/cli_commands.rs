@@ -7,8 +7,8 @@
 
 use clap::{Arg, Command};
 
-pub fn create() -> Command<'static> {
-    return Command::new("create")
+pub fn create() -> Command {
+    Command::new("create")
         .about("Create project")
         .visible_alias("c")
         .arg_required_else_help(true)
@@ -38,35 +38,35 @@ pub fn create() -> Command<'static> {
                 .help("Project template")
                 .default_value("com.pyxis.greenhopper.jira:gh-simplified-agility-kanban")
                 .value_parser(["com.atlassian.jira-core-project-templates:jira-core-simplified-content-management", "com.atlassian.jira-core-project-templates:jira-core-simplified-document-approval", "com.atlassian.jira-core-project-templates:jira-core-simplified-lead-tracking", "com.atlassian.jira-core-project-templates:jira-core-simplified-process-control", "com.atlassian.jira-core-project-templates:jira-core-simplified-procurement", "com.atlassian.jira-core-project-templates:jira-core-simplified-project-management", "com.atlassian.jira-core-project-templates:jira-core-simplified-recruitment", "com.atlassian.jira-core-project-templates:jira-core-simplified-task-tracking", "com.atlassian.servicedesk:simplified-it-service-management", "com.atlassian.servicedesk:simplified-general-service-desk", "com.atlassian.servicedesk:simplified-internal-service-desk", "com.atlassian.servicedesk:simplified-external-service-desk", "com.atlassian.servicedesk:simplified-hr-service-desk", "com.atlassian.servicedesk:simplified-facilities-service-desk", "com.atlassian.servicedesk:simplified-legal-service-desk", "com.pyxis.greenhopper.jira:gh-simplified-agility-kanban", "com.pyxis.greenhopper.jira:gh-simplified-agility-scrum", "com.pyxis.greenhopper.jira:gh-simplified-basic", "com.pyxis.greenhopper.jira:gh-simplified-kanban-classic", "com.pyxis.greenhopper.jira:gh-simplified-scrum-classic"]),
-        );
+        )
 }
 
-pub fn delete_project() -> Command<'static> {
-    return Command::new("delete_project")
+pub fn delete_project() -> Command {
+    Command::new("delete_project")
         .visible_aliases(&["destroy", "destroy_project"])
         .about("Delete project")
         .arg_required_else_help(true)
-        .arg(Arg::new("project_key").help("Project key").required(true));
+        .arg(Arg::new("project_key").help("Project key").required(true))
 }
 
-pub fn get_id() -> Command<'static> {
-    return Command::new("get_id")
+pub fn get_id() -> Command {
+    Command::new("get_id")
         .about("Get project id")
         .visible_aliases(&["gi", "get-id"])
         .arg_required_else_help(true)
-        .arg(Arg::new("project_key").help("Project key").required(true));
+        .arg(Arg::new("project_key").help("Project key").required(true))
 }
 
-pub fn list_features() -> Command<'static> {
-    return Command::new("list_features")
+pub fn list_features() -> Command {
+    Command::new("list_features")
         .about("List project features")
         .visible_aliases(&["lf", "list-features"])
         .arg_required_else_help(true)
-        .arg(Arg::new("project_key").help("Project key").required(true));
+        .arg(Arg::new("project_key").help("Project key").required(true))
 }
 
-pub fn list_versions() -> Command<'static> {
-    return Command::new("list_versions")
+pub fn list_versions() -> Command {
+    Command::new("list_versions")
         .about("List project versions")
         .visible_aliases(&["lv", "list-versions"])
         .arg_required_else_help(true)
@@ -75,11 +75,11 @@ pub fn list_versions() -> Command<'static> {
                 .help("Project key")
                 .env("JIRA_PROJECT_ID")
                 .required(true),
-        );
+        )
 }
 
-pub fn new_version() -> Command<'static> {
-    return Command::new("new_version")
+pub fn new_version() -> Command {
+    Command::new("new_version")
         .about("Create version")
         .visible_aliases(&["nv", "new-version"])
         .arg_required_else_help(true)
@@ -94,11 +94,11 @@ pub fn new_version() -> Command<'static> {
                 .help("Project id (use get_project_id subcommand to get it")
                 .env("JIRA_PROJECT_ID")
                 .required(true),
-        );
+        )
 }
 
-pub fn set_feature_state() -> Command<'static> {
-    return Command::new("set_feature_state")
+pub fn set_feature_state() -> Command {
+    Command::new("set_feature_state")
         .about("Set project feature state")
         .visible_aliases(&["sfs", "set-feature-state"])
         .arg_required_else_help(true)
@@ -106,7 +106,7 @@ pub fn set_feature_state() -> Command<'static> {
         .arg(
             Arg::new("feature_key")
                 .help("Feature key")
-                .use_value_delimiter(true)
+                .value_delimiter(',')
                 .required(true),
         )
         .arg(
@@ -114,5 +114,5 @@ pub fn set_feature_state() -> Command<'static> {
                 .help("Feature state")
                 .value_parser(["ENABLED", "DISABLED", "COMING_SOON"])
                 .required(true),
-        );
+        )
 }

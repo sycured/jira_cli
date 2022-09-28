@@ -12,8 +12,8 @@ use clap_complete::Shell;
 
 use crate::{check_version, group, issue, labels, license, project, user};
 
-fn generate() -> Command<'static> {
-    return Command::new("generate")
+fn generate() -> Command {
+    Command::new("generate")
         .about("Generate autocompletion script for your shell")
         .visible_aliases(&["g", "gen"])
         .arg_required_else_help(true)
@@ -21,12 +21,12 @@ fn generate() -> Command<'static> {
             Arg::new("shell")
                 .value_parser(value_parser!(Shell))
                 .required(true),
-        );
+        )
 }
 
 #[allow(clippy::module_name_repetitions)]
-pub fn build_cli() -> Command<'static> {
-    return Command::new(crate_name!())
+pub fn build_cli() -> Command {
+    Command::new(crate_name!())
         .version(crate_version!())
         .author(crate_authors!())
         .about(crate_description!())
@@ -38,7 +38,6 @@ pub fn build_cli() -> Command<'static> {
                 .long("domain")
                 .help("Domain")
                 .env("JIRA_DOMAIN")
-                .takes_value(true)
                 .required(true),
         )
         .arg(
@@ -47,7 +46,6 @@ pub fn build_cli() -> Command<'static> {
                 .long("user")
                 .help("User")
                 .env("JIRA_USER")
-                .takes_value(true)
                 .required(true),
         )
         .arg(
@@ -56,7 +54,6 @@ pub fn build_cli() -> Command<'static> {
                 .long("token")
                 .help("TOKEN - API KEY")
                 .env("JIRA_TOKEN")
-                .takes_value(true)
                 .required(true),
         )
         .subcommand(generate())
@@ -66,5 +63,5 @@ pub fn build_cli() -> Command<'static> {
         .subcommand(labels::cli_commands())
         .subcommand(license::cli_commands())
         .subcommand(project::cli_commands())
-        .subcommand(user::cli_commands());
+        .subcommand(user::cli_commands())
 }

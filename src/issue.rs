@@ -13,8 +13,8 @@ pub mod cli_commands;
 pub mod cli_logic;
 pub mod functions;
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("issue")
+pub fn cli_commands() -> Command {
+    Command::new("issue")
         .about("Manage issues")
         .visible_alias("i")
         .subcommand_required(true)
@@ -39,7 +39,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::show_fixversions())
         .subcommand(cli_commands::transition())
         .subcommand(cli_commands::unassign())
-        .subcommand(cli_commands::update_link_type());
+        .subcommand(cli_commands::update_link_type())
 }
 
 pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {

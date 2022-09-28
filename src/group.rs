@@ -13,8 +13,8 @@ pub mod cli_commands;
 pub mod cli_logic;
 pub mod functions;
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("group")
+pub fn cli_commands() -> Command {
+    Command::new("group")
         .about("Manage groups of users")
         .visible_alias("gr")
         .subcommand_required(true)
@@ -25,7 +25,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::find())
         .subcommand(cli_commands::list_groups())
         .subcommand(cli_commands::list_users())
-        .subcommand(cli_commands::remove_user());
+        .subcommand(cli_commands::remove_user())
 }
 
 pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {

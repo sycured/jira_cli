@@ -13,8 +13,8 @@ pub mod cli_commands;
 pub mod cli_logic;
 pub mod functions;
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("user")
+pub fn cli_commands() -> Command {
+    Command::new("user")
         .about("Manage users")
         .visible_aliases(&["u", "usr"])
         .subcommand_required(true)
@@ -22,7 +22,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::delete())
         .subcommand(cli_commands::get_account_id())
-        .subcommand(cli_commands::get_user_groups());
+        .subcommand(cli_commands::get_user_groups())
 }
 
 pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {

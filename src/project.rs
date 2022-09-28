@@ -13,8 +13,8 @@ pub mod cli_commands;
 pub mod cli_logic;
 pub mod functions;
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("project")
+pub fn cli_commands() -> Command {
+    Command::new("project")
         .about("Manage projects")
         .visible_aliases(&["p", "proj"])
         .subcommand_required(true)
@@ -25,7 +25,7 @@ pub fn cli_commands() -> Command<'static> {
         .subcommand(cli_commands::list_features())
         .subcommand(cli_commands::list_versions())
         .subcommand(cli_commands::new_version())
-        .subcommand(cli_commands::set_feature_state());
+        .subcommand(cli_commands::set_feature_state())
 }
 
 pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {

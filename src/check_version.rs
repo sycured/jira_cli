@@ -50,10 +50,10 @@ fn check_version() {
     }
 }
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("check_version")
+pub fn cli_commands() -> Command {
+    Command::new("check_version")
         .visible_alias("check-version")
-        .about("Check if a new version is available");
+        .about("Check if a new version is available")
 }
 
 pub fn logic_commands() {

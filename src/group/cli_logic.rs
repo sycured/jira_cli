@@ -15,7 +15,7 @@ use super::functions;
 pub fn add_user(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let account_ids: Vec<&String> = args
         .get_many::<String>("account_id")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     account_ids.par_iter().for_each(|account_id| {
         functions::add_user(
@@ -29,7 +29,7 @@ pub fn add_user(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let account_ids: Vec<&String> = args
         .get_many::<String>("name")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     account_ids
         .par_iter()
@@ -68,7 +68,7 @@ pub fn list_users(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn remove_user(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let account_ids: Vec<&String> = args
         .get_many::<String>("account_id")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     account_ids.par_iter().for_each(|account_id| {
         functions::remove_user(

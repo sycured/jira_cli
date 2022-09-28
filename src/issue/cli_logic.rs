@@ -15,7 +15,7 @@ use super::functions;
 pub fn add_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::add_label(
@@ -29,7 +29,7 @@ pub fn add_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::add_version(
@@ -43,7 +43,7 @@ pub fn add_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn add_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys
         .par_iter()
@@ -53,7 +53,7 @@ pub fn add_vote(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn assign(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::assign(
@@ -140,7 +140,7 @@ pub fn list_votes(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn remove_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::remove_label(
@@ -154,7 +154,7 @@ pub fn remove_label(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn remove_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::remove_version(
@@ -190,7 +190,7 @@ pub fn transition(global: &HashMap<&str, &str>, args: &ArgMatches) {
 pub fn unassign(global: &HashMap<&str, &str>, args: &ArgMatches) {
     let issue_keys: Vec<&String> = args
         .get_many::<String>("issue_key")
-        .map(std::iter::Iterator::collect)
+        .map(Iterator::collect)
         .unwrap();
     issue_keys.par_iter().for_each(|issue_key| {
         functions::assign(

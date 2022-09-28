@@ -28,8 +28,8 @@ fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_result
     });
 }
 
-pub fn cli_commands() -> Command<'static> {
-    return Command::new("labels")
+pub fn cli_commands() -> Command {
+    Command::new("labels")
         .about("List available labels for the global label field")
         .visible_alias("l")
         .arg(
@@ -43,7 +43,7 @@ pub fn cli_commands() -> Command<'static> {
                 .value_name("start_at")
                 .help("The index of the first item to return")
                 .default_value("0"),
-        );
+        )
 }
 
 pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {
