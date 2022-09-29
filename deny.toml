@@ -17,6 +17,7 @@ allow = [
     "LicenseRef-webpki",
     "MIT",
     "MPL-2.0",
+    "Unicode-DFS-2016",
 ]
 deny = [
     "Apache-2.0",
