@@ -24,24 +24,23 @@ fn get_request(url: &str) -> Response {
 
 fn check_version() {
     let actual_version: &str = crate_version!();
-    let repository_url: &str = env!("CARGO_PKG_REPOSITORY");
-    let api_url: String =
-        repository_url.replace("github.com", "api.github.com/repos") + "/releases/latest";
-    let resp: Response = get_request(&api_url);
-    let json: Value = resp.json().unwrap();
+    let api_url: String = env!("CARGO_PKG_REPOSITORY")
+        .replace("github.com", "api.github.com/repos")
+        + "/releases/latest";
+    let json: Value = get_request(&api_url).json().unwrap();
     let latest_version: &str = json["tag_name"]
         .as_str()
         .unwrap()
         .strip_prefix('v')
         .unwrap();
     match actual_version {
-        _ if actual_version == latest_version => {
+        x if x == latest_version => {
             println!("You are using the latest version.");
         }
-        _ if actual_version < latest_version => {
+        x if x < latest_version => {
             println!("You are using an outdated version. The latest version is {latest_version}");
         }
-        _ if actual_version > latest_version => {
+        x if x > latest_version => {
             println!("You are using an unreleased version. The latest version is {latest_version}");
         }
         _ => {

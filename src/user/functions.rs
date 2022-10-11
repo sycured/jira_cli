@@ -7,7 +7,6 @@
 
 use std::collections::HashMap;
 
-use attohttpc::Response;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
@@ -49,8 +48,9 @@ pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {
         "https://{}{}?query={}",
         global["domain"], URLS["group_user_picker"], email_address
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     println!(
         "{}",
         json["users"]["users"][0]["accountId"].as_str().unwrap()
@@ -62,8 +62,9 @@ pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
         "https://{}{}/groups?accountId={}",
         global["domain"], URLS["user"], account_id
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     if json["name"] == json!(null) {
         println!("No groups found for account id {}", account_id);
     } else {

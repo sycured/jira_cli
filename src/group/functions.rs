@@ -7,7 +7,6 @@
 
 use std::collections::HashMap;
 
-use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
 use rayon::prelude::*;
 use serde_json::{json, Value};
@@ -58,8 +57,9 @@ pub fn find(global: &HashMap<&str, &str>, query: &str) {
         "https://{}{}/picker?query={}",
         global["domain"], URLS["groups"], query
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let rows: Vec<Vec<Cell>> = json["groups"]
         .as_array()
         .unwrap()
@@ -84,8 +84,9 @@ pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &s
         "https://{}{}/bulk?startAt={}&maxResults={}",
         global["domain"], URLS["group"], start_at, max_results
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let rows: Vec<Vec<Cell>> = json["values"]
         .as_array()
         .unwrap()
@@ -116,8 +117,9 @@ pub fn list_users(
         "https://{}{}/member?groupId={}&includeInactiveUsers={}&startAt={}&maxResults={}",
         global["domain"], URLS["group"], group_id, include_inactive, start_at, max_results
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     if json["values"] == json!(null) {
         println!("No users found.");
     } else {

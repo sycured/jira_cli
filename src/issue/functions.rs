@@ -7,7 +7,6 @@
 
 use std::collections::HashMap;
 
-use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
 use rayon::prelude::*;
 use serde_json::{json, Value};
@@ -131,8 +130,10 @@ pub fn create(
         payload["fields"]["priority"] = json!({ "name": priority });
     }
 
-    let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
-    let json: Value = resp.json().unwrap();
+    let json: Value = post_request(&url, &payload, global["user"], global["token"], true)
+        .unwrap_right()
+        .json()
+        .unwrap();
     println!("Issue created: {}", json["key"]);
 }
 
@@ -143,8 +144,10 @@ pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, 
         "inward": inward,
         "outward": outward
     });
-    let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
-    let json: Value = resp.json().unwrap();
+    let json: Value = post_request(&url, &payload, global["user"], global["token"], true)
+        .unwrap_right()
+        .json()
+        .unwrap();
     if json["errorMessages"].is_null() {
         println!(
             "New link type {} (id: {} ) created",
@@ -183,8 +186,9 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["issue_link_types"], link_type_id
     );
-    let resp = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let mut rows: Vec<Vec<Cell>> = Vec::new();
     let id: &str = json["id"].as_str().unwrap();
     let name: &str = json["name"].as_str().unwrap();
@@ -213,8 +217,9 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}/transitions",
         global["domain"], URLS["issue"], issue_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let rows: Vec<Vec<Cell>> = json["transitions"]
         .as_array()
         .unwrap()
@@ -241,8 +246,9 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
 //noinspection DuplicatedCode
 pub fn list_link_types(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let rows: Vec<Vec<Cell>> = json["issueLinkTypes"]
         .as_array()
         .unwrap()
@@ -270,8 +276,9 @@ pub fn list_link_types(global: &HashMap<&str, &str>) {
 
 pub fn list_priorities(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["priority"]);
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     json.as_array().unwrap().par_iter().for_each(|x| {
         println!("{}", x["name"]);
     });
@@ -282,8 +289,9 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
         "https://{}{}/createmeta?projectKeys={}",
         global["domain"], URLS["issue"], project_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     json["projects"][0]["issuetypes"]
         .as_array()
         .unwrap()
@@ -299,8 +307,9 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}/votes",
         global["domain"], URLS["issue"], issue_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     if json["hasVoted"] == "true" {
         println!("Votes: {}", json["votes"]);
         let rows: Vec<Vec<Cell>> = json["voters"]
@@ -394,8 +403,9 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["issue"], issue_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     json["fields"]["fixVersions"]
         .as_array()
         .unwrap()

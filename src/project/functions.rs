@@ -7,7 +7,6 @@
 
 use std::collections::HashMap;
 
-use attohttpc::Response;
 use comfy_table::{Cell, CellAlignment};
 use itertools::Itertools;
 use rayon::prelude::*;
@@ -64,8 +63,9 @@ pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["project"], project_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     println!("{}", json["id"].as_str().unwrap().parse::<i32>().unwrap());
 }
 
@@ -74,8 +74,9 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
         "https://{}{}/{}/features",
         global["domain"], URLS["project"], project_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let rows: Vec<Vec<Cell>> = json["features"]
         .as_array()
         .unwrap()
@@ -111,8 +112,9 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
         "https://{}{}/{}/versions",
         global["domain"], URLS["project"], project_key
     );
-    let resp: Response = get_request(&url, global["user"], global["token"]);
-    let json: Value = resp.json().unwrap();
+    let json: Value = get_request(&url, global["user"], global["token"])
+        .json()
+        .unwrap();
     let mut rows: Vec<Vec<Cell>> = Vec::new();
     json.as_array()
         .unwrap()
