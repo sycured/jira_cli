@@ -39,7 +39,7 @@ jobs:
 
       - name: Audit check
         run: |
-          curl --location --output /tmp/cargo-audit.tar.gz https://github.com/rustsec/rustsec/releases/download/cargo-audit%2Fv0.16.0/cargo-audit-x86_64-unknown-linux-musl-v0.16.0.tgz
+          curl --location --output /tmp/cargo-audit.tar.gz https://github.com/rustsec/rustsec/releases/download/cargo-audit%2Fv0.17.2/cargo-audit-x86_64-unknown-linux-musl-v0.17.2.tgz
           tar --extract --verbose --gzip --file /tmp/cargo-audit.tar.gz --directory /usr/local/bin/ --strip-components=1 cargo-audit-x86_64-unknown-linux-musl-v0.16.0/cargo-audit
           cargo audit --json > $HOME/audit.json || exit 0
 
