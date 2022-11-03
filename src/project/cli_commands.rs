@@ -43,7 +43,7 @@ pub fn create() -> Command {
 
 pub fn delete_project() -> Command {
     Command::new("delete_project")
-        .visible_aliases(&["destroy", "destroy_project"])
+        .visible_aliases(["destroy", "destroy_project"])
         .about("Delete project")
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
@@ -52,7 +52,7 @@ pub fn delete_project() -> Command {
 pub fn get_id() -> Command {
     Command::new("get_id")
         .about("Get project id")
-        .visible_aliases(&["gi", "get-id"])
+        .visible_aliases(["gi", "get-id"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
 }
@@ -60,7 +60,7 @@ pub fn get_id() -> Command {
 pub fn list_features() -> Command {
     Command::new("list_features")
         .about("List project features")
-        .visible_aliases(&["lf", "list-features"])
+        .visible_aliases(["lf", "list-features"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
 }
@@ -68,7 +68,7 @@ pub fn list_features() -> Command {
 pub fn list_versions() -> Command {
     Command::new("list_versions")
         .about("List project versions")
-        .visible_aliases(&["lv", "list-versions"])
+        .visible_aliases(["lv", "list-versions"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("project_key")
@@ -81,7 +81,7 @@ pub fn list_versions() -> Command {
 pub fn new_version() -> Command {
     Command::new("new_version")
         .about("Create version")
-        .visible_aliases(&["nv", "new-version"])
+        .visible_aliases(["nv", "new-version"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("version_name")
@@ -100,7 +100,7 @@ pub fn new_version() -> Command {
 pub fn set_feature_state() -> Command {
     Command::new("set_feature_state")
         .about("Set project feature state")
-        .visible_aliases(&["sfs", "set-feature-state"])
+        .visible_aliases(["sfs", "set-feature-state"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
         .arg(

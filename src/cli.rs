@@ -15,7 +15,7 @@ use crate::{check_version, group, issue, labels, license, project, user};
 fn generate() -> Command {
     Command::new("generate")
         .about("Generate autocompletion script for your shell")
-        .visible_aliases(&["g", "gen"])
+        .visible_aliases(["g", "gen"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("shell")

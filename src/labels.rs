@@ -50,10 +50,10 @@ pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {
         global["user"],
         global["token"],
         args.get_one::<String>("start_at")
-            .unwrap_or(&"".to_string())
+            .unwrap_or(&String::new())
             .as_str(),
         args.get_one::<String>("max_results")
-            .unwrap_or(&"".to_string())
+            .unwrap_or(&String::new())
             .as_str(),
     );
 }

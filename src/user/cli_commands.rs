@@ -10,7 +10,7 @@ use clap::{Arg, Command};
 pub fn create() -> Command {
     Command::new("create")
         .about("Create a new user")
-        .visible_aliases(&["au", "add_user", "add-user", "c"])
+        .visible_aliases(["au", "add_user", "add-user", "c"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("email")
@@ -25,7 +25,7 @@ pub fn create() -> Command {
 pub fn delete() -> Command {
     Command::new("delete")
         .about("Delete a user")
-        .visible_aliases(&["d", "del", "rm"])
+        .visible_aliases(["d", "del", "rm"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("account_id")
@@ -37,7 +37,7 @@ pub fn delete() -> Command {
 pub fn get_account_id() -> Command {
     Command::new("get_account_id")
         .about("Get account id")
-        .visible_aliases(&["gai", "get-account-id"])
+        .visible_aliases(["gai", "get-account-id"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("email_address")
@@ -49,7 +49,7 @@ pub fn get_account_id() -> Command {
 pub fn get_user_groups() -> Command {
     Command::new("get_user_groups")
         .about("Get user groups")
-        .visible_aliases(&["gg", "gug", "get-user-groups", "get_groups", "get-groups"])
+        .visible_aliases(["gg", "gug", "get-user-groups", "get_groups", "get-groups"])
         .arg_required_else_help(true)
         .arg(
             Arg::new("account_id")

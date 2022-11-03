@@ -78,7 +78,7 @@ pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
             .unwrap()
             .as_str(),
         args.get_one::<String>("issue_priority")
-            .unwrap_or(&"".to_string())
+            .unwrap_or(&String::new())
             .as_str(),
     );
 }

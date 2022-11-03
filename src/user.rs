@@ -16,7 +16,7 @@ pub mod functions;
 pub fn cli_commands() -> Command {
     Command::new("user")
         .about("Manage users")
-        .visible_aliases(&["u", "usr"])
+        .visible_aliases(["u", "usr"])
         .subcommand_required(true)
         .arg_required_else_help(true)
         .subcommand(cli_commands::create())
