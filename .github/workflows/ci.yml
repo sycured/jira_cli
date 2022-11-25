@@ -22,6 +22,9 @@ on:
       - '**/*.exp'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+
 defaults:
   run:
     shell: bash
