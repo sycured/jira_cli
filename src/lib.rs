@@ -12,7 +12,7 @@ use std::{collections::HashMap, error::Error};
 use attohttpc::{delete, get, post, put, Response};
 use base64::encode as b64encode;
 use comfy_table::{
-    Cell, CellAlignment, ContentArrangement, modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL,
+    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
 };
 use dialoguer::Confirm;

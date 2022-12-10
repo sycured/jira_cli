@@ -62,7 +62,9 @@ pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
                 exit(1)
             }
         }
-    } else { println!("Project {} not deleted.", project_key) }
+    } else {
+        println!("Project {} not deleted.", project_key)
+    }
 }
 
 pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {

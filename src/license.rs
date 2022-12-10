@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use clap::{Command, crate_description, crate_name};
+use clap::{crate_description, crate_name, Command};
 
 fn license() {
     println!(
