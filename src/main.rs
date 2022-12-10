@@ -7,18 +7,17 @@
 
 #![forbid(unsafe_code)]
 
+use std::{collections::HashMap, io::stdout};
+
+use clap::Command;
+use clap_complete::{generate, Generator, Shell};
+use human_panic::setup_panic;
 #[cfg(not(target_os = "windows"))]
 use jemallocator::Jemalloc;
 
 #[cfg(not(target_os = "windows"))]
 #[global_allocator]
 static GLOBAL: Jemalloc = Jemalloc;
-
-use std::{collections::HashMap, io::stdout};
-
-use clap::Command;
-use clap_complete::{generate, Generator, Shell};
-use human_panic::setup_panic;
 
 mod check_version;
 mod cli;

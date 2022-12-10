@@ -210,25 +210,25 @@ jobs:
     needs:
       - check
     steps:
-    - uses: actions/checkout@v3
-    - name: Cache target
-      id: jira_cli-freebsd-x86-64
-      uses: actions/cache@v3
-      with:
-        path: target/
-        key: jira_cli-freebsd-x86-64
-    - uses: vmactions/freebsd-vm@v0
-      with:
-        mem: 4096
-        usesh: true
-        prepare: |
-          mkdir -p /usr/local/etc/pkg/repos/
-          cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
-          sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
-          pkg upgrade -y
-          pkg install -y gmake rust
-        run: |
-          cargo build --target x86_64-unknown-freebsd
+      - uses: actions/checkout@v3
+      - name: Cache target
+        id: jira_cli-freebsd-x86-64
+        uses: actions/cache@v3
+        with:
+          path: target/
+          key: jira_cli-freebsd-x86-64
+      - uses: vmactions/freebsd-vm@v0
+        with:
+          mem: 4096
+          usesh: true
+          prepare: |
+            mkdir -p /usr/local/etc/pkg/repos/
+            cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
+            sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
+            pkg upgrade -y
+            pkg install -y gmake rust
+          run: |
+            cargo build --target x86_64-unknown-freebsd
 
   approve-pr:
     name: Approve PR

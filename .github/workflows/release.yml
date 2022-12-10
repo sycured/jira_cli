@@ -128,33 +128,33 @@ jobs:
       RUSTFLAGS: "-C target-feature=+crt-static"
     runs-on: macos-12
     steps:
-    - uses: actions/checkout@v3
-    - name: Cache target
-      id: jira_cli-freebsd-x86-64
-      uses: actions/cache@v3
-      with:
-        path: target/
-        key: jira_cli-freebsd-x86-64
-    - uses: vmactions/freebsd-vm@v0
-      with:
-        mem: 4096
-        usesh: true
-        envs: 'RUSTFLAGS'
-        prepare: |
-          mkdir -p /usr/local/etc/pkg/repos/
-          cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
-          sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
-          pkg upgrade -y
-          pkg install -y gmake rust
-        run: |
-          cargo build --release --target x86_64-unknown-freebsd
-    - name: Upload binaries to release
-      uses: svenstaro/upload-release-action@v1-release
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: target/x86_64-unknown-freebsd/release/jira_cli
-        asset_name: jira_cli-freebsd_amd64
-        tag: ${{ github.ref_name }}
+      - uses: actions/checkout@v3
+      - name: Cache target
+        id: jira_cli-freebsd-x86-64
+        uses: actions/cache@v3
+        with:
+          path: target/
+          key: jira_cli-freebsd-x86-64
+      - uses: vmactions/freebsd-vm@v0
+        with:
+          mem: 4096
+          usesh: true
+          envs: 'RUSTFLAGS'
+          prepare: |
+            mkdir -p /usr/local/etc/pkg/repos/
+            cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
+            sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
+            pkg upgrade -y
+            pkg install -y gmake rust
+          run: |
+            cargo build --release --target x86_64-unknown-freebsd
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/x86_64-unknown-freebsd/release/jira_cli
+          asset_name: jira_cli-freebsd_amd64
+          tag: ${{ github.ref_name }}
 
 
   sbom:

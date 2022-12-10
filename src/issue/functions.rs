@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::collections::HashMap;
+use std::{collections::HashMap, process::exit};
 
 use comfy_table::{Cell, CellAlignment};
 use rayon::prelude::*;
@@ -29,14 +29,16 @@ pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
             ]
         }
     });
-    let success_message: String = format!("Label {} added to issue {}", label, issue_key);
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-    );
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Label {} added to issue {}", label, issue_key),
+        Err(e) => {
+            eprintln!(
+                "Impossible to add label {} to issue {} {}",
+                label, issue_key, e
+            );
+            exit(1)
+        }
+    }
 }
 
 pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: &str) {
@@ -55,14 +57,16 @@ pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: 
             ]
         }
     });
-    let success_message: String = format!("Version {} added to issue {}", version_name, issue_key);
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-    );
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Version {} added to issue {}", version_name, issue_key),
+        Err(e) => {
+            eprintln!(
+                "Impossible to add version {} to issue {} {}",
+                version_name, issue_key, e
+            );
+            exit(1)
+        }
+    }
 }
 
 pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
@@ -71,14 +75,12 @@ pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
         global["domain"], URLS["issue"], issue_key
     );
     let payload: Value = json!({});
-    let success_message: String = format!("Vote added to issue {}", issue_key);
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-    );
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Vote added to issue {}", issue_key),
+        Err(e) => {
+            eprintln!("Impossible to add vote to issue {}: {}", issue_key, e);
+        }
+    }
 }
 
 pub fn assign(
@@ -92,13 +94,13 @@ pub fn assign(
         global["domain"], URLS["issue"], issue_key
     );
     let payload: Value = json!({ "accountId": account_id });
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        success_message,
-    );
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("{}", success_message),
+        Err(e) => {
+            eprintln!("Impossible to assign the issue {}: {}", issue_key, e);
+            exit(1)
+        }
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -130,11 +132,16 @@ pub fn create(
         payload["fields"]["priority"] = json!({ "name": priority });
     }
 
-    let json: Value = post_request(&url, &payload, global["user"], global["token"], true)
-        .unwrap_right()
-        .json()
-        .unwrap();
-    println!("Issue created: {}", json["key"]);
+    match post_request(&url, &payload, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Failed to create issue: {}", e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            println!("Issue created: {}", json["key"]);
+        }
+    }
 }
 
 pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, outward: &str) {
@@ -144,18 +151,23 @@ pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, 
         "inward": inward,
         "outward": outward
     });
-    let json: Value = post_request(&url, &payload, global["user"], global["token"], true)
-        .unwrap_right()
-        .json()
-        .unwrap();
-    if json["errorMessages"].is_null() {
-        println!(
-            "New link type {} (id: {} ) created",
-            json["name"].as_str().unwrap(),
-            json["id"].as_str().unwrap()
-        );
-    } else {
-        println!("{}", json["errorMessages"][0].as_str().unwrap());
+    match post_request(&url, &payload, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Failed to create issue link type: {}", e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            if json["errorMessages"].is_null() {
+                println!(
+                    "New link type {} (id: {} ) created",
+                    json["name"].as_str().unwrap(),
+                    json["id"].as_str().unwrap()
+                );
+            } else {
+                println!("{}", json["errorMessages"][0].as_str().unwrap());
+            }
+        }
     }
 }
 
@@ -168,7 +180,13 @@ pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &s
     if delete_subtasks == "true" {
         success_message += " with its subtasks";
     }
-    delete_request(&url, global["user"], global["token"], &success_message);
+    match delete_request(&url, global["user"], global["token"]) {
+        Ok(_) => println!("{}", success_message),
+        Err(e) => {
+            eprintln!("Impossible to delete issue {}: {}", issue_key, e);
+            exit(1)
+        }
+    }
 }
 
 pub fn delete_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
@@ -176,8 +194,13 @@ pub fn delete_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["issue_link_types"], link_type_id
     );
-    let success_message: String = format!("Link type {} deleted", link_type_id);
-    delete_request(&url, global["user"], global["token"], &success_message);
+    match delete_request(&url, global["user"], global["token"]) {
+        Ok(_) => println!("Link type {} deleted", link_type_id),
+        Err(e) => {
+            eprintln!("Impossible to delete link type id {}: {}", link_type_id, e);
+            exit(1)
+        }
+    }
 }
 
 //noinspection DuplicatedCode
@@ -186,30 +209,36 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["issue_link_types"], link_type_id
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    let mut rows: Vec<Vec<Cell>> = Vec::new();
-    let id: &str = json["id"].as_str().unwrap();
-    let name: &str = json["name"].as_str().unwrap();
-    let inward: &str = json["inward"].as_str().unwrap_or("");
-    let outward: &str = json["outward"].as_str().unwrap_or("");
-    rows.push(vec![
-        Cell::new(id),
-        Cell::new(name),
-        Cell::new(inward),
-        Cell::new(outward),
-    ]);
-    create_and_print_table(
-        vec!["ID", "Name", "Inward", "Outward"],
-        &HashMap::from([
-            (0, CellAlignment::Center),
-            (1, CellAlignment::Center),
-            (2, CellAlignment::Center),
-            (3, CellAlignment::Center),
-        ]),
-        rows,
-    );
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Impossible to get link type {}: {}", link_type_id, e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            let mut rows: Vec<Vec<Cell>> = Vec::new();
+            let id: &str = json["id"].as_str().unwrap();
+            let name: &str = json["name"].as_str().unwrap();
+            let inward: &str = json["inward"].as_str().unwrap_or("");
+            let outward: &str = json["outward"].as_str().unwrap_or("");
+            rows.push(vec![
+                Cell::new(id),
+                Cell::new(name),
+                Cell::new(inward),
+                Cell::new(outward),
+            ]);
+            create_and_print_table(
+                vec!["ID", "Name", "Inward", "Outward"],
+                &HashMap::from([
+                    (0, CellAlignment::Center),
+                    (1, CellAlignment::Center),
+                    (2, CellAlignment::Center),
+                    (3, CellAlignment::Center),
+                ]),
+                rows,
+            );
+        }
+    }
 }
 
 pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
@@ -217,71 +246,89 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}/transitions",
         global["domain"], URLS["issue"], issue_key
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    let rows: Vec<Vec<Cell>> = json["transitions"]
-        .as_array()
-        .unwrap()
-        .par_iter()
-        .map(|x| {
-            vec![
-                Cell::new(x["id"].as_str().unwrap()),
-                Cell::new(x["name"].as_str().unwrap()),
-                Cell::new(x["to"]["name"].as_str().unwrap_or("")),
-            ]
-        })
-        .collect();
-    create_and_print_table(
-        vec!["ID", "Name", "To Name"],
-        &HashMap::from([
-            (0, CellAlignment::Center),
-            (1, CellAlignment::Center),
-            (2, CellAlignment::Center),
-        ]),
-        rows,
-    );
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Failed to get transitions for issue {}: {}", issue_key, e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            let rows: Vec<Vec<Cell>> = json["transitions"]
+                .as_array()
+                .unwrap()
+                .par_iter()
+                .map(|x| {
+                    vec![
+                        Cell::new(x["id"].as_str().unwrap()),
+                        Cell::new(x["name"].as_str().unwrap()),
+                        Cell::new(x["to"]["name"].as_str().unwrap_or("")),
+                    ]
+                })
+                .collect();
+            create_and_print_table(
+                vec!["ID", "Name", "To Name"],
+                &HashMap::from([
+                    (0, CellAlignment::Center),
+                    (1, CellAlignment::Center),
+                    (2, CellAlignment::Center),
+                ]),
+                rows,
+            );
+        }
+    }
 }
 
 //noinspection DuplicatedCode
 pub fn list_link_types(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    let rows: Vec<Vec<Cell>> = json["issueLinkTypes"]
-        .as_array()
-        .unwrap()
-        .par_iter()
-        .map(|x| {
-            vec![
-                Cell::new(x["id"].as_str().unwrap()),
-                Cell::new(x["name"].as_str().unwrap()),
-                Cell::new(x["inward"].as_str().unwrap_or("")),
-                Cell::new(x["outward"].as_str().unwrap_or("")),
-            ]
-        })
-        .collect();
-    create_and_print_table(
-        vec!["ID", "Name", "Inward", "Outward"],
-        &HashMap::from([
-            (0, CellAlignment::Center),
-            (1, CellAlignment::Center),
-            (2, CellAlignment::Center),
-            (3, CellAlignment::Center),
-        ]),
-        rows,
-    );
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Failed to get issue link types: {}", e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            let rows: Vec<Vec<Cell>> = json["issueLinkTypes"]
+                .as_array()
+                .unwrap()
+                .par_iter()
+                .map(|x| {
+                    vec![
+                        Cell::new(x["id"].as_str().unwrap()),
+                        Cell::new(x["name"].as_str().unwrap()),
+                        Cell::new(x["inward"].as_str().unwrap_or("")),
+                        Cell::new(x["outward"].as_str().unwrap_or("")),
+                    ]
+                })
+                .collect();
+            create_and_print_table(
+                vec!["ID", "Name", "Inward", "Outward"],
+                &HashMap::from([
+                    (0, CellAlignment::Center),
+                    (1, CellAlignment::Center),
+                    (2, CellAlignment::Center),
+                    (3, CellAlignment::Center),
+                ]),
+                rows,
+            );
+        }
+    }
 }
 
 pub fn list_priorities(global: &HashMap<&str, &str>) {
     let url: String = format!("https://{}{}", global["domain"], URLS["priority"]);
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    json.as_array().unwrap().par_iter().for_each(|x| {
-        println!("{}", x["name"]);
-    });
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Impossible to get priorities: {}", e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            json.as_array().unwrap().par_iter().for_each(|x| {
+                println!("{}", x["name"]);
+            });
+        }
+    }
 }
 
 pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
@@ -289,16 +336,22 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
         "https://{}{}/createmeta?projectKeys={}",
         global["domain"], URLS["issue"], project_key
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    json["projects"][0]["issuetypes"]
-        .as_array()
-        .unwrap()
-        .par_iter()
-        .for_each(|x| {
-            println!("{}", x["name"]);
-        });
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Impossible to list types: {}", e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            json["projects"][0]["issuetypes"]
+                .as_array()
+                .unwrap()
+                .par_iter()
+                .for_each(|x| {
+                    println!("{}", x["name"]);
+                });
+        }
+    }
 }
 
 //noinspection DuplicatedCode
@@ -307,34 +360,40 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}/votes",
         global["domain"], URLS["issue"], issue_key
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    if json["hasVoted"] == "true" {
-        println!("Votes: {}", json["votes"]);
-        let rows: Vec<Vec<Cell>> = json["voters"]
-            .as_array()
-            .unwrap()
-            .par_iter()
-            .map(|x| {
-                vec![
-                    Cell::new(x["name"].as_str().unwrap_or("")),
-                    Cell::new(x["accountId"].as_str().unwrap()),
-                    Cell::new(x["displayName"].as_str().unwrap_or("")),
-                ]
-            })
-            .collect();
-        create_and_print_table(
-            vec!["Name", "Account ID", "Display Name"],
-            &HashMap::from([
-                (0, CellAlignment::Center),
-                (1, CellAlignment::Center),
-                (2, CellAlignment::Center),
-            ]),
-            rows,
-        );
-    } else {
-        println!("Issue {} has 0 vote", issue_key);
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!("Impossible to list votes for issue {}: {}", issue_key, e);
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            if json["hasVoted"] == "true" {
+                println!("Votes: {}", json["votes"]);
+                let rows: Vec<Vec<Cell>> = json["voters"]
+                    .as_array()
+                    .unwrap()
+                    .par_iter()
+                    .map(|x| {
+                        vec![
+                            Cell::new(x["name"].as_str().unwrap_or("")),
+                            Cell::new(x["accountId"].as_str().unwrap()),
+                            Cell::new(x["displayName"].as_str().unwrap_or("")),
+                        ]
+                    })
+                    .collect();
+                create_and_print_table(
+                    vec!["Name", "Account ID", "Display Name"],
+                    &HashMap::from([
+                        (0, CellAlignment::Center),
+                        (1, CellAlignment::Center),
+                        (2, CellAlignment::Center),
+                    ]),
+                    rows,
+                );
+            } else {
+                println!("Issue {} has 0 vote", issue_key);
+            }
+        }
     }
 }
 
@@ -352,14 +411,16 @@ pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) 
             ]
         }
     });
-    let success_message: String = format!("Label {} removed from issue {}", label, issue_key);
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-    );
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Label {} removed from issue {}", label, issue_key),
+        Err(e) => {
+            eprintln!(
+                "Failed to remove label {} from issue {}: {}",
+                label, issue_key, e
+            );
+            exit(1)
+        }
+    }
 }
 
 pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: &str) {
@@ -378,15 +439,17 @@ pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_ke
             ]
         }
     });
-    let success_message: String =
-        format!("Version {} removed from issue {}", version_name, issue_key);
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-    );
+
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Version {} removed from issue {}", version_name, issue_key),
+        Err(e) => {
+            eprintln!(
+                "Impossible to remove version {} from issue {}: {}",
+                version_name, issue_key, e
+            );
+            exit(1)
+        }
+    }
 }
 
 pub fn remove_vote(global: &HashMap<&str, &str>, issue_key: &str) {
@@ -394,8 +457,13 @@ pub fn remove_vote(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}/votes",
         global["domain"], URLS["issue"], issue_key
     );
-    let success_message: String = format!("Vote removed from issue {}", issue_key);
-    delete_request(&url, global["user"], global["token"], &success_message);
+    match delete_request(&url, global["user"], global["token"]) {
+        Ok(_) => println!("Vote removed from issue {}", issue_key),
+        Err(e) => {
+            eprintln!("Impossible to remove vote from issue {}: {}", issue_key, e);
+            exit(1)
+        }
+    }
 }
 
 pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
@@ -403,16 +471,25 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
         "https://{}{}/{}",
         global["domain"], URLS["issue"], issue_key
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    json["fields"]["fixVersions"]
-        .as_array()
-        .unwrap()
-        .par_iter()
-        .for_each(|x| {
-            println!("{}", x["name"]);
-        });
+    match get_request(&url, global["user"], global["token"]) {
+        Err(e) => {
+            eprintln!(
+                "Impossible to list fix versions for issue {}: {}",
+                issue_key, e
+            );
+            exit(1)
+        }
+        Ok(response) => {
+            let json: Value = response.json().unwrap();
+            json["fields"]["fixVersions"]
+                .as_array()
+                .unwrap()
+                .par_iter()
+                .for_each(|x| {
+                    println!("{}", x["name"]);
+                });
+        }
+    }
 }
 
 pub fn transition(global: &HashMap<&str, &str>, issue_key: &str, transition_id: &str) {
@@ -425,13 +502,12 @@ pub fn transition(global: &HashMap<&str, &str>, issue_key: &str, transition_id: 
             "id": transition_id
         }
     });
-    let resp = post_request(&url, &payload, global["user"], global["token"], true).unwrap_right();
-    match resp.status().as_str() {
-        "204" => println!("Success"),
-        "400" => println!("Request failed or is invalid"),
-        "401" => eprintln!("Authentication credentials are incorrect or missing"),
-        "404" => println!("The issue is not found or the user does not have permission to view it"),
-        _ => panic!("Status code unknown"),
+    match post_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Success"),
+        Err(e) => {
+            eprintln!("Failed to transition issue {}: {}", issue_key, e);
+            exit(1)
+        }
     }
 }
 
@@ -451,12 +527,11 @@ pub fn update_link_type(
         "inward": link_type_inward,
         "outward": link_type_outward
     });
-    let success_message: String = format!("Link type {} updated", link_type_id);
-    put_request(
-        &url,
-        &payload,
-        global["user"],
-        global["token"],
-        &success_message,
-    );
+    match put_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("Link type {} updated", link_type_id),
+        Err(e) => {
+            eprintln!("Impossible to update link type {} {}", link_type_id, e);
+            exit(1)
+        }
+    }
 }

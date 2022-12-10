@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::collections::HashMap;
+use std::{collections::HashMap, process::exit};
 
 use rayon::prelude::*;
 use serde_json::{json, Value};
@@ -20,8 +20,12 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
         "emailAddress": email,
         "displayName": display_name
     });
-    if post_request(&url, &payload, global["user"], global["token"], false).unwrap_left() {
-        println!("User {} created", email);
+    match post_request(&url, &payload, global["user"], global["token"]) {
+        Ok(_) => println!("User {} created", email),
+        Err(e) => {
+            eprintln!("Impossible to create the user {}: {}", email, e);
+            exit(1);
+        }
     }
 }
 
@@ -32,12 +36,17 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
         global["domain"], URLS["user"], account_id
     );
 
-    let success_message: String = format!("User {} deleted", account_id);
     if confirm(format!(
         "Are you sure you want to delete the account id: {}?",
         account_id
     )) {
-        delete_request(&url, global["user"], global["token"], &success_message);
+        match delete_request(&url, global["user"], global["token"]) {
+            Ok(_) => println!("User {} deleted", account_id),
+            Err(e) => {
+                eprintln!("Impossible to delete the user {}: {}", account_id, e);
+                exit(1);
+            }
+        }
     } else {
         println!("User {} not deleted.", account_id);
     }
@@ -48,13 +57,19 @@ pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {
         "https://{}{}?query={}",
         global["domain"], URLS["group_user_picker"], email_address
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    println!(
-        "{}",
-        json["users"]["users"][0]["accountId"].as_str().unwrap()
-    );
+    match get_request(&url, global["user"], global["token"]) {
+        Ok(r) => {
+            let json: Value = r.json().unwrap();
+            println!(
+                "{}",
+                json["users"]["users"][0]["accountId"].as_str().unwrap()
+            );
+        }
+        Err(e) => {
+            eprintln!("Impossible to get account {} id: {}", email_address, e);
+            exit(1);
+        }
+    }
 }
 
 pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
@@ -62,14 +77,20 @@ pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
         "https://{}{}/groups?accountId={}",
         global["domain"], URLS["user"], account_id
     );
-    let json: Value = get_request(&url, global["user"], global["token"])
-        .json()
-        .unwrap();
-    if json["name"] == json!(null) {
-        println!("No groups found for account id {}", account_id);
-    } else {
-        json["name"].as_array().unwrap().par_iter().for_each(|x| {
-            println!("{}", x);
-        });
+    match get_request(&url, global["user"], global["token"]) {
+        Ok(r) => {
+            let json: Value = r.json().unwrap();
+            if json["name"] == json!(null) {
+                println!("No groups found for account id {}", account_id);
+            } else {
+                json["name"].as_array().unwrap().par_iter().for_each(|x| {
+                    println!("{}", x);
+                });
+            }
+        }
+        Err(e) => {
+            eprintln!("Impossible to get groups for user {}: {}", account_id, e);
+            exit(1);
+        }
     }
 }

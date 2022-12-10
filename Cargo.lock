@@ -499,7 +499,6 @@ dependencies = [
  "clap_complete",
  "comfy-table",
  "dialoguer",
- "either",
  "human-panic",
  "itertools",
  "jemallocator",

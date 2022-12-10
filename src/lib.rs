@@ -7,17 +7,15 @@
 
 #![forbid(unsafe_code)]
 
-use std::collections::HashMap;
-use std::process::exit;
+use std::{collections::HashMap, error::Error};
 
 use attohttpc::{delete, get, post, put, Response};
 use base64::encode as b64encode;
 use comfy_table::{
-    modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
+    Cell, CellAlignment, ContentArrangement, modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL,
     Table,
 };
 use dialoguer::Confirm;
-use either::Either;
 use serde_json::Value;
 
 fn b64auth(user: &str, token: &str) -> String {
@@ -31,7 +29,6 @@ pub fn confirm(prompt: String) -> bool {
 }
 
 #[allow(clippy::missing_panics_doc)]
-#[inline]
 pub fn create_and_print_table<S: std::hash::BuildHasher>(
     header: Vec<&str>,
     column_alignment: &HashMap<usize, CellAlignment, S>,
@@ -52,97 +49,57 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
     println!("{}", table);
 }
 
-#[inline]
-pub fn delete_request(url: &str, user: &str, token: &str, success_message: &str) {
-    let resp = delete(url)
+#[allow(clippy::missing_errors_doc)]
+pub fn delete_request(url: &str, user: &str, token: &str) -> Result<Response, Box<dyn Error>> {
+    Ok(delete(url)
         .header(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .send();
-    match resp {
-        Err(err) => {
-            eprintln!("{}", err);
-            exit(1);
-        }
-        Ok(_) => {
-            println!("{}", success_message);
-        }
-    }
+        .send()?)
 }
 
-#[inline]
-#[must_use]
-pub fn get_request(url: &str, user: &str, token: &str) -> Response {
-    let resp = get(url)
+#[allow(clippy::missing_errors_doc)]
+pub fn get_request(url: &str, user: &str, token: &str) -> Result<Response, Box<dyn Error>> {
+    Ok(get(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .send();
-    match resp {
-        Err(err) => {
-            eprintln!("{}", err);
-            exit(1);
-        }
-        Ok(response) => response,
-    }
+        .send()?)
 }
 
-#[allow(clippy::missing_panics_doc)]
-#[inline]
-#[must_use]
+#[allow(clippy::missing_errors_doc)]
 pub fn post_request(
     url: &str,
     payload: &Value,
     user: &str,
     token: &str,
-    return_response: bool,
-) -> Either<bool, Response> {
-    let resp = post(url)
+) -> Result<Response, Box<dyn Error>> {
+    Ok(post(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .json(payload)
-        .unwrap()
-        .send();
-    match resp {
-        Err(err) => {
-            eprintln!("{}", err);
-            exit(1);
-        }
-        Ok(response) => {
-            if return_response {
-                Either::Right(response)
-            } else {
-                Either::Left(response.status().is_success())
-            }
-        }
-    }
+        .json(payload)?
+        .send()?)
 }
 
-#[allow(clippy::missing_panics_doc)]
-#[inline]
-pub fn put_request(url: &str, payload: &Value, user: &str, token: &str, success_message: &str) {
-    let resp = put(url)
+#[allow(clippy::missing_errors_doc)]
+pub fn put_request(
+    url: &str,
+    payload: &Value,
+    user: &str,
+    token: &str,
+) -> Result<Response, Box<dyn Error>> {
+    Ok(put(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .json(payload)
-        .unwrap()
-        .send();
-    match resp {
-        Err(err) => {
-            eprintln!("{}", err);
-            exit(1);
-        }
-        Ok(_) => {
-            println!("{}", success_message);
-        }
-    }
+        .json(payload)?
+        .send()?)
 }
