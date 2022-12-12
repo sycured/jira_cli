@@ -24,7 +24,7 @@ lto = true
 
 [dependencies]
 attohttpc = { version = "0.24.0", default-features = false, features = ["compress", "json", "rustls"] }
-base64 = "0.13.1"
+base64 = "0.20.0"
 clap = { version = "4.0.29", features = ["cargo", "env", "wrap_help"] }
 clap_complete = "4.0.6"
 comfy-table = "6.1.3"
