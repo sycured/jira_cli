@@ -60,7 +60,7 @@ pub fn assign(global: &HashMap<&str, &str>, args: &ArgMatches) {
             global,
             args.get_one::<String>("issue_key").unwrap().as_str(),
             args.get_one::<String>("account_id").unwrap().as_str(),
-            format!("Issue {} assigned", issue_key).as_str(),
+            format!("Issue {issue_key} assigned").as_str(),
         );
     });
 }
@@ -197,7 +197,7 @@ pub fn unassign(global: &HashMap<&str, &str>, args: &ArgMatches) {
             global,
             args.get_one::<String>("issue_key").unwrap().as_str(),
             "null",
-            format!("Issue {} unassigned", issue_key).as_str(),
+            format!("Issue {issue_key} unassigned").as_str(),
         );
     });
 }

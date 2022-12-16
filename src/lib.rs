@@ -19,7 +19,7 @@ use dialoguer::Confirm;
 use serde_json::Value;
 
 fn b64auth(user: &str, token: &str) -> String {
-    b64encode(format!("{}:{}", user, token))
+    b64encode(format!("{user}:{token}"))
 }
 
 #[allow(clippy::missing_panics_doc)]
@@ -46,7 +46,7 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
     for row in rows {
         table.add_row(row);
     }
-    println!("{}", table);
+    println!("{table}");
 }
 
 #[allow(clippy::missing_errors_doc)]

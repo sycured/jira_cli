@@ -37,9 +37,9 @@ pub fn create(
         "assigneeType": "UNASSIGNED"
     });
     match post_request(&url, &payload, global["user"], global["token"]) {
-        Ok(_) => println!("Project {} created", project_key),
+        Ok(_) => println!("Project {project_key} created"),
         Err(e) => {
-            eprintln!("Impossible to create the project {}: {}", project_key, e);
+            eprintln!("Impossible to create the project {project_key}: {e}");
             exit(1)
         }
     }
@@ -48,33 +48,33 @@ pub fn create(
 #[allow(clippy::unit_arg)]
 pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}{}/{}",
-        global["domain"], URLS["project"], project_key
+        "https://{}{}/{project_key}",
+        global["domain"], URLS["project"]
     );
     if confirm(format!(
         "Are you sure you want to delete the project key: {}?",
         project_key
     )) {
         match delete_request(&url, global["user"], global["token"]) {
-            Ok(_) => println!("Project {} deleted", project_key),
+            Ok(_) => println!("Project {project_key} deleted"),
             Err(e) => {
-                eprintln!("Impossible to delete the project {}: {}", project_key, e);
+                eprintln!("Impossible to delete the project {project_key}: {e}");
                 exit(1)
             }
         }
     } else {
-        println!("Project {} not deleted.", project_key)
+        println!("Project {project_key} not deleted.");
     }
 }
 
 pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}{}/{}",
-        global["domain"], URLS["project"], project_key
+        "https://{}{}/{project_key}",
+        global["domain"], URLS["project"]
     );
     match get_request(&url, global["user"], global["token"]) {
         Err(e) => {
-            eprintln!("Impossible to get project {} id: {}", project_key, e);
+            eprintln!("Impossible to get project {project_key} id: {e}");
             exit(1)
         }
         Ok(r) => {
@@ -86,8 +86,8 @@ pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
 
 pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}{}/{}/features",
-        global["domain"], URLS["project"], project_key
+        "https://{}{}/{project_key}/features",
+        global["domain"], URLS["project"]
     );
     match get_request(&url, global["user"], global["token"]) {
         Err(e) => {
@@ -114,7 +114,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
                         Cell::new(x["feature"].as_str().unwrap()),
                         Cell::new(x["localisedDescription"].as_str().unwrap()),
                         Cell::new(x["state"].as_str().unwrap()),
-                        Cell::new(&locked.to_string()).fg(locked_color),
+                        Cell::new(locked.to_string()).fg(locked_color),
                     ]
                 })
                 .collect();
@@ -133,8 +133,8 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
 
 pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
     let url: String = format!(
-        "https://{}{}/{}/versions",
-        global["domain"], URLS["project"], project_key
+        "https://{}{}/{project_key}/versions",
+        global["domain"], URLS["project"]
     );
     match get_request(&url, global["user"], global["token"]) {
         Err(e) => eprintln!(
@@ -167,8 +167,8 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
                     rows.push(vec![
                         Cell::new(name),
                         Cell::new(description),
-                        Cell::new(&released.to_string()).fg(released_color),
-                        Cell::new(&archived.to_string()).fg(archived_color),
+                        Cell::new(released.to_string()).fg(released_color),
+                        Cell::new(archived.to_string()).fg(archived_color),
                         Cell::new(id),
                     ]);
                 });
@@ -194,8 +194,8 @@ pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name:
       "projectId": project_id.parse::<i32>().unwrap()
     });
     match post_request(&url, &payload, global["user"], global["token"]) {
-        Ok(_) => println!("Version created: {}", version_name),
-        Err(e) => eprintln!("Failed to create version {}: {}", version_name, e),
+        Ok(_) => println!("Version created: {version_name}"),
+        Err(e) => eprintln!("Failed to create version {version_name}: {e}"),
     }
 }
 
@@ -206,8 +206,8 @@ pub fn set_feature_state(
     project_feature_state: &str,
 ) {
     let url: String = format!(
-        "https://{}{}/{}/features/{}",
-        global["domain"], URLS["project"], project_key, project_feature_key
+        "https://{}{}/{project_key}/features/{project_feature_key}",
+        global["domain"], URLS["project"]
     );
     let payload: Value = json!({ "state": project_feature_state });
     match put_request(&url, &payload, global["user"], global["token"]) {

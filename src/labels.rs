@@ -22,13 +22,13 @@ fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_result
     );
     match get_request(&url, user, token) {
         Err(e) => {
-            eprintln!("Impossible to list labels: {}", e);
+            eprintln!("Impossible to list labels: {e}");
             exit(1);
         }
         Ok(r) => {
             let json: Value = r.json().unwrap();
             json["values"].as_array().unwrap().par_iter().for_each(|x| {
-                println!("{}", x);
+                println!("{x}");
             });
         }
     }

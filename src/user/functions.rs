@@ -21,9 +21,9 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
         "displayName": display_name
     });
     match post_request(&url, &payload, global["user"], global["token"]) {
-        Ok(_) => println!("User {} created", email),
+        Ok(_) => println!("User {email} created"),
         Err(e) => {
-            eprintln!("Impossible to create the user {}: {}", email, e);
+            eprintln!("Impossible to create the user {email}: {e}");
             exit(1);
         }
     }
@@ -32,8 +32,8 @@ pub fn create(global: &HashMap<&str, &str>, email: &str, display_name: &str) {
 #[allow(clippy::unit_arg)]
 pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
     let url = format!(
-        "https://{}{}?accountId={}",
-        global["domain"], URLS["user"], account_id
+        "https://{}{}?accountId={account_id}",
+        global["domain"], URLS["user"]
     );
 
     if confirm(format!(
@@ -41,21 +41,20 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
         account_id
     )) {
         match delete_request(&url, global["user"], global["token"]) {
-            Ok(_) => println!("User {} deleted", account_id),
+            Ok(_) => println!("User {account_id} deleted"),
             Err(e) => {
-                eprintln!("Impossible to delete the user {}: {}", account_id, e);
-                exit(1);
+                eprintln!("Impossible to delete the user {account_id}: {e}");
             }
         }
     } else {
-        println!("User {} not deleted.", account_id);
+        println!("User {account_id} not deleted.");
     }
 }
 
 pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {
     let url: String = format!(
-        "https://{}{}?query={}",
-        global["domain"], URLS["group_user_picker"], email_address
+        "https://{}{}?query={email_address}",
+        global["domain"], URLS["group_user_picker"]
     );
     match get_request(&url, global["user"], global["token"]) {
         Ok(r) => {
@@ -66,7 +65,7 @@ pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {
             );
         }
         Err(e) => {
-            eprintln!("Impossible to get account {} id: {}", email_address, e);
+            eprintln!("Impossible to get account {email_address} id: {e}");
             exit(1);
         }
     }
@@ -74,22 +73,22 @@ pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {
 
 pub fn get_user_groups(global: &HashMap<&str, &str>, account_id: &str) {
     let url: String = format!(
-        "https://{}{}/groups?accountId={}",
-        global["domain"], URLS["user"], account_id
+        "https://{}{}/groups?accountId={account_id}",
+        global["domain"], URLS["user"]
     );
     match get_request(&url, global["user"], global["token"]) {
         Ok(r) => {
             let json: Value = r.json().unwrap();
             if json["name"] == json!(null) {
-                println!("No groups found for account id {}", account_id);
+                println!("No groups found for account id {account_id}");
             } else {
                 json["name"].as_array().unwrap().par_iter().for_each(|x| {
-                    println!("{}", x);
+                    println!("{x}");
                 });
             }
         }
         Err(e) => {
-            eprintln!("Impossible to get groups for user {}: {}", account_id, e);
+            eprintln!("Impossible to get groups for user {account_id}: {e}");
             exit(1);
         }
     }

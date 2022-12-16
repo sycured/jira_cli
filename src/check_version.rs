@@ -15,7 +15,7 @@ fn get_request(url: &str) -> Response {
     let resp = get(url).header("Accept", "application/json").send();
     match resp {
         Err(err) => {
-            eprintln!("{}", err);
+            eprintln!("{err}");
             exit(1);
         }
         Ok(response) => response,
