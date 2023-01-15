@@ -25,10 +25,10 @@ lto = true
 [dependencies]
 attohttpc = { version = "0.24.0", default-features = false, features = ["compress", "json", "rustls"] }
 base64 = "0.21.0"
-clap = { version = "4.0.32", features = ["cargo", "env", "wrap_help"] }
-clap_complete = "4.0.7"
+clap = { version = "4.1.1", features = ["cargo", "env", "wrap_help"] }
+clap_complete = "4.1.0"
 comfy-table = "6.1.4"
-dialoguer = "0.10.2"
+dialoguer = "0.10.3"
 human-panic = "1.0.3"
 itertools = "0.10.5"
 lazy_static = "1.4.0"
@@ -36,7 +36,7 @@ rayon = "1.6.1"
 serde_json = "1.0.91"
 
 [dev-dependencies]
-clap = { version = "4.0.32", features = ["cargo", "deprecated", "env", "wrap_help"] }
+clap = { version = "4.1.1", features = ["cargo", "deprecated", "env", "wrap_help"] }
 
 [target.'cfg(not(target_os = "windows"))'.dependencies]
 jemallocator = "0.5.0"

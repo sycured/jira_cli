@@ -10,7 +10,7 @@
 use std::{collections::HashMap, error::Error};
 
 use attohttpc::{delete, get, post, put, Response};
-use base64::encode as b64encode;
+use base64::{engine::general_purpose as b64, Engine};
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
@@ -19,7 +19,7 @@ use dialoguer::Confirm;
 use serde_json::Value;
 
 fn b64auth(user: &str, token: &str) -> String {
-    b64encode(format!("{user}:{token}"))
+    b64::STANDARD.encode(format!("{user}:{token}"))
 }
 
 #[allow(clippy::missing_panics_doc)]
