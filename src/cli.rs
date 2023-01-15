@@ -16,6 +16,7 @@ fn generate() -> Command {
     Command::new("generate")
         .about("Generate autocompletion script for your shell")
         .visible_aliases(["g", "gen"])
+        .ignore_errors(true)
         .arg_required_else_help(true)
         .arg(
             Arg::new("shell")

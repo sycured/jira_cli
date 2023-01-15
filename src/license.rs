@@ -31,6 +31,7 @@ pub fn cli_commands() -> Command {
     Command::new("license")
         .visible_alias("L")
         .about("Show copyright and license")
+        .ignore_errors(true)
 }
 
 pub fn logic_commands() {

@@ -53,6 +53,7 @@ pub fn cli_commands() -> Command {
     Command::new("check_version")
         .visible_alias("check-version")
         .about("Check if a new version is available")
+        .ignore_errors(true)
 }
 
 pub fn logic_commands() {
