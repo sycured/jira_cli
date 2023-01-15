@@ -51,25 +51,25 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
 
 #[allow(clippy::missing_errors_doc)]
 pub fn delete_request(url: &str, user: &str, token: &str) -> Result<Response, Error> {
-    Ok(delete(url)
+    delete(url)
         .header(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .send()?
-        .error_for_status()?)
+        .error_for_status()
 }
 
 #[allow(clippy::missing_errors_doc)]
 pub fn get_request(url: &str, user: &str, token: &str) -> Result<Response, Error> {
-    Ok(get(url)
+    get(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .send()?
-        .error_for_status()?)
+        .error_for_status()
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -79,7 +79,7 @@ pub fn post_request(
     user: &str,
     token: &str,
 ) -> Result<Response, Error> {
-    Ok(post(url)
+    post(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
@@ -87,12 +87,12 @@ pub fn post_request(
         )
         .json(payload)?
         .send()?
-        .error_for_status()?)
+        .error_for_status()
 }
 
 #[allow(clippy::missing_errors_doc)]
 pub fn put_request(url: &str, payload: &Value, user: &str, token: &str) -> Result<Response, Error> {
-    Ok(put(url)
+    put(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
@@ -100,5 +100,5 @@ pub fn put_request(url: &str, payload: &Value, user: &str, token: &str) -> Resul
         )
         .json(payload)?
         .send()?
-        .error_for_status()?)
+        .error_for_status()
 }
