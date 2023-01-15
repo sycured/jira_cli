@@ -56,18 +56,16 @@ pub fn get_account_id(global: &HashMap<&str, &str>, email_address: &str) {
         "https://{}{}?query={email_address}",
         global["domain"], URLS["group_user_picker"]
     );
-    match get_request(&url, global["user"], global["token"]) {
-        Ok(r) => {
-            let json: Value = r.json().unwrap();
-            println!(
-                "{}",
-                json["users"]["users"][0]["accountId"].as_str().unwrap()
-            );
-        }
-        Err(e) => {
-            eprintln!("Impossible to get account {email_address} id: {e}");
-            exit(1);
-        }
+    let resp = get_request(&url, global["user"], global["token"]).unwrap();
+    let json: Value = resp.json().unwrap();
+    if json["users"]["users"].as_array().unwrap().is_empty() {
+        println!("User {email_address} not found.");
+        exit(1);
+    } else {
+        println!(
+            "{}",
+            json["users"]["users"][0]["accountId"].as_str().unwrap()
+        );
     }
 }
 
