@@ -69,7 +69,7 @@ pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
         global["domain"], URLS["issue"]
     );
     let payload: Value = json!({});
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global["user"], global["token"]) {
         Ok(_) => println!("Vote added to issue {issue_key}"),
         Err(e) => {
             eprintln!("Impossible to add vote to issue {issue_key}: {e}");
