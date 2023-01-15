@@ -7,9 +7,9 @@
 
 #![forbid(unsafe_code)]
 
-use std::{collections::HashMap, error::Error};
+use std::collections::HashMap;
 
-use attohttpc::{delete, get, post, put, Response};
+use attohttpc::{delete, get, post, put, Error, Response};
 use base64::{engine::general_purpose as b64, Engine};
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
@@ -50,24 +50,26 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn delete_request(url: &str, user: &str, token: &str) -> Result<Response, Box<dyn Error>> {
+pub fn delete_request(url: &str, user: &str, token: &str) -> Result<Response, Error> {
     Ok(delete(url)
         .header(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .send()?)
+        .send()?
+        .error_for_status()?)
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn get_request(url: &str, user: &str, token: &str) -> Result<Response, Box<dyn Error>> {
+pub fn get_request(url: &str, user: &str, token: &str) -> Result<Response, Error> {
     Ok(get(url)
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
-        .send()?)
+        .send()?
+        .error_for_status()?)
 }
 
 #[allow(clippy::missing_errors_doc)]
@@ -76,7 +78,7 @@ pub fn post_request(
     payload: &Value,
     user: &str,
     token: &str,
-) -> Result<Response, Box<dyn Error>> {
+) -> Result<Response, Error> {
     Ok(post(url)
         .header("Accept", "application/json")
         .header_append(
@@ -84,16 +86,12 @@ pub fn post_request(
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .json(payload)?
-        .send()?)
+        .send()?
+        .error_for_status()?)
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn put_request(
-    url: &str,
-    payload: &Value,
-    user: &str,
-    token: &str,
-) -> Result<Response, Box<dyn Error>> {
+pub fn put_request(url: &str, payload: &Value, user: &str, token: &str) -> Result<Response, Error> {
     Ok(put(url)
         .header("Accept", "application/json")
         .header_append(
@@ -101,5 +99,6 @@ pub fn put_request(
             &format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .json(payload)?
-        .send()?)
+        .send()?
+        .error_for_status()?)
 }
