@@ -33,7 +33,7 @@ human-panic = "1.1.0"
 itertools = "0.10.5"
 lazy_static = "1.4.0"
 rayon = "1.6.1"
-serde_json = "1.0.91"
+serde_json = "1.0.92"
 
 [dev-dependencies]
 clap = { version = "4.1.4", features = ["cargo", "deprecated", "env", "wrap_help"] }
