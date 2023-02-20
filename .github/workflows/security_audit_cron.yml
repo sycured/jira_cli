@@ -74,7 +74,7 @@ jobs:
 
       - name: Sonar converter
         run: |
-          curl ---location --output /usr/local/bin/cargo-sonar https://www.tuziwo.info/cargo-sonar-v0.14.1-x86_64-unknown-linux-gnu
+          curl --location --output /usr/local/bin/cargo-sonar https://www.tuziwo.info/cargo-sonar-v0.14.1-x86_64-unknown-linux-gnu
           chmod a+x /usr/local/bin/cargo-sonar
           cargo sonar --issues audit,clippy,outdated,udeps --audit-path $HOME/audit.json --clippy-path $HOME/clippy.json --outdated-path $HOME/outdated.json --udeps-path $HOME/udeps.json --issues-path $HOME/sonar.json
 
