@@ -29,10 +29,7 @@ pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
     match put_request(&url, &payload, global["user"], global["token"]) {
         Ok(_) => println!("Label {label} added to issue {issue_key}"),
         Err(e) => {
-            eprintln!(
-                "Impossible to add label {} to issue {} {}",
-                label, issue_key, e
-            );
+            eprintln!("Impossible to add label {label} to issue {issue_key} {e}");
             exit(1)
         }
     }
@@ -54,10 +51,7 @@ pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: 
     match put_request(&url, &payload, global["user"], global["token"]) {
         Ok(_) => println!("Version {version_name} added to issue {issue_key}"),
         Err(e) => {
-            eprintln!(
-                "Impossible to add version {} to issue {} {}",
-                version_name, issue_key, e
-            );
+            eprintln!("Impossible to add version {version_name} to issue {issue_key} {e}",);
             exit(1)
         }
     }
@@ -405,10 +399,7 @@ pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) 
     match put_request(&url, &payload, global["user"], global["token"]) {
         Ok(_) => println!("Label {label} removed from issue {issue_key}"),
         Err(e) => {
-            eprintln!(
-                "Failed to remove label {} from issue {}: {}",
-                label, issue_key, e
-            );
+            eprintln!("Failed to remove label {label} from issue {issue_key}: {e}",);
             exit(1)
         }
     }
@@ -431,10 +422,7 @@ pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_ke
     match put_request(&url, &payload, global["user"], global["token"]) {
         Ok(_) => println!("Version {version_name} removed from issue {issue_key}"),
         Err(e) => {
-            eprintln!(
-                "Impossible to remove version {} from issue {}: {}",
-                version_name, issue_key, e
-            );
+            eprintln!("Impossible to remove version {version_name} from issue {issue_key}: {e}",);
             exit(1)
         }
     }

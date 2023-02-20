@@ -191,15 +191,9 @@ pub fn remove_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &st
                 eprintln!("Impossible to remove user: {e}");
                 exit(1)
             }
-            Ok(_) => println!(
-                "Account id {} removed from group id {}",
-                account_id, group_id
-            ),
+            Ok(_) => println!("Account id {account_id} removed from group id {group_id}",),
         }
     } else {
-        println!(
-            "Account id {} not removed from group id {}",
-            account_id, group_id
-        );
+        println!("Account id {account_id} not removed from group id {group_id}",);
     }
 }

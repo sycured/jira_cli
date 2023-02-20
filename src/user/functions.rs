@@ -37,8 +37,7 @@ pub fn delete(global: &HashMap<&str, &str>, account_id: &str) {
     );
 
     if confirm(format!(
-        "Are you sure you want to delete the account id: {}?",
-        account_id
+        "Are you sure you want to delete the account id: {account_id}?"
     )) {
         match delete_request(&url, global["user"], global["token"]) {
             Ok(_) => println!("User {account_id} deleted"),

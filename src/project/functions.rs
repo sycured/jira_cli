@@ -52,8 +52,7 @@ pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
         global["domain"], URLS["project"]
     );
     if confirm(format!(
-        "Are you sure you want to delete the project key: {}?",
-        project_key
+        "Are you sure you want to delete the project key: {project_key}?"
     )) {
         match delete_request(&url, global["user"], global["token"]) {
             Ok(_) => println!("Project {project_key} deleted"),
@@ -91,10 +90,7 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     );
     match get_request(&url, global["user"], global["token"]) {
         Err(e) => {
-            eprintln!(
-                "Impossible to list features for project {}: {}",
-                project_key, e
-            );
+            eprintln!("Impossible to list features for project {project_key}: {e}");
             exit(1)
         }
         Ok(r) => {
@@ -137,10 +133,7 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
         global["domain"], URLS["project"]
     );
     match get_request(&url, global["user"], global["token"]) {
-        Err(e) => eprintln!(
-            "Impossible to list versions on project {}: {}",
-            project_key, e
-        ),
+        Err(e) => eprintln!("Impossible to list versions on project {project_key}: {e}"),
         Ok(r) => {
             let json: Value = r.json().unwrap();
             let mut rows: Vec<Vec<Cell>> = Vec::new();
@@ -212,13 +205,11 @@ pub fn set_feature_state(
     let payload: Value = json!({ "state": project_feature_state });
     match put_request(&url, &payload, global["user"], global["token"]) {
         Ok(_) => println!(
-            "Feature {} set to {} on project {}",
-            project_feature_key, project_feature_state, project_key
+            "Feature {project_feature_key} set to {project_feature_state} on project {project_key}"
         ),
         Err(e) => {
             eprintln!(
-                "Impossible to set feature {} to {} on project {}: {}",
-                project_feature_key, project_feature_state, project_feature_key, e
+                "Impossible to set feature {project_feature_key} to {project_feature_state} on project {project_feature_key}: {e}"
             );
             exit(1)
         }
