@@ -2,6 +2,8 @@ name: Security audit
 on:
   schedule:
     - cron: '0 0 * * *'
+env:
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 jobs:
   security_audit:
     runs-on: ubuntu-latest

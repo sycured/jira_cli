@@ -8,6 +8,9 @@ defaults:
   run:
     shell: bash
 
+env:
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+
 jobs:
   native:
     runs-on: ${{ matrix.os }}
@@ -96,7 +99,7 @@ jobs:
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.target }}
         name: Add target
-      - run: sudo apt update -y && sudo apt dist-upgrade -y && sudo apt install expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu libjemalloc-dev libsecret-1-0 libsecret-1-dev -y
+      - run: sudo apt update -y && sudo apt install expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu libjemalloc-dev libsecret-1-0 libsecret-1-dev -y
         name: Install dependencies for Linux
         if: matrix.os == 'ubuntu-latest'
       - run: rustup component add rustfmt || echo "rustfmt not available"
