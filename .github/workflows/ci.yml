@@ -147,7 +147,7 @@ jobs:
       - name: Add target
         run: rustup target add ${{ matrix.target }}
       - name: Install dependencies for Linux
-        run: sudo apt update -y && sudo apt upgrade -y && sudo apt install --no-install-recommends expect gcc-multilib libjemalloc-dev libsecret-1-0 libsecret-1-dev -y
+        run: sudo apt update -y && sudo apt install --no-install-recommends expect gcc-multilib libjemalloc-dev libsecret-1-0 libsecret-1-dev mold -y
         if: matrix.os == 'ubuntu-latest'
       - name: Install rustfmt
         run: rustup component add rustfmt || echo "rustfmt not available"
@@ -191,7 +191,7 @@ jobs:
       - name: Add target
         run: rustup target add ${{ matrix.target }}
       - name: Install dependencies for Linux
-        run: sudo apt update -y && sudo apt upgrade -y && sudo apt install --no-install-recommends expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu libjemalloc-dev libsecret-1-0 libsecret-1-dev -y
+        run: sudo apt update -y && sudo apt install --no-install-recommends expect g++-aarch64-linux-gnu gcc-aarch64-linux-gnu libjemalloc-dev libsecret-1-0 libsecret-1-dev -y
         if: matrix.os == 'ubuntu-latest'
       - name: Install rustfmt
         run: rustup component add rustfmt || echo "rustfmt not available"
