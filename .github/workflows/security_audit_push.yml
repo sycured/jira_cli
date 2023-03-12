@@ -4,8 +4,6 @@ on:
     paths:
       - '**/Cargo.toml'
       - '**/Cargo.lock'
-env:
-  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
 jobs:
   security_audit:
     runs-on: ubuntu-latest
