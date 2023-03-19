@@ -130,9 +130,6 @@ jobs:
             rust: stable
             target: x86_64-apple-darwin
           - os: windows-latest
-            rust: stable-msvc
-            target: x86_64-pc-windows-msvc
-          - os: windows-latest
             rust: stable-gnu
             target: x86_64-pc-windows-gnu
     steps:

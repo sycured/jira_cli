@@ -29,11 +29,6 @@ jobs:
             artifact_name: jira_cli
             asset_name: jira_cli-darwin_amd64
           - os: windows-latest
-            rust: stable-msvc
-            target: x86_64-pc-windows-msvc
-            artifact_name: jira_cli.exe
-            asset_name: jira_cli-windows_msvc_amd64.exe
-          - os: windows-latest
             rust: stable-gnu
             target: x86_64-pc-windows-gnu
             artifact_name: jira_cli.exe
