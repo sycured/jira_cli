@@ -23,7 +23,7 @@ opt-level = 3
 lto = false
 
 [dependencies]
-attohttpc = { version = "0.24.1", default-features = false, features = ["compress", "json", "rustls"] }
+attohttpc = { version = "0.25.0", default-features = false, features = ["compress", "json", "rustls"] }
 base64 = "0.21.0"
 clap = { version = "4.1.11", features = ["cargo", "env", "wrap_help"] }
 clap_complete = "4.2.0"
