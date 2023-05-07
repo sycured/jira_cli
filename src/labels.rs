@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::{collections::HashMap, process::exit};
+use std::process::exit;
 
 use clap::{Arg, ArgMatches, Command};
 use rayon::prelude::*;
@@ -14,6 +14,7 @@ use serde_json::Value;
 use jira_cli::get_request;
 
 use crate::urls::URLS;
+use crate::Global;
 
 fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_results: &str) {
     let url: String = format!(
@@ -36,7 +37,7 @@ fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_result
 
 pub fn cli_commands() -> Command {
     Command::new("labels")
-        .about("List available labels for the global label field")
+        .about("List available labels for the Global label field")
         .visible_alias("l")
         .arg(
             Arg::new("max_results")
@@ -52,11 +53,11 @@ pub fn cli_commands() -> Command {
         )
 }
 
-pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn logic_commands(global: &Global, args: &ArgMatches) {
     list_labels(
-        global["domain"],
-        global["user"],
-        global["token"],
+        global.domain.as_str(),
+        global.user.as_str(),
+        global.token.as_str(),
         args.get_one::<String>("start_at")
             .unwrap_or(&String::new())
             .as_str(),

@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::collections::HashMap;
-
 use clap::{ArgMatches, Command};
+
+use crate::Global;
 
 pub mod cli_commands;
 pub mod cli_logic;
@@ -28,7 +28,7 @@ pub fn cli_commands() -> Command {
         .subcommand(cli_commands::set_feature_state())
 }
 
-pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn logic_commands(global: &Global, args: &ArgMatches) {
     match args.subcommand() {
         Some(("create", args)) => cli_logic::create(global, args),
         Some(("delete_project", args)) => cli_logic::delete_project(global, args),

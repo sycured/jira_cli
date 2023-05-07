@@ -13,10 +13,10 @@ use serde_json::{json, Value};
 
 use jira_cli::{create_and_print_table, delete_request, get_request, post_request, put_request};
 
-use crate::urls::URLS;
+use crate::{urls::URLS, Global};
 
-pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
-    let url: String = format!("https://{}{}/{issue_key}", global["domain"], URLS["issue"]);
+pub fn add_label(global: &Global, issue_key: &str, label: &str) {
+    let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
     let payload: Value = json!({
         "update": {
             "labels": [
@@ -26,7 +26,7 @@ pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
             ]
         }
     });
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Label {label} added to issue {issue_key}"),
         Err(e) => {
             eprintln!("Impossible to add label {label} to issue {issue_key} {e}");
@@ -35,8 +35,8 @@ pub fn add_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
     }
 }
 
-pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: &str) {
-    let url: String = format!("https://{}{}/{issue_key}", global["domain"], URLS["issue"]);
+pub fn add_version(global: &Global, version_name: &str, issue_key: &str) {
+    let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
     let payload: Value = json!({
         "update": {
             "fixVersions": [
@@ -48,7 +48,7 @@ pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: 
             ]
         }
     });
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Version {version_name} added to issue {issue_key}"),
         Err(e) => {
             eprintln!("Impossible to add version {version_name} to issue {issue_key} {e}",);
@@ -57,13 +57,13 @@ pub fn add_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: 
     }
 }
 
-pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
+pub fn add_vote(global: &Global, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/votes",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
     let payload: Value = json!({});
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Vote added to issue {issue_key}"),
         Err(e) => {
             eprintln!("Impossible to add vote to issue {issue_key}: {e}");
@@ -71,18 +71,13 @@ pub fn add_vote(global: &HashMap<&str, &str>, issue_key: &str) {
     }
 }
 
-pub fn assign(
-    global: &HashMap<&str, &str>,
-    issue_key: &str,
-    account_id: &str,
-    success_message: &str,
-) {
+pub fn assign(global: &Global, issue_key: &str, account_id: &str, success_message: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/assignee",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
     let payload: Value = json!({ "accountId": account_id });
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("{success_message}"),
         Err(e) => {
             eprintln!("Impossible to assign the issue {issue_key}: {e}");
@@ -93,7 +88,7 @@ pub fn assign(
 
 #[allow(clippy::too_many_arguments)]
 pub fn create(
-    global: &HashMap<&str, &str>,
+    global: &Global,
     reporter_account_id: &str,
     project_key: &str,
     issue_type: &str,
@@ -101,7 +96,7 @@ pub fn create(
     description: &str,
     priority: &str,
 ) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["issue"]);
+    let url: String = format!("https://{}{}", global.domain, URLS["issue"]);
     let mut payload: Value = json!({
         "fields":
         {
@@ -120,7 +115,7 @@ pub fn create(
         payload["fields"]["priority"] = json!({ "name": priority });
     }
 
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Failed to create issue: {e}");
             exit(1)
@@ -132,14 +127,14 @@ pub fn create(
     }
 }
 
-pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, outward: &str) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
+pub fn create_link_type(global: &Global, name: &str, inward: &str, outward: &str) {
+    let url: String = format!("https://{}{}", global.domain, URLS["issue_link_types"]);
     let payload: Value = json!({
         "name": name,
         "inward": inward,
         "outward": outward
     });
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Failed to create issue link type: {e}");
             exit(1)
@@ -159,16 +154,16 @@ pub fn create_link_type(global: &HashMap<&str, &str>, name: &str, inward: &str, 
     }
 }
 
-pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &str) {
+pub fn delete(global: &Global, issue_key: &str, delete_subtasks: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}?deleteSubtasks={delete_subtasks}",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
     let mut success_message: String = format!("Issue {issue_key} deleted",);
     if delete_subtasks == "true" {
         success_message += " with its subtasks";
     }
-    match delete_request(&url, global["user"], global["token"]) {
+    match delete_request(&url, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("{success_message}"),
         Err(e) => {
             eprintln!("Impossible to delete issue {issue_key}: {e}");
@@ -177,12 +172,12 @@ pub fn delete(global: &HashMap<&str, &str>, issue_key: &str, delete_subtasks: &s
     }
 }
 
-pub fn delete_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
+pub fn delete_link_type(global: &Global, link_type_id: &str) {
     let url: String = format!(
         "https://{}{}/{link_type_id}",
-        global["domain"], URLS["issue_link_types"]
+        global.domain, URLS["issue_link_types"]
     );
-    match delete_request(&url, global["user"], global["token"]) {
+    match delete_request(&url, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Link type {link_type_id} deleted"),
         Err(e) => {
             eprintln!("Impossible to delete link type id {link_type_id}: {e}");
@@ -192,12 +187,12 @@ pub fn delete_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
 }
 
 //noinspection DuplicatedCode
-pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
+pub fn get_link_type(global: &Global, link_type_id: &str) {
     let url: String = format!(
         "https://{}{}/{link_type_id}",
-        global["domain"], URLS["issue_link_types"]
+        global.domain, URLS["issue_link_types"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to get link type {link_type_id}: {e}");
             exit(1)
@@ -229,12 +224,12 @@ pub fn get_link_type(global: &HashMap<&str, &str>, link_type_id: &str) {
     }
 }
 
-pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
+pub fn get_transitions(global: &Global, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/transitions",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Failed to get transitions for issue {issue_key}: {e}");
             exit(1)
@@ -267,9 +262,9 @@ pub fn get_transitions(global: &HashMap<&str, &str>, issue_key: &str) {
 }
 
 //noinspection DuplicatedCode
-pub fn list_link_types(global: &HashMap<&str, &str>) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["issue_link_types"]);
-    match get_request(&url, global["user"], global["token"]) {
+pub fn list_link_types(global: &Global) {
+    let url: String = format!("https://{}{}", global.domain, URLS["issue_link_types"]);
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Failed to get issue link types: {e}");
             exit(1)
@@ -303,9 +298,9 @@ pub fn list_link_types(global: &HashMap<&str, &str>) {
     }
 }
 
-pub fn list_priorities(global: &HashMap<&str, &str>) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["priority"]);
-    match get_request(&url, global["user"], global["token"]) {
+pub fn list_priorities(global: &Global) {
+    let url: String = format!("https://{}{}", global.domain, URLS["priority"]);
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to get priorities: {e}");
             exit(1)
@@ -319,12 +314,12 @@ pub fn list_priorities(global: &HashMap<&str, &str>) {
     }
 }
 
-pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
+pub fn list_types(global: &Global, project_key: &str) {
     let url: String = format!(
         "https://{}{}/createmeta?projectKeys={project_key}",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to list types: {e}");
             exit(1)
@@ -343,12 +338,12 @@ pub fn list_types(global: &HashMap<&str, &str>, project_key: &str) {
 }
 
 //noinspection DuplicatedCode
-pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
+pub fn list_votes(global: &Global, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/votes",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to list votes for issue {issue_key}: {e}");
             exit(1)
@@ -385,8 +380,8 @@ pub fn list_votes(global: &HashMap<&str, &str>, issue_key: &str) {
     }
 }
 
-pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) {
-    let url: String = format!("https://{}{}/{issue_key}", global["domain"], URLS["issue"]);
+pub fn remove_label(global: &Global, issue_key: &str, label: &str) {
+    let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
     let payload: Value = json!({
         "update": {
             "labels": [
@@ -396,7 +391,7 @@ pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) 
             ]
         }
     });
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Label {label} removed from issue {issue_key}"),
         Err(e) => {
             eprintln!("Failed to remove label {label} from issue {issue_key}: {e}",);
@@ -405,8 +400,8 @@ pub fn remove_label(global: &HashMap<&str, &str>, issue_key: &str, label: &str) 
     }
 }
 
-pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_key: &str) {
-    let url: String = format!("https://{}{}/{issue_key}", global["domain"], URLS["issue"]);
+pub fn remove_version(global: &Global, version_name: &str, issue_key: &str) {
+    let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
     let payload: Value = json!({
         "update": {
             "fixVersions": [
@@ -419,7 +414,7 @@ pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_ke
         }
     });
 
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Version {version_name} removed from issue {issue_key}"),
         Err(e) => {
             eprintln!("Impossible to remove version {version_name} from issue {issue_key}: {e}",);
@@ -428,12 +423,12 @@ pub fn remove_version(global: &HashMap<&str, &str>, version_name: &str, issue_ke
     }
 }
 
-pub fn remove_vote(global: &HashMap<&str, &str>, issue_key: &str) {
+pub fn remove_vote(global: &Global, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/votes",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
-    match delete_request(&url, global["user"], global["token"]) {
+    match delete_request(&url, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Vote removed from issue {issue_key}"),
         Err(e) => {
             eprintln!("Impossible to remove vote from issue {issue_key}: {e}");
@@ -442,9 +437,9 @@ pub fn remove_vote(global: &HashMap<&str, &str>, issue_key: &str) {
     }
 }
 
-pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
-    let url: String = format!("https://{}{}/{issue_key}", global["domain"], URLS["issue"]);
-    match get_request(&url, global["user"], global["token"]) {
+pub fn show_fixversions(global: &Global, issue_key: &str) {
+    let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to list fix versions for issue {issue_key}: {e}");
             exit(1)
@@ -462,17 +457,17 @@ pub fn show_fixversions(global: &HashMap<&str, &str>, issue_key: &str) {
     }
 }
 
-pub fn transition(global: &HashMap<&str, &str>, issue_key: &str, transition_id: &str) {
+pub fn transition(global: &Global, issue_key: &str, transition_id: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/transitions",
-        global["domain"], URLS["issue"]
+        global.domain, URLS["issue"]
     );
     let payload: Value = json!({
         "transition": {
             "id": transition_id
         }
     });
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Success"),
         Err(e) => {
             eprintln!("Failed to transition issue {issue_key}: {e}");
@@ -482,7 +477,7 @@ pub fn transition(global: &HashMap<&str, &str>, issue_key: &str, transition_id: 
 }
 
 pub fn update_link_type(
-    global: &HashMap<&str, &str>,
+    global: &Global,
     link_type_id: &str,
     link_type_name: &str,
     link_type_inward: &str,
@@ -490,14 +485,14 @@ pub fn update_link_type(
 ) {
     let url: String = format!(
         "https://{}{}/{link_type_id}",
-        global["domain"], URLS["issue_link_types"]
+        global.domain, URLS["issue_link_types"]
     );
     let payload: Value = json!({
         "name": link_type_name,
         "inward": link_type_inward,
         "outward": link_type_outward
     });
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Link type {link_type_id} updated"),
         Err(e) => {
             eprintln!("Impossible to update link type {link_type_id}: {e}");

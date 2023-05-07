@@ -17,17 +17,18 @@ use jira_cli::{
 };
 
 use crate::urls::URLS;
+use crate::Global;
 
 #[allow(clippy::too_many_arguments)]
 pub fn create(
-    global: &HashMap<&str, &str>,
+    global: &Global,
     project_name: &str,
     project_key: &str,
     project_leadaccountid: &str,
     project_type: &str,
     project_template: &str,
 ) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["project"]);
+    let url: String = format!("https://{}{}", global.domain, URLS["project"]);
     let payload: Value = json!({
         "name": project_name,
         "key": project_key,
@@ -36,7 +37,7 @@ pub fn create(
         "projectTemplateKey": project_template,
         "assigneeType": "UNASSIGNED"
     });
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Project {project_key} created"),
         Err(e) => {
             eprintln!("Impossible to create the project {project_key}: {e}");
@@ -46,15 +47,12 @@ pub fn create(
 }
 
 #[allow(clippy::unit_arg)]
-pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
-    let url: String = format!(
-        "https://{}{}/{project_key}",
-        global["domain"], URLS["project"]
-    );
+pub fn delete_project(global: &Global, project_key: &str) {
+    let url: String = format!("https://{}{}/{project_key}", global.domain, URLS["project"]);
     if confirm(format!(
         "Are you sure you want to delete the project key: {project_key}?"
     )) {
-        match delete_request(&url, global["user"], global["token"]) {
+        match delete_request(&url, global.user.as_str(), global.token.as_str()) {
             Ok(_) => println!("Project {project_key} deleted"),
             Err(e) => {
                 eprintln!("Impossible to delete the project {project_key}: {e}");
@@ -66,12 +64,9 @@ pub fn delete_project(global: &HashMap<&str, &str>, project_key: &str) {
     }
 }
 
-pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
-    let url: String = format!(
-        "https://{}{}/{project_key}",
-        global["domain"], URLS["project"]
-    );
-    match get_request(&url, global["user"], global["token"]) {
+pub fn get_id(global: &Global, project_key: &str) {
+    let url: String = format!("https://{}{}/{project_key}", global.domain, URLS["project"]);
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to get project {project_key} id: {e}");
             exit(1)
@@ -83,12 +78,12 @@ pub fn get_id(global: &HashMap<&str, &str>, project_key: &str) {
     }
 }
 
-pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
+pub fn list_features(global: &Global, project_key: &str) {
     let url: String = format!(
         "https://{}{}/{project_key}/features",
-        global["domain"], URLS["project"]
+        global.domain, URLS["project"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to list features for project {project_key}: {e}");
             exit(1)
@@ -127,12 +122,12 @@ pub fn list_features(global: &HashMap<&str, &str>, project_key: &str) {
     }
 }
 
-pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
+pub fn list_versions(global: &Global, project_key: &str) {
     let url: String = format!(
         "https://{}{}/{project_key}/versions",
-        global["domain"], URLS["project"]
+        global.domain, URLS["project"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => eprintln!("Impossible to list versions on project {project_key}: {e}"),
         Ok(r) => {
             let json: Value = r.json().unwrap();
@@ -180,30 +175,30 @@ pub fn list_versions(global: &HashMap<&str, &str>, project_key: &str) {
     }
 }
 
-pub fn new_version(global: &HashMap<&str, &str>, project_id: &str, version_name: &str) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["version"]);
+pub fn new_version(global: &Global, project_id: &str, version_name: &str) {
+    let url: String = format!("https://{}{}", global.domain, URLS["version"]);
     let payload: Value = json!({
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
     });
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Version created: {version_name}"),
         Err(e) => eprintln!("Failed to create version {version_name}: {e}"),
     }
 }
 
 pub fn set_feature_state(
-    global: &HashMap<&str, &str>,
+    global: &Global,
     project_key: &str,
     project_feature_key: &str,
     project_feature_state: &str,
 ) {
     let url: String = format!(
         "https://{}{}/{project_key}/features/{project_feature_key}",
-        global["domain"], URLS["project"]
+        global.domain, URLS["project"]
     );
     let payload: Value = json!({ "state": project_feature_state });
-    match put_request(&url, &payload, global["user"], global["token"]) {
+    match put_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!(
             "Feature {project_feature_key} set to {project_feature_state} on project {project_key}"
         ),

@@ -7,13 +7,14 @@
 
 #![forbid(unsafe_code)]
 
-use std::{collections::HashMap, io::stdout};
+use std::io::stdout;
 
 use clap::Command;
 use clap_complete::{generate, Generator, Shell};
 use human_panic::setup_panic;
 #[cfg(not(target_os = "windows"))]
 use jemallocator::Jemalloc;
+use zeroize::{Zeroize, ZeroizeOnDrop};
 
 #[cfg(not(target_os = "windows"))]
 #[global_allocator]
@@ -29,6 +30,13 @@ mod project;
 mod urls;
 mod user;
 
+#[derive(Zeroize, ZeroizeOnDrop)]
+pub struct Global {
+    domain: String,
+    user: String,
+    token: String,
+}
+
 fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_owned(), &mut stdout());
 }
@@ -36,17 +44,11 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
 fn main() {
     setup_panic!();
     let matches = cli::build_cli().get_matches();
-    let global: HashMap<&str, &str> = HashMap::from([
-        (
-            "domain",
-            matches.get_one::<String>("domain").unwrap().as_str(),
-        ),
-        (
-            "token",
-            matches.get_one::<String>("token").unwrap().as_str(),
-        ),
-        ("user", matches.get_one::<String>("user").unwrap().as_str()),
-    ]);
+    let global: Global = Global {
+        domain: matches.get_one::<String>("domain").unwrap().to_string(),
+        user: matches.get_one::<String>("user").unwrap().to_string(),
+        token: matches.get_one::<String>("token").unwrap().to_string(),
+    };
 
     match matches.subcommand() {
         Some(("check_version", _)) => {

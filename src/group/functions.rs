@@ -13,15 +13,15 @@ use serde_json::{json, Value};
 
 use jira_cli::{confirm, create_and_print_table, delete_request, get_request, post_request};
 
-use crate::urls::URLS;
+use crate::{urls::URLS, Global};
 
-pub fn add_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) {
+pub fn add_user(global: &Global, account_id: &str, group_id: &str) {
     let url: String = format!(
         "https://{}{}/user?groupId={group_id}",
-        global["domain"], URLS["group"]
+        global.domain, URLS["group"]
     );
     let payload: Value = json!({ "accountId": account_id });
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Account id {account_id} added to group id {group_id}"),
         Err(e) => {
             eprintln!("{e}");
@@ -30,10 +30,10 @@ pub fn add_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) 
     }
 }
 
-pub fn create(global: &HashMap<&str, &str>, name: &str) {
-    let url: String = format!("https://{}{}", global["domain"], URLS["group"]);
+pub fn create(global: &Global, name: &str) {
+    let url: String = format!("https://{}{}", global.domain, URLS["group"]);
     let payload: Value = json!({ "name": name });
-    match post_request(&url, &payload, global["user"], global["token"]) {
+    match post_request(&url, &payload, global.user.as_str(), global.token.as_str()) {
         Ok(_) => println!("Group {name} created"),
         Err(e) => {
             eprintln!("Impossible to create group {name}: {e}");
@@ -43,15 +43,15 @@ pub fn create(global: &HashMap<&str, &str>, name: &str) {
 }
 
 #[allow(clippy::unit_arg)]
-pub fn delete(global: &HashMap<&str, &str>, group_id: &str) {
+pub fn delete(global: &Global, group_id: &str) {
     let url: String = format!(
         "https://{}{}?groupId={group_id}",
-        global["domain"], URLS["group"]
+        global.domain, URLS["group"]
     );
     if confirm(format!(
         "Are you sure you want to delete the group id: {group_id}?"
     )) {
-        match delete_request(&url, global["user"], global["token"]) {
+        match delete_request(&url, global.user.as_str(), global.token.as_str()) {
             Ok(_) => println!("Are you sure you want to delete the group id: {group_id}?"),
             Err(e) => {
                 eprintln!("Impossible to delete group id {group_id}: {e}");
@@ -64,12 +64,12 @@ pub fn delete(global: &HashMap<&str, &str>, group_id: &str) {
 }
 
 //noinspection DuplicatedCode
-pub fn find(global: &HashMap<&str, &str>, query: &str) {
+pub fn find(global: &Global, query: &str) {
     let url: String = format!(
         "https://{}{}/picker?query={query}",
-        global["domain"], URLS["groups"]
+        global.domain, URLS["groups"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to find group {query}: {e}");
             exit(1)
@@ -97,12 +97,12 @@ pub fn find(global: &HashMap<&str, &str>, query: &str) {
 }
 
 //noinspection DuplicatedCode
-pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &str) {
+pub fn list_groups(global: &Global, start_at: &str, max_results: &str) {
     let url: String = format!(
         "https://{}{}/bulk?startAt={start_at}&maxResults={max_results}",
-        global["domain"], URLS["group"]
+        global.domain, URLS["group"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to list groups: {e}");
             exit(1)
@@ -131,7 +131,7 @@ pub fn list_groups(global: &HashMap<&str, &str>, start_at: &str, max_results: &s
 
 //noinspection DuplicatedCode
 pub fn list_users(
-    global: &HashMap<&str, &str>,
+    global: &Global,
     group_id: &str,
     include_inactive: bool,
     start_at: &str,
@@ -139,9 +139,9 @@ pub fn list_users(
 ) {
     let url: String = format!(
         "https://{}{}/member?groupId={group_id}&includeInactiveUsers={include_inactive}&startAt={start_at}&maxResults={max_results}",
-        global["domain"], URLS["group"]
+        global.domain, URLS["group"]
     );
-    match get_request(&url, global["user"], global["token"]) {
+    match get_request(&url, global.user.as_str(), global.token.as_str()) {
         Err(e) => {
             eprintln!("Impossible to list users in group {group_id}: {e}");
             exit(1)
@@ -178,15 +178,15 @@ pub fn list_users(
 }
 
 #[allow(clippy::unit_arg)]
-pub fn remove_user(global: &HashMap<&str, &str>, account_id: &str, group_id: &str) {
+pub fn remove_user(global: &Global, account_id: &str, group_id: &str) {
     let url: String = format!(
         "https://{}{}/user?groupId={group_id}&accountId={account_id}",
-        global["domain"], URLS["group"]
+        global.domain, URLS["group"]
     );
     if confirm(format!(
         "Are you sure you want to remove account id {account_id} from group id: {group_id}?"
     )) {
-        match delete_request(&url, global["user"], global["token"]) {
+        match delete_request(&url, global.user.as_str(), global.token.as_str()) {
             Err(e) => {
                 eprintln!("Impossible to remove user: {e}");
                 exit(1)

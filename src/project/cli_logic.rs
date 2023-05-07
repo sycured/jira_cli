@@ -5,14 +5,14 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::collections::HashMap;
-
 use clap::ArgMatches;
 use rayon::prelude::*;
 
+use crate::Global;
+
 use super::functions;
 
-pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn create(global: &Global, args: &ArgMatches) {
     functions::create(
         global,
         args.get_one::<String>("project_name").unwrap().as_str(),
@@ -25,35 +25,35 @@ pub fn create(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
-pub fn delete_project(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn delete_project(global: &Global, args: &ArgMatches) {
     functions::delete_project(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
-pub fn get_id(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn get_id(global: &Global, args: &ArgMatches) {
     functions::get_id(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
-pub fn list_features(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn list_features(global: &Global, args: &ArgMatches) {
     functions::list_features(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
-pub fn list_versions(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn list_versions(global: &Global, args: &ArgMatches) {
     functions::list_versions(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
-pub fn new_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn new_version(global: &Global, args: &ArgMatches) {
     functions::new_version(
         global,
         args.get_one::<String>("project_id").unwrap().as_str(),
@@ -61,7 +61,7 @@ pub fn new_version(global: &HashMap<&str, &str>, args: &ArgMatches) {
     );
 }
 
-pub fn set_feature_state(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn set_feature_state(global: &Global, args: &ArgMatches) {
     let feature_keys: Vec<&String> = args
         .get_many::<String>("feature_key")
         .map(Iterator::collect)

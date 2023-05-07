@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::collections::HashMap;
-
 use clap::{ArgMatches, Command};
+
+use crate::Global;
 
 pub mod cli_commands;
 pub mod cli_logic;
@@ -42,7 +42,7 @@ pub fn cli_commands() -> Command {
         .subcommand(cli_commands::update_link_type())
 }
 
-pub fn logic_commands(global: &HashMap<&str, &str>, args: &ArgMatches) {
+pub fn logic_commands(global: &Global, args: &ArgMatches) {
     match args.subcommand() {
         Some(("add_label", args)) => cli_logic::add_label(global, args),
         Some(("add_version", args)) => cli_logic::add_version(global, args),
