@@ -54,7 +54,7 @@ pub fn delete_request(url: &str, user: &str, token: &str) -> Result<Response, Er
     delete(url)
         .header(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(user, token)),
+            format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .send()?
         .error_for_status()
@@ -66,7 +66,7 @@ pub fn get_request(url: &str, user: &str, token: &str) -> Result<Response, Error
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(user, token)),
+            format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .send()?
         .error_for_status()
@@ -83,7 +83,7 @@ pub fn post_request(
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(user, token)),
+            format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .json(payload)?
         .send()?
@@ -96,7 +96,7 @@ pub fn put_request(url: &str, payload: &Value, user: &str, token: &str) -> Resul
         .header("Accept", "application/json")
         .header_append(
             "Authorization",
-            &format!("Basic {b64}", b64 = b64auth(user, token)),
+            format!("Basic {b64}", b64 = b64auth(user, token)),
         )
         .json(payload)?
         .send()?
