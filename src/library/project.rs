@@ -12,12 +12,10 @@ use itertools::Itertools;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use jira_cli::{
+use crate::{
     confirm, create_and_print_table, delete_request, get_request, post_request, put_request,
+    urls::URLS, Global,
 };
-
-use crate::urls::URLS;
-use crate::Global;
 
 #[allow(clippy::too_many_arguments)]
 pub fn create(
@@ -47,8 +45,11 @@ pub fn create(
 }
 
 #[allow(clippy::unit_arg)]
-pub fn delete_project(global: &Global, project_key: &str) {
-    let url: String = format!("https://{}{}/{project_key}", global.domain, URLS["project"]);
+pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
+    let url: String = format!(
+        "https://{}{}/{project_key}?enableUndo={enable_undo}",
+        global.domain, URLS["project"]
+    );
     if confirm(format!(
         "Are you sure you want to delete the project key: {project_key}?"
     )) {
@@ -64,6 +65,7 @@ pub fn delete_project(global: &Global, project_key: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn get_id(global: &Global, project_key: &str) {
     let url: String = format!("https://{}{}/{project_key}", global.domain, URLS["project"]);
     match get_request(&url, global.user.as_str(), global.token.as_str()) {
@@ -78,6 +80,7 @@ pub fn get_id(global: &Global, project_key: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn list_features(global: &Global, project_key: &str) {
     let url: String = format!(
         "https://{}{}/{project_key}/features",
@@ -122,6 +125,7 @@ pub fn list_features(global: &Global, project_key: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn list_versions(global: &Global, project_key: &str) {
     let url: String = format!(
         "https://{}{}/{project_key}/versions",
@@ -175,6 +179,7 @@ pub fn list_versions(global: &Global, project_key: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn new_version(global: &Global, project_id: &str, version_name: &str) {
     let url: String = format!("https://{}{}", global.domain, URLS["version"]);
     let payload: Value = json!({

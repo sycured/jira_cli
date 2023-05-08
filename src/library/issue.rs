@@ -11,9 +11,10 @@ use comfy_table::{Cell, CellAlignment};
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use jira_cli::{create_and_print_table, delete_request, get_request, post_request, put_request};
-
-use crate::{urls::URLS, Global};
+use crate::{
+    create_and_print_table, delete_request, get_request, post_request, put_request, urls::URLS,
+    Global,
+};
 
 pub fn add_label(global: &Global, issue_key: &str, label: &str) {
     let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
@@ -86,7 +87,7 @@ pub fn assign(global: &Global, issue_key: &str, account_id: &str, success_messag
     }
 }
 
-#[allow(clippy::too_many_arguments)]
+#[allow(clippy::missing_panics_doc)]
 pub fn create(
     global: &Global,
     reporter_account_id: &str,
@@ -127,6 +128,7 @@ pub fn create(
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn create_link_type(global: &Global, name: &str, inward: &str, outward: &str) {
     let url: String = format!("https://{}{}", global.domain, URLS["issue_link_types"]);
     let payload: Value = json!({
@@ -187,6 +189,7 @@ pub fn delete_link_type(global: &Global, link_type_id: &str) {
 }
 
 //noinspection DuplicatedCode
+#[allow(clippy::missing_panics_doc)]
 pub fn get_link_type(global: &Global, link_type_id: &str) {
     let url: String = format!(
         "https://{}{}/{link_type_id}",
@@ -224,6 +227,7 @@ pub fn get_link_type(global: &Global, link_type_id: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn get_transitions(global: &Global, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/transitions",
@@ -262,6 +266,7 @@ pub fn get_transitions(global: &Global, issue_key: &str) {
 }
 
 //noinspection DuplicatedCode
+#[allow(clippy::missing_panics_doc)]
 pub fn list_link_types(global: &Global) {
     let url: String = format!("https://{}{}", global.domain, URLS["issue_link_types"]);
     match get_request(&url, global.user.as_str(), global.token.as_str()) {
@@ -298,6 +303,7 @@ pub fn list_link_types(global: &Global) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn list_priorities(global: &Global) {
     let url: String = format!("https://{}{}", global.domain, URLS["priority"]);
     match get_request(&url, global.user.as_str(), global.token.as_str()) {
@@ -314,6 +320,7 @@ pub fn list_priorities(global: &Global) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn list_types(global: &Global, project_key: &str) {
     let url: String = format!(
         "https://{}{}/createmeta?projectKeys={project_key}",
@@ -338,6 +345,7 @@ pub fn list_types(global: &Global, project_key: &str) {
 }
 
 //noinspection DuplicatedCode
+#[allow(clippy::missing_panics_doc)]
 pub fn list_votes(global: &Global, issue_key: &str) {
     let url: String = format!(
         "https://{}{}/{issue_key}/votes",
@@ -437,6 +445,7 @@ pub fn remove_vote(global: &Global, issue_key: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn show_fixversions(global: &Global, issue_key: &str) {
     let url: String = format!("https://{}{}/{issue_key}", global.domain, URLS["issue"]);
     match get_request(&url, global.user.as_str(), global.token.as_str()) {

@@ -5,35 +5,11 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::process::exit;
-
 use clap::{Arg, ArgMatches, Command};
-use rayon::prelude::*;
-use serde_json::Value;
 
-use jira_cli::get_request;
+use jira_cli::labels::list;
 
-use crate::urls::URLS;
 use crate::Global;
-
-fn list_labels(domain: &str, user: &str, token: &str, start_at: &str, max_results: &str) {
-    let url: String = format!(
-        "https://{}{}?startAt={}&maxResults={}",
-        domain, URLS["label"], start_at, max_results
-    );
-    match get_request(&url, user, token) {
-        Err(e) => {
-            eprintln!("Impossible to list labels: {e}");
-            exit(1);
-        }
-        Ok(r) => {
-            let json: Value = r.json().unwrap();
-            json["values"].as_array().unwrap().par_iter().for_each(|x| {
-                println!("{x}");
-            });
-        }
-    }
-}
 
 pub fn cli_commands() -> Command {
     Command::new("labels")
@@ -54,7 +30,7 @@ pub fn cli_commands() -> Command {
 }
 
 pub fn logic_commands(global: &Global, args: &ArgMatches) {
-    list_labels(
+    list(
         global.domain.as_str(),
         global.user.as_str(),
         global.token.as_str(),

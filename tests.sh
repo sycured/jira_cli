@@ -9,7 +9,8 @@
 
 set -e
 export JIRA_CLI="./target/debug/jira_cli"
-export JIRA_PROJECT_KEY="CITS"
+export JIRA_PROJECT_NAME="ci-$GIT_ACTION_RUN_NUMBER"
+export JIRA_PROJECT_KEY="CI$GIT_ACTION_RUN_NUMBER"
 export JIRA_VERSION_NAME="v0.0.0"
 
 # version
@@ -37,7 +38,7 @@ echo "$JIRA_USER_ACCOUNT_ID"
 # project
 ## create
 echo "project create"
-$JIRA_CLI project create citest CITS "$JIRA_USER_ACCOUNT_ID"
+$JIRA_CLI project create $JIRA_PROJECT_NAME $JIRA_PROJECT_KEY "$JIRA_USER_ACCOUNT_ID"
 ## get_id
 echo "project get_id"
 $JIRA_CLI project get_id $JIRA_PROJECT_KEY

@@ -11,7 +11,6 @@ use crate::Global;
 
 pub mod cli_commands;
 pub mod cli_logic;
-pub mod functions;
 
 pub fn cli_commands() -> Command {
     Command::new("project")

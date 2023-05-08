@@ -11,9 +11,9 @@ use comfy_table::{Cell, CellAlignment};
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use jira_cli::{confirm, create_and_print_table, delete_request, get_request, post_request};
-
-use crate::{urls::URLS, Global};
+use crate::{
+    confirm, create_and_print_table, delete_request, get_request, post_request, urls::URLS, Global,
+};
 
 pub fn add_user(global: &Global, account_id: &str, group_id: &str) {
     let url: String = format!(
@@ -64,6 +64,7 @@ pub fn delete(global: &Global, group_id: &str) {
 }
 
 //noinspection DuplicatedCode
+#[allow(clippy::missing_panics_doc)]
 pub fn find(global: &Global, query: &str) {
     let url: String = format!(
         "https://{}{}/picker?query={query}",
@@ -97,6 +98,7 @@ pub fn find(global: &Global, query: &str) {
 }
 
 //noinspection DuplicatedCode
+#[allow(clippy::missing_panics_doc)]
 pub fn list_groups(global: &Global, start_at: &str, max_results: &str) {
     let url: String = format!(
         "https://{}{}/bulk?startAt={start_at}&maxResults={max_results}",
@@ -130,6 +132,7 @@ pub fn list_groups(global: &Global, start_at: &str, max_results: &str) {
 }
 
 //noinspection DuplicatedCode
+#[allow(clippy::missing_panics_doc)]
 pub fn list_users(
     global: &Global,
     group_id: &str,
