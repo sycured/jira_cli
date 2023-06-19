@@ -27,7 +27,7 @@ attohttpc = { version = "0.25.0", default-features = false, features = ["compres
 base64 = "0.21.2"
 clap = { version = "4.3.4", features = ["cargo", "env", "wrap_help"] }
 clap_complete = "4.3.1"
-comfy-table = "7.0.0"
+comfy-table = "7.0.1"
 dialoguer = "0.10.4"
 human-panic = "1.1.5"
 itertools = "0.10.5"
