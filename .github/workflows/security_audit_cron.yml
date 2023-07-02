@@ -36,11 +36,12 @@ jobs:
           rm /home/runner/.cargo/bin/rustfmt
           rustup self update
           rustup update --no-self-update
+          curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+          cargo binstall -y cargo-quickinstall
 
       - name: Audit check
         run: |
-          curl --location --output /tmp/cargo-audit.tar.gz https://github.com/rustsec/rustsec/releases/download/cargo-audit%2Fv0.17.4/cargo-audit-x86_64-unknown-linux-musl-v0.17.4.tgz
-          tar --extract --verbose --gzip --file /tmp/cargo-audit.tar.gz --directory /usr/local/bin/ --strip-components=1 cargo-audit-x86_64-unknown-linux-musl-v0.17.4/cargo-audit
+          cargo binstall -y cargo-audit
           cargo audit --json > $HOME/audit.json || exit 0
 
       - name: Check a local package and all of its dependencies for errors
@@ -57,14 +58,12 @@ jobs:
 
       - name: Outdated check
         run: |
-          curl --output /usr/local/bin/cargo-outdated https://www.tuziwo.info/cargo-outdated-v0.11.1-x86_64-unknown-linux-gnu
-          chmod a+x /usr/local/bin/cargo-outdated
+          cargo binstall -y cargo-outdated
           cargo outdated --depth 1 --format json > $HOME/outdated.json
 
       - name: Udeps check
         run: |
-          curl --location --output /usr/local/bin/cargo-udeps https://www.tuziwo.info/cargo-udeps-v0.1.35-x86_64-unknown-linux-gnu
-          chmod a+x /usr/local/bin/cargo-udeps
+          cargo binstall -y cargo-udeps
           cargo +nightly udeps --quiet --workspace --all-features --all-targets --output json > $HOME/udeps.json || exit 0
 
       - name: Clippy check
@@ -74,8 +73,7 @@ jobs:
 
       - name: Sonar converter
         run: |
-          curl --location --output /usr/local/bin/cargo-sonar https://www.tuziwo.info/cargo-sonar-v0.14.1-x86_64-unknown-linux-gnu
-          chmod a+x /usr/local/bin/cargo-sonar
+          cargo binstall -y cargo-sonar
           cargo sonar --issues audit,clippy,outdated,udeps --audit-path $HOME/audit.json --clippy-path $HOME/clippy.json --outdated-path $HOME/outdated.json --udeps-path $HOME/udeps.json --issues-path $HOME/sonar.json
 
       - name: Setup sonarqube
