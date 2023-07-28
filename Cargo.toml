@@ -40,4 +40,4 @@ zeroize = { version = "1.6.0", features = ["zeroize_derive"] }
 clap = { version = "4.3.19", features = ["cargo", "deprecated", "env", "wrap_help"] }
 
 [target.'cfg(not(target_os = "windows"))'.dependencies]
-jemallocator = "0.5.0"
+jemallocator = "0.5.4"
