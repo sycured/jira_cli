@@ -10,10 +10,7 @@ use std::process::exit;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
-use jira_cli::{confirm, delete_request, get_request, post_request};
-
-use crate::urls::URLS;
-use crate::Global;
+use crate::{confirm, delete_request, get_request, post_request, urls::URLS, Global};
 
 pub fn create(global: &Global, email: &str, display_name: &str) {
     let url = format!("https://{}{}", global.domain, URLS["user"]);
@@ -51,6 +48,7 @@ pub fn delete(global: &Global, account_id: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn get_account_id(global: &Global, email_address: &str) {
     let url: String = format!(
         "https://{}{}?query={email_address}",
@@ -69,6 +67,7 @@ pub fn get_account_id(global: &Global, email_address: &str) {
     }
 }
 
+#[allow(clippy::missing_panics_doc)]
 pub fn get_user_groups(global: &Global, account_id: &str) {
     let url: String = format!(
         "https://{}{}/groups?accountId={account_id}",

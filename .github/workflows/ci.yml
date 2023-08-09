@@ -68,6 +68,11 @@ jobs:
           curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
           cargo binstall -y --force cargo-quickinstall
 
+      - name: Deny check
+        run: |
+          cargo binstall -y --force cargo-deny
+          cargo deny --format json check bans licenses sources advisories > $HOME/deny.json || exit 0
+
       - name: Audit check
         run: |
           cargo binstall -y --force cargo-audit
@@ -103,7 +108,7 @@ jobs:
       - name: Sonar converter
         run: |
           cargo binstall -y --force cargo-sonar
-          cargo sonar --issues audit,clippy,outdated,udeps --audit-path $HOME/audit.json --clippy-path $HOME/clippy.json --outdated-path $HOME/outdated.json --udeps-path $HOME/udeps.json --issues-path $HOME/sonar.json
+          cargo sonar --issues audit,clippy,deny,outdated,udeps --audit-path $HOME/audit.json --clippy-path $HOME/clippy.json --deny-path $HOME/deny.json --outdated-path $HOME/outdated.json --udeps-path $HOME/udeps.json --issues-path $HOME/sonar.json
 
       - name: Setup sonarqube
         uses: warchant/setup-sonar-scanner@v3

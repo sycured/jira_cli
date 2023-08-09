@@ -8,12 +8,10 @@
 use clap::ArgMatches;
 use rayon::prelude::*;
 
-use crate::Global;
-
-use super::functions;
+use jira_cli::{project, Global};
 
 pub fn create(global: &Global, args: &ArgMatches) {
-    functions::create(
+    project::create(
         global,
         args.get_one::<String>("project_name").unwrap().as_str(),
         args.get_one::<String>("project_key").unwrap().as_str(),
@@ -26,35 +24,35 @@ pub fn create(global: &Global, args: &ArgMatches) {
 }
 
 pub fn delete_project(global: &Global, args: &ArgMatches) {
-    functions::delete_project(
+    project::delete(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
 pub fn get_id(global: &Global, args: &ArgMatches) {
-    functions::get_id(
+    project::get_id(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
 pub fn list_features(global: &Global, args: &ArgMatches) {
-    functions::list_features(
+    project::list_features(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
 pub fn list_versions(global: &Global, args: &ArgMatches) {
-    functions::list_versions(
+    project::list_versions(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
     );
 }
 
 pub fn new_version(global: &Global, args: &ArgMatches) {
-    functions::new_version(
+    project::new_version(
         global,
         args.get_one::<String>("project_id").unwrap().as_str(),
         args.get_one::<String>("version_name").unwrap().as_str(),
@@ -67,7 +65,7 @@ pub fn set_feature_state(global: &Global, args: &ArgMatches) {
         .map(Iterator::collect)
         .unwrap();
     feature_keys.par_iter().for_each(|feature_key| {
-        functions::set_feature_state(
+        project::set_feature_state(
             global,
             args.get_one::<String>("project_key").unwrap().as_str(),
             feature_key.as_str(),

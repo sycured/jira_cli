@@ -7,6 +7,9 @@
 
 #![forbid(unsafe_code)]
 
+pub mod library;
+pub use library::*;
+
 use std::collections::HashMap;
 
 use attohttpc::{delete, get, post, put, Error, Response};
@@ -17,6 +20,14 @@ use comfy_table::{
 };
 use dialoguer::Confirm;
 use serde_json::Value;
+use zeroize::{Zeroize, ZeroizeOnDrop};
+
+#[derive(Zeroize, ZeroizeOnDrop)]
+pub struct Global {
+    pub domain: String,
+    pub user: String,
+    pub token: String,
+}
 
 fn b64auth(user: &str, token: &str) -> String {
     b64::STANDARD.encode(format!("{user}:{token}"))

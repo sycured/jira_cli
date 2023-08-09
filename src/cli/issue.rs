@@ -9,9 +9,8 @@ use clap::{ArgMatches, Command};
 
 use crate::Global;
 
-pub mod cli_commands;
-pub mod cli_logic;
-pub mod functions;
+mod cli_commands;
+mod cli_logic;
 
 pub fn cli_commands() -> Command {
     Command::new("issue")

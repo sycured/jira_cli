@@ -5,12 +5,18 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
+pub mod check_version;
+pub mod group;
+pub mod issue;
+pub mod labels;
+pub mod license;
+pub mod project;
+pub mod user;
+
 use clap::{
     crate_authors, crate_description, crate_name, crate_version, value_parser, Arg, Command,
 };
 use clap_complete::Shell;
-
-use crate::{check_version, group, issue, labels, license, project, user};
 
 fn generate() -> Command {
     Command::new("generate")
