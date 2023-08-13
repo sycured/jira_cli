@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use clap::{Arg, Command};
+use clap::{Arg, ArgAction::SetTrue, Command};
 
 pub fn create() -> Command {
     Command::new("create")
@@ -46,6 +46,13 @@ pub fn delete_project() -> Command {
         .visible_aliases(["destroy", "destroy_project"])
         .about("Delete project")
         .arg_required_else_help(true)
+        .arg(Arg::new("disable_undo")
+            .long("disable_undo")
+            .short('d')
+            .help("Activate the direct deletion so the project isn't placed in the Jira recycle bin avoiding restauration.")
+            .required(false)
+            .action(SetTrue)
+        )
         .arg(Arg::new("project_key").help("Project key").required(true))
 }
 

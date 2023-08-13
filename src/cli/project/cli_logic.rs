@@ -27,6 +27,7 @@ pub fn delete_project(global: &Global, args: &ArgMatches) {
     project::delete(
         global,
         args.get_one::<String>("project_key").unwrap().as_str(),
+        !args.get_flag("disable_undo"),
     );
 }
 
