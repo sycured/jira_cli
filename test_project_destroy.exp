@@ -18,7 +18,7 @@ if {$force_conservative} {
 }
 
 set timeout -1
-spawn $env(JIRA_CLI) project delete_project $env(JIRA_PROJECT_KEY)
+spawn $env(JIRA_CLI) project delete_project --disable_undo $env(JIRA_PROJECT_KEY)
 match_max 100000
 expect -exact "Are you sure you want to delete the project key: $env(JIRA_PROJECT_KEY)? \[y/n\] \[?25l"
 send -- "y"

@@ -45,8 +45,11 @@ pub fn create(
 }
 
 #[allow(clippy::unit_arg)]
-pub fn delete(global: &Global, project_key: &str) {
-    let url: String = format!("https://{}{}/{project_key}", global.domain, URLS["project"]);
+pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
+    let url: String = format!(
+        "https://{}{}/{project_key}?enableUndo={enable_undo}",
+        global.domain, URLS["project"]
+    );
     if confirm(format!(
         "Are you sure you want to delete the project key: {project_key}?"
     )) {
