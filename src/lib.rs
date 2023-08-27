@@ -51,7 +51,7 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
         .load_preset(UTF8_FULL)
         .apply_modifier(UTF8_ROUND_CORNERS)
         .set_content_arrangement(ContentArrangement::DynamicFullWidth);
-    for (key, value) in column_alignment.iter() {
+    for (key, value) in column_alignment {
         table.column_mut(*key).unwrap().set_cell_alignment(*value);
     }
     for row in rows {
