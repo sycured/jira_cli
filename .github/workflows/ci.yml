@@ -129,7 +129,7 @@ jobs:
           cache-on-failure: true
       - uses: actions/checkout@v3
       - name: Update Rustup and define default toolchain
-        run: rustup update --no-self-update table && rustup default stable
+        run: rustup update --no-self-update stable && rustup default stable
       - name: Add target
         run: rustup target add x86_64-unknown-linux-gnu
       - name: Install dependencies for Linux
