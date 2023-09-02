@@ -118,10 +118,43 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  test:
+    runs-on: ubuntu-latest
+    needs:
+      - check
+    steps:
+      - uses: Swatinem/rust-cache@v1
+        with:
+          sharedKey: jira_cli-x86_64-unknown-linux-gnu
+          cache-on-failure: true
+      - uses: actions/checkout@v3
+      - name: Update Rustup and define default toolchain
+        run: rustup update --no-self-update table && rustup default stable
+      - name: Add target
+        run: rustup target add x86_64-unknown-linux-gnu
+      - name: Install dependencies for Linux
+        run: sudo apt update -y && sudo apt install --no-install-recommends expect gcc-multilib libjemalloc-dev libsecret-1-0 libsecret-1-dev mold -y
+      - name: Setup mold linker
+        run: echo -e '[target.x86_64-unknown-linux-gnu]\nlinker = "/usr/bin/clang"\nrustflags = ["-C", "link-arg=--ld-path=/usr/bin/mold"]' > ~/.cargo/config.toml
+      - name: Install rustfmt
+        run: rustup component add rustfmt || echo "rustfmt not available"
+      - name: Build
+        run: cargo build
+      - name: Run tests.sh
+        run: ./tests.sh
+        env:
+          GIT_ACTION_RUN_NUMBER: ${{ github.run_number }}
+          JIRA_DOMAIN: ${{ secrets.JIRA_DOMAIN }}
+          JIRA_USER: ${{ secrets.JIRA_USER }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          JIRA_USER_ACCOUNT_ID: ${{ secrets.JIRA_USER_ACCOUNT_ID }}
+
+
   native:
     runs-on: ${{ matrix.os }}
     needs:
       - check
+      - test
     strategy:
       fail-fast: false
       matrix:
@@ -172,6 +205,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     needs:
       - check
+      - test
     strategy:
       fail-fast: false
       matrix:
@@ -216,6 +250,7 @@ jobs:
     runs-on: macos-12
     needs:
       - check
+      - test
     steps:
       - uses: actions/checkout@v3
       - name: Cache target
@@ -242,6 +277,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     needs:
       - check
+      - test
       - native
       - cross
       - freebsd-x86-64
