@@ -11,5 +11,6 @@ pub mod group;
 pub mod issue;
 pub mod labels;
 pub mod project;
+pub mod sprint;
 pub mod urls;
 pub mod user;

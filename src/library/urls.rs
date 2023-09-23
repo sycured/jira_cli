@@ -19,6 +19,7 @@ lazy_static! {
         ("label", "/rest/api/3/label"),
         ("priority", "/rest/api/3/priority"),
         ("project", "/rest/api/3/project"),
+        ("sprint", "/est/agile/1.0/sprint"),
         ("user", "/rest/api/3/user"),
         ("version", "/rest/api/3/version"),
     ]
