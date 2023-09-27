@@ -10,9 +10,9 @@
 pub mod library;
 pub use library::*;
 
-use std::collections::HashMap;
+use std::{collections::HashMap, process::exit};
 
-use attohttpc::{delete, get, post, put, Error, Response};
+use attohttpc::{Error, Method, Response};
 use base64::{engine::general_purpose as b64, Engine};
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
@@ -29,8 +29,19 @@ pub struct Global {
     pub token: String,
 }
 
-fn b64auth(user: &str, token: &str) -> String {
-    b64::STANDARD.encode(format!("{user}:{token}"))
+impl Global {
+    fn b64auth(&self) -> String {
+        b64::STANDARD.encode(&format!("{}:{}", self.user, self.token))
+    }
+}
+
+pub fn handle_error_and_exit(message: &str) {
+    eprintln!("{message}");
+    exit(1);
+}
+
+pub fn print_output(output: &str) {
+    println!("{output}");
 }
 
 #[allow(clippy::missing_panics_doc)]
@@ -60,56 +71,44 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
     println!("{table}");
 }
 
-#[allow(clippy::missing_errors_doc)]
-pub fn delete_request(url: &str, user: &str, token: &str) -> Result<Response, Error> {
-    delete(url)
-        .header(
-            "Authorization",
-            format!("Basic {b64}", b64 = b64auth(user, token)),
-        )
-        .send()?
-        .error_for_status()
+pub fn exit_with_error<T: std::fmt::Display>(msg: T, exit_code: i32) {
+    eprintln!("{msg}");
+    exit(exit_code);
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn get_request(url: &str, user: &str, token: &str) -> Result<Response, Error> {
-    get(url)
-        .header("Accept", "application/json")
-        .header_append(
-            "Authorization",
-            format!("Basic {b64}", b64 = b64auth(user, token)),
-        )
-        .send()?
-        .error_for_status()
-}
-
-#[allow(clippy::missing_errors_doc)]
-pub fn post_request(
+pub fn make_request(
+    method: Method,
     url: &str,
-    payload: &Value,
-    user: &str,
-    token: &str,
+    payload: Option<&Value>,
+    b64auth: String,
 ) -> Result<Response, Error> {
-    post(url)
+    let builder = attohttpc::RequestBuilder::new(method, url)
         .header("Accept", "application/json")
-        .header_append(
-            "Authorization",
-            format!("Basic {b64}", b64 = b64auth(user, token)),
-        )
-        .json(payload)?
-        .send()?
-        .error_for_status()
+        .header("Authorization", format!("Basic {b64auth}"));
+
+    let payload = payload.unwrap_or(&Value::Null);
+    let builder = builder.json(payload)?;
+
+    builder.send().and_then(Response::error_for_status)
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn put_request(url: &str, payload: &Value, user: &str, token: &str) -> Result<Response, Error> {
-    put(url)
-        .header("Accept", "application/json")
-        .header_append(
-            "Authorization",
-            format!("Basic {b64}", b64 = b64auth(user, token)),
-        )
-        .json(payload)?
-        .send()?
-        .error_for_status()
+pub fn delete_request(url: &str, b64auth: String) -> Result<Response, Error> {
+    make_request(Method::DELETE, url, None, b64auth)
+}
+
+#[allow(clippy::missing_errors_doc)]
+pub fn get_request(url: &str, b64auth: String) -> Result<Response, Error> {
+    make_request(Method::GET, url, None, b64auth)
+}
+
+#[allow(clippy::missing_errors_doc)]
+pub fn post_request(url: &str, payload: &Value, b64auth: String) -> Result<Response, Error> {
+    make_request(Method::POST, url, Some(payload), b64auth)
+}
+
+#[allow(clippy::missing_errors_doc)]
+pub fn put_request(url: &String, payload: &Value, b64auth: String) -> Result<Response, Error> {
+    make_request(Method::PUT, url, Some(payload), b64auth)
 }
