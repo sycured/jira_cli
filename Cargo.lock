@@ -444,11 +444,11 @@ dependencies = [
 
 [[package]]
 name = "human-panic"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb2df2fb4e13fa697d21d93061ebcbbd876f5ef643b48ff59cfab57a726ef140"
+checksum = "b82da652938b83f94cfdaaf9ae7aaadb8430d84b0dfda226998416318727eac2"
 dependencies = [
- "anstream 0.5.0",
+ "anstream 0.6.1",
  "anstyle",
  "backtrace",
  "os_info",
