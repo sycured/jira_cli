@@ -11,7 +11,7 @@ mod cli;
 
 use std::io::stdout;
 
-use clap::Command;
+use clap::{ArgMatches, Command};
 use clap_complete::{generate, Generator, Shell};
 use human_panic::setup_panic;
 #[cfg(not(target_os = "windows"))]
@@ -29,13 +29,17 @@ fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_owned(), &mut stdout());
 }
 
+fn get_one_match_string(matches: &ArgMatches, name: &str) -> String {
+    matches.get_one::<String>(name).unwrap().to_string()
+}
+
 fn main() {
     setup_panic!();
     let matches = cli::build_cli().get_matches();
     let global: Global = Global {
-        domain: matches.get_one::<String>("domain").unwrap().to_string(),
-        user: matches.get_one::<String>("user").unwrap().to_string(),
-        token: matches.get_one::<String>("token").unwrap().to_string(),
+        domain: get_one_match_string(&matches, "domain"),
+        user: get_one_match_string(&matches, "user"),
+        token: get_one_match_string(&matches, "token"),
     };
 
     match matches.subcommand() {
