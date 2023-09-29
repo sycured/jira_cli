@@ -5,28 +5,24 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use std::process::exit;
-
 use rayon::prelude::*;
 use serde_json::Value;
 
-use crate::{get_request, urls::URLS};
+use crate::{generate_url, get_request, handle_error_and_exit, print_output, Global};
 
 #[allow(clippy::missing_panics_doc)]
-pub fn list(domain: &str, user: &str, token: &str, start_at: &str, max_results: &str) {
-    let url: String = format!(
-        "https://{}{}?startAt={}&maxResults={}",
-        domain, URLS["label"], start_at, max_results
+pub fn list(global: &Global, start_at: &str, max_results: &str) {
+    let url: String = generate_url(
+        &global.domain,
+        "label",
+        Some(&format!("?startAt={start_at}&maxResults={max_results}")),
     );
-    match get_request(&url, user, token) {
-        Err(e) => {
-            eprintln!("Impossible to list labels: {e}");
-            exit(1);
-        }
+    match get_request(&url, global.b64auth()) {
+        Err(e) => handle_error_and_exit(&format!("Impossible to list labels: {e}")),
         Ok(r) => {
-            let json: Value = r.json().unwrap();
+            let json: Value = r.json().expect("Failed to parse json");
             json["values"].as_array().unwrap().par_iter().for_each(|x| {
-                println!("{x}");
+                print_output(&format!("{x}"));
             });
         }
     }

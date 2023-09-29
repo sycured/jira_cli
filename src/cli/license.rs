@@ -6,9 +6,10 @@
  */
 
 use clap::{crate_description, crate_name, Command};
+use lazy_static::lazy_static;
 
-fn license() {
-    println!(
+lazy_static! {
+    static ref LICENSE_TEXT: String = format!(
         "{}\n\
         {}\n\
         \n\
@@ -20,11 +21,15 @@ fn license() {
         \n\
         \n\
         License file:\n\
-            - https://github.com/sycured/jira_cli/blob/main/LICENSE\n\
-            - https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
+        - https://github.com/sycured/jira_cli/blob/main/LICENSE\n\
+        - https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt",
         crate_name!(),
         crate_description!()
     );
+}
+
+fn license() {
+    println!("{}", &*LICENSE_TEXT);
 }
 
 pub fn cli_commands() -> Command {

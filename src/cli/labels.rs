@@ -31,9 +31,7 @@ pub fn cli_commands() -> Command {
 
 pub fn logic_commands(global: &Global, args: &ArgMatches) {
     list(
-        global.domain.as_str(),
-        global.user.as_str(),
-        global.token.as_str(),
+        global,
         args.get_one::<String>("start_at")
             .unwrap_or(&String::new())
             .as_str(),
