@@ -122,13 +122,11 @@ pub fn delete() -> Command {
     Command::new("delete")
         .about("Delete an issue")
         .visible_aliases(["d", "del", "rm"])
-        .arg_required_else_help(true)
         .arg(Arg::new("issue_key").help("Issue key").required(true))
         .arg(
             Arg::new("delete_subtasks")
-                .help("Delete subtasks")
-                .default_value("false")
-                .value_parser(["true", "false"]),
+                .long("delete_subtasks")
+                .help("Activate deletion of all subtasks"),
         )
 }
 
