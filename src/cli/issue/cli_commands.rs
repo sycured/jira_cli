@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: GPL-2.0-only
  */
 
-use clap::{Arg, Command};
+use clap::{Arg, ArgAction, Command};
 
 pub fn add_label() -> Command {
     Command::new("add_label")
@@ -126,6 +126,7 @@ pub fn delete() -> Command {
         .arg(
             Arg::new("delete_subtasks")
                 .long("delete_subtasks")
+                .action(ArgAction::SetTrue)
                 .help("Activate deletion of all subtasks"),
         )
 }
