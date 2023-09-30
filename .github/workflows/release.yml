@@ -28,21 +28,12 @@ jobs:
             target: x86_64-apple-darwin
             artifact_name: jira_cli
             asset_name: jira_cli-darwin_amd64
-          - os: windows-latest
-            rust: stable-gnu
-            target: x86_64-pc-windows-gnu
-            artifact_name: jira_cli.exe
-            asset_name: jira_cli-windows_gnu_amd64.exe
     steps:
       - uses: Swatinem/rust-cache@v1
         with:
           sharedKey: jira_cli-${{ matrix.target }}
           cache-on-failure: true
       - uses: actions/checkout@v3
-      - name: Update Rustup (temporary workaround)
-        run: rustup self update
-        shell: bash
-        if: startsWith(matrix.os, 'windows')
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.target }}
@@ -86,10 +77,6 @@ jobs:
           sharedKey: jira_cli-${{ matrix.target }}
           cache-on-failure: true
       - uses: actions/checkout@v3
-      - name: Update Rustup (temporary workaround)
-        run: rustup self update
-        shell: bash
-        if: startsWith(matrix.os, 'windows')
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.target }}

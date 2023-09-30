@@ -165,19 +165,12 @@ jobs:
           - os: macos-latest
             rust: stable
             target: x86_64-apple-darwin
-          - os: windows-latest
-            rust: stable-gnu
-            target: x86_64-pc-windows-gnu
     steps:
       - uses: Swatinem/rust-cache@v1
         with:
           sharedKey: jira_cli-${{ matrix.target }}
           cache-on-failure: true
       - uses: actions/checkout@v3
-      - name: Update Rustup (temporary workaround)
-        run: rustup self update
-        shell: bash
-        if: startsWith(matrix.os, 'windows')
       - name: Update Rustup and define default toolchain
         run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
       - name: Add target
@@ -222,10 +215,6 @@ jobs:
           sharedKey: jira_cli-${{ matrix.target }}
           cache-on-failure: true
       - uses: actions/checkout@v3
-      - name: Update Rustup (temporary workaround)
-        run: rustup self update
-        shell: bash
-        if: startsWith(matrix.os, 'windows')
       - name: Update Rustup and define default toolchain
         run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
       - name: Add target
