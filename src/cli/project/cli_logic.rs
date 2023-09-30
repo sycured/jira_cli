@@ -24,11 +24,13 @@ pub fn create(global: &Global, args: &ArgMatches) {
 }
 
 pub fn delete_project(global: &Global, args: &ArgMatches) {
-    project::delete(
-        global,
-        args.get_one::<String>("project_key").unwrap().as_str(),
-        !args.get_flag("disable_undo"),
-    );
+    let project_keys: Vec<&String> = args
+        .get_many::<String>("project_key")
+        .map(Iterator::collect)
+        .unwrap();
+    project_keys
+        .par_iter()
+        .for_each(|prj| project::delete(global, prj, !args.get_flag("disable_undo")));
 }
 
 pub fn get_id(global: &Global, args: &ArgMatches) {

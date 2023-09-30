@@ -53,7 +53,7 @@ pub fn delete_project() -> Command {
             .required(false)
             .action(SetTrue)
         )
-        .arg(Arg::new("project_key").help("Project key").required(true))
+        .arg(Arg::new("project_key").value_delimiter(',').help("Project key").required(true))
 }
 
 pub fn get_id() -> Command {
