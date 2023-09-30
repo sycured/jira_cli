@@ -8,6 +8,7 @@
 use clap::ArgMatches;
 use jira_cli::{issue, Global};
 use rayon::prelude::*;
+use std::borrow::ToOwned;
 
 const ACCOUNT_ID: &str = "account_id";
 const ISSUE_KEY: &str = "issue_key";
@@ -29,8 +30,8 @@ fn handle_issue_keys<F>(global: &Global, args: &ArgMatches, func: F)
 where
     F: Fn(&Global, &String) + Sync,
 {
-    if let Some(issue_keys) = args.get_many(ISSUE_KEY) {
-        let issue_keys: Vec<String> = issue_keys.map(|s: &String| s.to_owned()).collect();
+    if let Some(issue_keys) = args.get_many::<String>(ISSUE_KEY) {
+        let issue_keys: Vec<String> = issue_keys.map(ToOwned::to_owned).collect();
         issue_keys
             .par_iter()
             .for_each(|issue_key| func(global, issue_key));
@@ -40,20 +41,20 @@ where
 pub fn add_label(global: &Global, args: &ArgMatches) {
     let label = args.get_one::<String>(LABEL).unwrap();
     handle_issue_keys(global, args, |global, issue_key| {
-        issue::add_label(global, issue_key, &label)
+        issue::add_label(global, issue_key, label);
     });
 }
 
 pub fn add_version(global: &Global, args: &ArgMatches) {
     let version_name = args.get_one::<String>(VERSION_NAME).unwrap();
     handle_issue_keys(global, args, |global, issue_key| {
-        issue::add_version(global, &version_name, issue_key)
+        issue::add_version(global, version_name, issue_key);
     });
 }
 
 pub fn add_vote(global: &Global, args: &ArgMatches) {
     handle_issue_keys(global, args, |global, issue_key| {
-        issue::add_vote(global, issue_key)
+        issue::add_vote(global, issue_key);
     });
 }
 
@@ -64,7 +65,7 @@ pub fn assign(global: &Global, args: &ArgMatches) {
             global,
             issue_key,
             account_id,
-            &format!("Issue {} assigned", issue_key),
+            &format!("Issue {issue_key} assigned"),
         );
     });
 }
@@ -99,7 +100,7 @@ pub fn delete(global: &Global, args: &ArgMatches) {
         global,
         args.get_one::<String>(ISSUE_KEY).unwrap().as_str(),
         args.get_flag(DELETE_SUBTASKS),
-    )
+    );
 }
 
 pub fn delete_link_type(global: &Global, args: &ArgMatches) {
@@ -169,7 +170,7 @@ pub fn unassign(global: &Global, args: &ArgMatches) {
             global,
             issue_key,
             "null",
-            &format!("Issue {} unassigned", issue_key),
+            &format!("Issue {issue_key} unassigned"),
         );
     });
 }

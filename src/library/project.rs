@@ -35,7 +35,7 @@ pub fn create(
         "projectTemplateKey": project_template,
         "assigneeType": "UNASSIGNED"
     });
-    match post_request(&url, &payload, global.b64auth()) {
+    match post_request(&url, &payload, &global.b64auth()) {
         Ok(_) => print_output(&format!("Project {project_key} created")),
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to create the project {project_key}: {e}"
@@ -53,7 +53,7 @@ pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
     if confirm(format!(
         "Are you sure you want to delete the project key: {project_key}?"
     )) {
-        match delete_request(&url, global.b64auth()) {
+        match delete_request(&url, &global.b64auth()) {
             Ok(_) => print_output(&format!("Project {project_key} deleted")),
             Err(e) => handle_error_and_exit(&format!(
                 "Impossible to delete the project {project_key}: {e}"
@@ -67,7 +67,7 @@ pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
 #[allow(clippy::missing_panics_doc)]
 pub fn get_id(global: &Global, project_key: &str) {
     let url: String = generate_url(&global.domain, "project", Some(&format!("/{project_key}")));
-    match get_request(&url, global.b64auth()) {
+    match get_request(&url, &global.b64auth()) {
         Err(e) => {
             handle_error_and_exit(&format!("Impossible to get project {project_key} id: {e}"));
         }
@@ -92,7 +92,7 @@ pub fn list_features(global: &Global, project_key: &str) {
         "project",
         Some(&format!("/{project_key}/features")),
     );
-    match get_request(&url, global.b64auth()) {
+    match get_request(&url, &global.b64auth()) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list features for project {project_key}: {e}"
         )),
@@ -137,7 +137,7 @@ pub fn list_versions(global: &Global, project_key: &str) {
         "project",
         Some(&format!("/{project_key}/versions")),
     );
-    match get_request(&url, global.b64auth()) {
+    match get_request(&url, &global.b64auth()) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list versions on project {project_key}: {e}"
         )),
@@ -194,7 +194,7 @@ pub fn new_version(global: &Global, project_id: &str, version_name: &str) {
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
     });
-    match post_request(&url, &payload, global.b64auth()) {
+    match post_request(&url, &payload, &global.b64auth()) {
         Ok(_) => print_output(&format!("Version created: {version_name}")),
         Err(e) => handle_error_and_exit(&format!("Failed to create version {version_name}: {e}")),
     }
@@ -206,9 +206,13 @@ pub fn set_feature_state(
     project_feature_key: &str,
     project_feature_state: &str,
 ) {
-    let url: String = generate_url(&global.domain, "project", None);
+    let url: String = generate_url(
+        &global.domain,
+        "project",
+        Some(&format!("/{project_key}/features/{project_feature_key}")),
+    );
     let payload: Value = json!({ "state": project_feature_state });
-    match put_request(&url, &payload, global.b64auth()) {
+    match put_request(&url, &payload, &global.b64auth()) {
         Ok(_) => print_output(&format!(
             "Feature {project_feature_key} set to {project_feature_state} on project {project_key}"
         )),

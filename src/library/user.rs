@@ -19,7 +19,7 @@ pub fn create(global: &Global, email: &str, display_name: &str) {
         "emailAddress": email,
         "displayName": display_name
     });
-    match post_request(&url, &payload, global.b64auth()) {
+    match post_request(&url, &payload, &global.b64auth()) {
         Ok(_) => print_output(&format!("User {email} created")),
         Err(e) => handle_error_and_exit(&format!("Unable to create the user {email}: {e}")),
     }
@@ -36,7 +36,7 @@ pub fn delete(global: &Global, account_id: &str) {
     if confirm(format!(
         "Are you sure you want to delete the account id: {account_id}?"
     )) {
-        match delete_request(&url, global.b64auth()) {
+        match delete_request(&url, &global.b64auth()) {
             Ok(_) => print_output(&format!("User {account_id} deleted")),
             Err(e) => {
                 handle_error_and_exit(&format!("Unable to delete the user {account_id}: {e}"));
@@ -54,7 +54,7 @@ pub fn get_account_id(global: &Global, email_address: &str) {
         "group_user_picker",
         Some(&format!("?query={email_address}")),
     );
-    let resp = get_request(&url, global.b64auth()).expect("Failed to get request");
+    let resp = get_request(&url, &global.b64auth()).expect("Failed to get request");
     let json: Value = resp.json().expect("Failed to parse json");
     if json["users"]["users"]
         .as_array()
@@ -80,7 +80,7 @@ pub fn get_user_groups(global: &Global, account_id: &str) {
         "user",
         Some(&format!("/groups?accountId={account_id}")),
     );
-    match get_request(&url, global.b64auth()) {
+    match get_request(&url, &global.b64auth()) {
         Ok(r) => {
             let json: Value = r.json().expect("Failed to parse json");
             if json["name"] == json!(null) {

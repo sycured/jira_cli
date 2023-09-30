@@ -7,8 +7,9 @@
 
 use attohttpc::{get, Error as AttohttpcError, Response};
 use clap::{crate_version, Command};
+use jira_cli::handle_error_and_exit;
 use serde_json::Value;
-use std::{error::Error, process::exit};
+use std::error::Error;
 
 fn get_request(url: &str) -> Result<Response, AttohttpcError> {
     get(url).header("Accept", "application/json").send()
@@ -19,7 +20,7 @@ fn get_api_url() -> String {
 }
 
 fn get_latest_version(api_url: &str) -> Result<String, Box<dyn Error>> {
-    let response = get_request(&api_url)?;
+    let response = get_request(api_url)?;
 
     if !response.is_success() {
         return Err(format!(
@@ -30,10 +31,10 @@ fn get_latest_version(api_url: &str) -> Result<String, Box<dyn Error>> {
     }
 
     let json: Value = response.json()?;
-    Ok(extract_version_from_response(json)?)
+    extract_version_from_response(&json)
 }
 
-fn extract_version_from_response(json: Value) -> Result<String, Box<dyn Error>> {
+fn extract_version_from_response(json: &Value) -> Result<String, Box<dyn Error>> {
     let version = json["tag_name"]
         .as_str()
         .ok_or("Failed to parse version from JSON")?
@@ -48,22 +49,13 @@ fn print_version_info(actual_version: &str, latest_version: &str) {
             println!("You are using the latest version.");
         }
         x if x < latest_version => {
-            println!(
-                "You are using an outdated version. The latest version is {}",
-                latest_version
-            );
+            println!("You are using an outdated version. The latest version is {latest_version}");
         }
         x if x > latest_version => {
-            println!(
-                "You are using an unreleased version. The latest version is {}",
-                latest_version
-            );
+            println!("You are using an unreleased version. The latest version is {latest_version}");
         }
         _ => {
-            println!(
-                "You are using an unknown version. The latest version is {}",
-                latest_version
-            );
+            println!("You are using an unknown version. The latest version is {latest_version}");
         }
     }
 }
@@ -76,10 +68,7 @@ fn check_version() {
         Ok(latest_version) => {
             print_version_info(actual_version, &latest_version);
         }
-        Err(err) => {
-            eprintln!("Error: {:?}", err);
-            exit(1);
-        }
+        Err(err) => handle_error_and_exit(&format!("Error: {err:?}")),
     }
 }
 

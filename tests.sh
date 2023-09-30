@@ -7,7 +7,7 @@
 # SPDX-License-Identifier: GPL-2.0-only
 #
 
-set -e
+set -xe
 export JIRA_CLI="./target/debug/jira_cli"
 export JIRA_PROJECT_NAME="ci-$GIT_ACTION_RUN_NUMBER"
 export JIRA_PROJECT_KEY="CI$GIT_ACTION_RUN_NUMBER"

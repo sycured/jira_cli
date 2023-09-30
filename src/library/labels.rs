@@ -17,7 +17,7 @@ pub fn list(global: &Global, start_at: &str, max_results: &str) {
         "label",
         Some(&format!("?startAt={start_at}&maxResults={max_results}")),
     );
-    match get_request(&url, global.b64auth()) {
+    match get_request(&url, &global.b64auth()) {
         Err(e) => handle_error_and_exit(&format!("Impossible to list labels: {e}")),
         Ok(r) => {
             let json: Value = r.json().expect("Failed to parse json");

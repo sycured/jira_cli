@@ -31,7 +31,7 @@ pub struct Global {
 
 impl Global {
     fn b64auth(&self) -> String {
-        b64::STANDARD.encode(&format!("{}:{}", self.user, self.token))
+        b64::STANDARD.encode(format!("{}:{}", self.user, self.token))
     }
 }
 
@@ -71,17 +71,12 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
     println!("{table}");
 }
 
-pub fn exit_with_error<T: std::fmt::Display>(msg: T, exit_code: i32) {
-    eprintln!("{msg}");
-    exit(exit_code);
-}
-
 #[allow(clippy::missing_errors_doc)]
 pub fn make_request(
     method: Method,
     url: &str,
     payload: Option<&Value>,
-    b64auth: String,
+    b64auth: &str,
 ) -> Result<Response, Error> {
     let builder = attohttpc::RequestBuilder::new(method, url)
         .header("Accept", "application/json")
@@ -94,21 +89,21 @@ pub fn make_request(
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn delete_request(url: &str, b64auth: String) -> Result<Response, Error> {
+pub fn delete_request(url: &str, b64auth: &str) -> Result<Response, Error> {
     make_request(Method::DELETE, url, None, b64auth)
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn get_request(url: &str, b64auth: String) -> Result<Response, Error> {
+pub fn get_request(url: &str, b64auth: &str) -> Result<Response, Error> {
     make_request(Method::GET, url, None, b64auth)
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn post_request(url: &str, payload: &Value, b64auth: String) -> Result<Response, Error> {
+pub fn post_request(url: &str, payload: &Value, b64auth: &str) -> Result<Response, Error> {
     make_request(Method::POST, url, Some(payload), b64auth)
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn put_request(url: &String, payload: &Value, b64auth: String) -> Result<Response, Error> {
+pub fn put_request(url: &str, payload: &Value, b64auth: &str) -> Result<Response, Error> {
     make_request(Method::PUT, url, Some(payload), b64auth)
 }
