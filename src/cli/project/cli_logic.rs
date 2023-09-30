@@ -47,6 +47,15 @@ pub fn list_features(global: &Global, args: &ArgMatches) {
     );
 }
 
+pub fn list_projects(global: &Global, args: &ArgMatches) {
+    project::list_projects(
+        global,
+        args.get_one::<String>("start_at").unwrap().as_str(),
+        args.get_one::<String>("max_results").unwrap().as_str(),
+    )
+    .unwrap();
+}
+
 pub fn list_versions(global: &Global, args: &ArgMatches) {
     project::list_versions(
         global,

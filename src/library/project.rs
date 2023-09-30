@@ -7,9 +7,11 @@
 
 use std::collections::HashMap;
 
+use attohttpc::{Error, Method};
 use comfy_table::{Cell, CellAlignment};
 use itertools::Itertools;
 use rayon::prelude::*;
+use serde::Deserialize;
 use serde_json::{json, Value};
 
 use crate::{
@@ -128,6 +130,95 @@ pub fn list_features(global: &Global, project_key: &str) {
             );
         }
     }
+}
+
+#[derive(Debug)]
+pub enum APIError {
+    RequestError(Error),
+    ParsingError(serde_json::Error),
+}
+
+impl From<attohttpc::Error> for APIError {
+    fn from(err: attohttpc::Error) -> Self {
+        Self::RequestError(err)
+    }
+}
+
+impl From<serde_json::Error> for APIError {
+    fn from(err: serde_json::Error) -> Self {
+        Self::ParsingError(err)
+    }
+}
+
+#[allow(clippy::missing_errors_doc)]
+pub fn list_projects(global: &Global, start_at: &str, max_results: &str) -> Result<(), APIError> {
+    #[derive(Deserialize)]
+    struct ApiResponse {
+        next_page: Option<String>,
+        values: Vec<Project>,
+    }
+
+    #[allow(non_snake_case)]
+    #[derive(Deserialize, Debug)]
+    struct Project {
+        key: String,
+        name: String,
+        description: String,
+        projectTypeKey: String,
+    }
+
+    let mut data: Vec<Project> = Vec::new();
+
+    let mut url: Option<String> = Option::from(generate_url(
+        &global.domain,
+        "project",
+        Some(&format!(
+            "/search?startAt={start_at}&maxResults={max_results}&expand=description"
+        )),
+    ));
+
+    while let Some(ref u) = url {
+        let resp = attohttpc::RequestBuilder::new(Method::GET, u)
+            .header("Accept", "application/json")
+            .header("Authorization", format!("Basic {}", global.b64auth()))
+            .send()?;
+
+        if let Ok(ApiResponse { next_page, values }) = serde_json::from_str(&resp.text()?) {
+            data.extend(values);
+            url = next_page;
+        } else {
+            handle_error_and_exit(
+                "Impossible to retrieve a paginated list of projects visible to the user",
+            );
+        }
+    }
+
+    if data.is_empty() {
+        print_output("No project in Jira");
+    } else {
+        let rows: Vec<Vec<Cell>> = data
+            .par_iter()
+            .map(|x| {
+                vec![
+                    Cell::new(x.key.as_str()),
+                    Cell::new(x.name.as_str()),
+                    Cell::new(x.description.as_str()),
+                    Cell::new(x.projectTypeKey.as_str()),
+                ]
+            })
+            .collect();
+        create_and_print_table(
+            vec!["Key", "Name", "Description", "Project Type"],
+            &HashMap::from([
+                (0, CellAlignment::Center),
+                (1, CellAlignment::Center),
+                (2, CellAlignment::Center),
+                (3, CellAlignment::Center),
+            ]),
+            rows,
+        );
+    }
+    Ok(())
 }
 
 #[allow(clippy::missing_panics_doc)]

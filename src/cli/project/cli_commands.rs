@@ -72,6 +72,22 @@ pub fn list_features() -> Command {
         .arg(Arg::new("project_key").help("Project key").required(true))
 }
 
+pub fn list_projects() -> Command {
+    Command::new("list_projects")
+        .about("List projects")
+        .visible_aliases(["lp", "list-projects"])
+        .arg(
+            Arg::new("start_at")
+                .default_value("0")
+                .help("The index of the first item to return in a page of results (page offset)"),
+        )
+        .arg(
+            Arg::new("max_results")
+                .default_value("50")
+                .help("The maximum number of items to return per page"),
+        )
+}
+
 pub fn list_versions() -> Command {
     Command::new("list_versions")
         .about("List project versions")

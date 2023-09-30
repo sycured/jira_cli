@@ -22,6 +22,7 @@ pub fn cli_commands() -> Command {
         .subcommand(cli_commands::create())
         .subcommand(cli_commands::delete_project())
         .subcommand(cli_commands::list_features())
+        .subcommand(cli_commands::list_projects())
         .subcommand(cli_commands::list_versions())
         .subcommand(cli_commands::new_version())
         .subcommand(cli_commands::set_feature_state())
@@ -33,6 +34,7 @@ pub fn logic_commands(global: &Global, args: &ArgMatches) {
         Some(("delete_project", args)) => cli_logic::delete_project(global, args),
         Some(("get_id", args)) => cli_logic::get_id(global, args),
         Some(("list_features", args)) => cli_logic::list_features(global, args),
+        Some(("list_projects", args)) => cli_logic::list_projects(global, args),
         Some(("list_versions", args)) => cli_logic::list_versions(global, args),
         Some(("new_version", args)) => cli_logic::new_version(global, args),
         Some(("set_feature_state", args)) => cli_logic::set_feature_state(global, args),
