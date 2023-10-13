@@ -34,7 +34,7 @@ itertools = "0.11.0"
 lazy_static = "1.4.0"
 phf = { version = "0.11.2", features = ["macros"] }
 rayon = "1.8.0"
-serde = { version = "1.0.188", features = ["derive"] }
+serde = { version = "1.0.189", features = ["derive"] }
 serde_json = "1.0.107"
 zeroize = { version = "1.6.0", features = ["zeroize_derive"] }
 
