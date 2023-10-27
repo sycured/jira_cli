@@ -22,6 +22,9 @@ strip = true
 opt-level = 3
 lto = false
 
+[package.metadata.cargo-udeps.ignore]
+normal = ["tikv-jemallocator-global"]
+
 [dependencies]
 attohttpc = { version = "0.26.1", default-features = false, features = ["compress", "json", "rustls"] }
 base64 = "0.21.5"
@@ -31,6 +34,7 @@ comfy-table = "7.1.0"
 dialoguer = "0.11.0"
 human-panic = "1.2.1"
 itertools = "0.11.0"
+tikv-jemallocator-global = "0.5.0"
 lazy_static = "1.4.0"
 phf = { version = "0.11.2", features = ["macros"] }
 rayon = "1.8.0"
@@ -40,6 +44,3 @@ zeroize = { version = "1.6.0", features = ["zeroize_derive"] }
 
 [dev-dependencies]
 clap = { version = "4.4.7", features = ["cargo", "deprecated", "env", "wrap_help"] }
-
-[target.'cfg(not(target_os = "windows"))'.dependencies]
-jemallocator = "0.5.4"

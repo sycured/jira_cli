@@ -29,11 +29,11 @@ jobs:
             artifact_name: jira_cli
             asset_name: jira_cli-darwin_amd64
     steps:
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-${{ matrix.target }}
+          shared-key: jira_cli-${{ matrix.target }}
           cache-on-failure: true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.target }}
@@ -72,11 +72,11 @@ jobs:
             artifact_name: jira_cli
             asset_name: jira_cli-darwin_arm
     steps:
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-${{ matrix.target }}
+          shared-key: jira_cli-${{ matrix.target }}
           cache-on-failure: true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
         name: Update Rustup and define default toolchain
       - run: rustup target add ${{ matrix.target }}
@@ -107,40 +107,52 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref_name }}
 
-  freebsd-x86-64:
-    name: FreeBSD x86-64
+  freebsd:
+    name: FreeBSD ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
     env:
       RUSTFLAGS: "-C target-feature=+crt-static"
-    runs-on: macos-12
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86-64
+            os: macos-12
+            hypervisor: xhyve
+            target: x86_64-unknown-freebsd
+          - arch: arm64
+            os: ubuntu-latest
+            hypervisor: qemu
+            target: aarch64-unknown-freebsd
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Cache target
-        id: jira_cli-freebsd-x86-64
         uses: actions/cache@v3
         with:
           path: target/
-          key: jira_cli-freebsd-x86-64
-      - uses: vmactions/freebsd-vm@v0
+          key: jira_cli-freebsd-${{ matrix.arch }}
+      - uses: cross-platform-actions/action@v0.21.0
         with:
-          mem: 4096
-          usesh: true
-          envs: 'RUSTFLAGS'
-          prepare: |
-            mkdir -p /usr/local/etc/pkg/repos/
-            cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
-            sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
-            pkg upgrade -y
-            pkg install -y gmake rust
+          operating_system: freebsd
+          architecture: ${{ matrix.arch }}
+          hypervisor: ${{ matrix.hypervisor }}
+          version: '13.2'
+          shell: bash
+          environment_variables: RUSTFLAGS
           run: |
-            cargo build --release --target x86_64-unknown-freebsd
+            sudo mkdir -p /usr/local/etc/pkg/repos/
+            sudo cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
+            sudo sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
+            sudo pkg upgrade -y
+            sudo pkg install -y gmake rust
+            cargo build --target ${{ matrix.target }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v1-release
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/x86_64-unknown-freebsd/release/jira_cli
-          asset_name: jira_cli-freebsd_amd64
+          file: target/${{ matrix.target }}/release/jira_cli
+          asset_name: jira_cli-freebsd_${{ matrix.arch }}
           tag: ${{ github.ref_name }}
-
 
   sbom:
     runs-on: ubuntu-latest
@@ -148,14 +160,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-sbom
           cache-on-failure: true
       - name: Install cargo-cyclonedx
         run: cargo install cargo-cyclonedx

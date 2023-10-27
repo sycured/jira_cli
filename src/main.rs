@@ -14,16 +14,10 @@ use std::io::stdout;
 use clap::{ArgMatches, Command};
 use clap_complete::{generate, Generator, Shell};
 use human_panic::setup_panic;
-#[cfg(not(target_os = "windows"))]
-use jemallocator::Jemalloc;
 
 use jira_cli::Global;
 
 use crate::cli::{check_version, group, issue, labels, license, project, user};
-
-#[cfg(not(target_os = "windows"))]
-#[global_allocator]
-static GLOBAL: Jemalloc = Jemalloc;
 
 fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
     generate(gen, cmd, cmd.get_name().to_owned(), &mut stdout());
