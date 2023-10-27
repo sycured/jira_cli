@@ -38,31 +38,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-check
+          shared-key: jira_cli-check
           cache-on-failure: true
 
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          override: true
+          components: rustfmt
 
       - name: Install nightly toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: nightly
-          override: false
+          components: rustfmt
 
       - name: Update Rustup (temporary workaround)
         run: |
-          rm /home/runner/.cargo/bin/cargo-fmt
-          rm /home/runner/.cargo/bin/rustfmt
           rustup self update
           rustup update --no-self-update
           curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
@@ -79,13 +75,13 @@ jobs:
           cargo audit --json > $HOME/audit.json || exit 0
 
       - name: Check a local package and all of its dependencies for errors
-        uses: actions-rs/cargo@v1
+        uses: clechasseur/rs-cargo@v2
         with:
           command: check
           args: --all
 
       - name: Lint check
-        uses: actions-rs/cargo@v1
+        uses: clechasseur/rs-cargo@v2
         with:
           command: fmt
           args: --all --check
@@ -111,7 +107,7 @@ jobs:
           cargo sonar --audit --audit-path $HOME/audit.json --clippy --clippy-path $HOME/clippy.json --deny --deny-path $HOME/deny.json --outdated --outdated-path $HOME/outdated.json --udeps --udeps-path $HOME/udeps.json --sonar-path $HOME/sonar.json
 
       - name: Setup sonarqube
-        uses: warchant/setup-sonar-scanner@v3
+        uses: warchant/setup-sonar-scanner@v7
 
       - name: Run sonarqube
         run: sonar-scanner -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.sources=$GITHUB_WORKSPACE -Dsonar.host.url=${{ secrets.SONAR_URL }} -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.externalIssuesReportPaths=$HOME/sonar.json
@@ -123,11 +119,11 @@ jobs:
     needs:
       - check
     steps:
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-x86_64-unknown-linux-gnu
+          shared-key: jira_cli-x86_64-unknown-linux-gnu
           cache-on-failure: true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update Rustup and define default toolchain
         run: rustup update --no-self-update stable && rustup default stable
       - name: Add target
@@ -166,11 +162,11 @@ jobs:
             rust: stable
             target: x86_64-apple-darwin
     steps:
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-${{ matrix.target }}
+          shared-key: jira_cli-${{ matrix.target }}
           cache-on-failure: true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update Rustup and define default toolchain
         run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
       - name: Add target
@@ -210,11 +206,11 @@ jobs:
             rust: stable
             target: aarch64-apple-darwin
     steps:
-      - uses: Swatinem/rust-cache@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          sharedKey: jira_cli-${{ matrix.target }}
+          shared-key: jira_cli-${{ matrix.target }}
           cache-on-failure: true
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Update Rustup and define default toolchain
         run: rustup update --no-self-update ${{ matrix.rust }} && rustup default ${{ matrix.rust }}
       - name: Add target
@@ -234,32 +230,48 @@ jobs:
           cargo build --target=aarch64-apple-darwin
         if: matrix.target == 'aarch64-apple-darwin'
 
-  freebsd-x86-64:
-    name: FreeBSD x86-64
-    runs-on: macos-12
+  freebsd:
+    name: FreeBSD ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
     needs:
       - check
       - test
+    env:
+      RUSTFLAGS: "-C target-feature=+crt-static"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86-64
+            os: macos-12
+            hypervisor: xhyve
+            target: x86_64-unknown-freebsd
+          - arch: arm64
+            os: ubuntu-latest
+            hypervisor: qemu
+            target: aarch64-unknown-freebsd
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Cache target
-        id: jira_cli-freebsd-x86-64
         uses: actions/cache@v3
         with:
           path: target/
-          key: jira_cli-freebsd-x86-64
-      - uses: vmactions/freebsd-vm@v0
+          key: jira_cli-freebsd-${{ matrix.arch }}
+      - uses: cross-platform-actions/action@v0.21.0
         with:
-          mem: 4096
-          usesh: true
-          prepare: |
-            mkdir -p /usr/local/etc/pkg/repos/
-            cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
-            sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
-            pkg upgrade -y
-            pkg install -y gmake rust
+          operating_system: freebsd
+          architecture: ${{ matrix.arch }}
+          hypervisor: ${{ matrix.hypervisor }}
+          version: '13.2'
+          shell: bash
+          environment_variables: RUSTFLAGS
           run: |
-            cargo build --target x86_64-unknown-freebsd
+            sudo mkdir -p /usr/local/etc/pkg/repos/
+            sudo cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
+            sudo sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
+            sudo pkg upgrade -y
+            sudo pkg install -y gmake rust
+            cargo build --target ${{ matrix.target }}
 
   approve-pr:
     name: Approve PR
@@ -269,7 +281,7 @@ jobs:
       - test
       - native
       - cross
-      - freebsd-x86-64
+      - freebsd
     runs-on: ubuntu-latest
     steps:
       - uses: hmarr/auto-approve-action@v2
