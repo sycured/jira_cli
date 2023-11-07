@@ -32,7 +32,7 @@ clap = { version = "4.4.7", features = ["cargo", "env", "wrap_help"] }
 clap_complete = "4.4.4"
 comfy-table = "7.1.0"
 dialoguer = "0.11.0"
-human-panic = "1.2.1"
+human-panic = "1.2.2"
 itertools = "0.11.0"
 tikv-jemallocator-global = "0.5.0"
 lazy_static = "1.4.0"
