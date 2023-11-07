@@ -32,13 +32,13 @@ clap = { version = "4.4.7", features = ["cargo", "env", "wrap_help"] }
 clap_complete = "4.4.4"
 comfy-table = "7.1.0"
 dialoguer = "0.11.0"
-human-panic = "1.2.1"
+human-panic = "1.2.2"
 itertools = "0.11.0"
 tikv-jemallocator-global = "0.5.0"
 lazy_static = "1.4.0"
 phf = { version = "0.11.2", features = ["macros"] }
 rayon = "1.8.0"
-serde = { version = "1.0.190", features = ["derive"] }
+serde = { version = "1.0.192", features = ["derive"] }
 serde_json = "1.0.108"
 zeroize = { version = "1.6.0", features = ["zeroize_derive"] }
 
