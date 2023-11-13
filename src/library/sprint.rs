@@ -12,8 +12,8 @@ use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
-    create_and_print_table, delete_request, generate_url, get_request, handle_error_and_exit,
-    post_request, print_output, Global,
+    create_and_print_table, generate_url, handle_error_and_exit, print_output, request, Global,
+    HttpRequest,
 };
 
 #[allow(clippy::missing_panics_doc)]
@@ -34,7 +34,7 @@ pub fn create(
             "name": name
     });
 
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Err(e) => handle_error_and_exit(&format!("Failed to create sprint: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -48,7 +48,7 @@ pub fn create(
 #[allow(clippy::missing_panics_doc)]
 pub fn delete(global: &Global, sprint_id: i64) {
     let url: String = generate_url(&global.domain, "sprint", Some(&format!("/{sprint_id}")));
-    match delete_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::DELETE, &url, None, global) {
         Ok(_) => print_output(&format!("Sprint {sprint_id} deleted")),
         Err(e) => handle_error_and_exit(&format!("Impossible to delete sprint {sprint_id}: {e}")),
     }
@@ -57,7 +57,7 @@ pub fn delete(global: &Global, sprint_id: i64) {
 #[allow(clippy::missing_panics_doc)]
 pub fn get(global: &Global, sprint_id: i64) {
     let url: String = generate_url(&global.domain, "sprint", Some(&format!("/{sprint_id}")));
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Failed to get sprint: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Faileed to parse json");

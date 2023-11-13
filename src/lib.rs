@@ -6,12 +6,7 @@
  */
 
 #![forbid(unsafe_code)]
-
 pub mod library;
-pub use library::*;
-
-use std::{collections::HashMap, process::exit};
-
 use attohttpc::{Error, Method, Response};
 use base64::{engine::general_purpose as b64, Engine};
 use comfy_table::{
@@ -19,7 +14,9 @@ use comfy_table::{
     Table,
 };
 use dialoguer::Confirm;
+pub use library::*;
 use serde_json::Value;
+use std::{collections::HashMap, process::exit};
 use zeroize::{Zeroize, ZeroizeOnDrop};
 
 #[derive(Zeroize, ZeroizeOnDrop)]
@@ -29,7 +26,11 @@ pub struct Global {
     pub token: String,
 }
 
-impl Global {
+pub trait Authorization {
+    fn b64auth(&self) -> String;
+}
+
+impl Authorization for Global {
     fn b64auth(&self) -> String {
         b64::STANDARD.encode(format!("{}:{}", self.user, self.token))
     }
@@ -62,25 +63,28 @@ pub fn create_and_print_table<S: std::hash::BuildHasher>(
         .load_preset(UTF8_FULL)
         .apply_modifier(UTF8_ROUND_CORNERS)
         .set_content_arrangement(ContentArrangement::DynamicFullWidth);
+
     for (key, value) in column_alignment {
         table.column_mut(*key).unwrap().set_cell_alignment(*value);
     }
+
     for row in rows {
         table.add_row(row);
     }
+
     println!("{table}");
 }
 
 #[allow(clippy::missing_errors_doc)]
-pub fn make_request(
+pub fn make_request<A: Authorization>(
     method: Method,
     url: &str,
     payload: Option<&Value>,
-    b64auth: &str,
+    b64auth: &A,
 ) -> Result<Response, Error> {
     let builder = attohttpc::RequestBuilder::new(method, url)
         .header("Accept", "application/json")
-        .header("Authorization", format!("Basic {b64auth}"));
+        .header("Authorization", format!("Basic {}", b64auth.b64auth()));
 
     let payload = payload.unwrap_or(&Value::Null);
     let builder = builder.json(payload)?;
@@ -88,22 +92,28 @@ pub fn make_request(
     builder.send().and_then(Response::error_for_status)
 }
 
-#[allow(clippy::missing_errors_doc)]
-pub fn delete_request(url: &str, b64auth: &str) -> Result<Response, Error> {
-    make_request(Method::DELETE, url, None, b64auth)
+//New enum for HTTP methods
+pub enum HttpRequest {
+    GET,
+    POST,
+    PUT,
+    DELETE,
 }
 
+//Refactored request functions - now one function that accepts the enum value
 #[allow(clippy::missing_errors_doc)]
-pub fn get_request(url: &str, b64auth: &str) -> Result<Response, Error> {
-    make_request(Method::GET, url, None, b64auth)
-}
+pub fn request(
+    method: &HttpRequest,
+    url: &str,
+    payload: Option<&Value>,
+    b64auth: &Global,
+) -> Result<Response, Error> {
+    let method = match method {
+        HttpRequest::GET => Method::GET,
+        HttpRequest::POST => Method::POST,
+        HttpRequest::PUT => Method::PUT,
+        HttpRequest::DELETE => Method::DELETE,
+    };
 
-#[allow(clippy::missing_errors_doc)]
-pub fn post_request(url: &str, payload: &Value, b64auth: &str) -> Result<Response, Error> {
-    make_request(Method::POST, url, Some(payload), b64auth)
-}
-
-#[allow(clippy::missing_errors_doc)]
-pub fn put_request(url: &str, payload: &Value, b64auth: &str) -> Result<Response, Error> {
-    make_request(Method::PUT, url, Some(payload), b64auth)
+    make_request(method, url, payload, b64auth)
 }

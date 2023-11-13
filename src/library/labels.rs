@@ -8,7 +8,7 @@
 use rayon::prelude::*;
 use serde_json::Value;
 
-use crate::{generate_url, get_request, handle_error_and_exit, print_output, Global};
+use crate::{generate_url, handle_error_and_exit, print_output, request, Global, HttpRequest::GET};
 
 #[allow(clippy::missing_panics_doc)]
 pub fn list(global: &Global, start_at: &str, max_results: &str) {
@@ -17,7 +17,7 @@ pub fn list(global: &Global, start_at: &str, max_results: &str) {
         "label",
         Some(&format!("?startAt={start_at}&maxResults={max_results}")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Impossible to list labels: {e}")),
         Ok(r) => {
             let json: Value = r.json().expect("Failed to parse json");

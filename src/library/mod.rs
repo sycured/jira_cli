@@ -19,9 +19,5 @@ pub mod user;
 
 #[must_use]
 pub fn generate_url(domain: &str, key: &str, query: Option<&str>) -> String {
-    let mut url = format!("https://{}{}", domain, URLS[key]);
-    if let Some(query) = query {
-        url = format!("{url}{query}");
-    }
-    url
+    format!("https://{}{}", domain, URLS[key]) + query.map_or("", |query| query)
 }

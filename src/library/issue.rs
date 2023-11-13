@@ -12,8 +12,8 @@ use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
-    create_and_print_table, delete_request, generate_url, get_request, handle_error_and_exit,
-    post_request, print_output, put_request, Global,
+    create_and_print_table, generate_url, handle_error_and_exit, print_output, request, Global,
+    HttpRequest,
 };
 
 pub fn add_label(global: &Global, issue_key: &str, label: &str) {
@@ -27,7 +27,7 @@ pub fn add_label(global: &Global, issue_key: &str, label: &str) {
             ]
         }
     });
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Label {label} added to issue {issue_key}")),
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to add label {label} to issue {issue_key} {e}"
@@ -48,7 +48,7 @@ pub fn add_version(global: &Global, version_name: &str, issue_key: &str) {
             ]
         }
     });
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!(
             "Version {version_name} added to issue {issue_key}"
         )),
@@ -65,7 +65,7 @@ pub fn add_vote(global: &Global, issue_key: &str) {
         Some(&format!("/{issue_key}/votes")),
     );
     let payload: Value = json!({});
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Vote added to issue {issue_key}")),
         Err(e) => {
             handle_error_and_exit(&format!("Impossible to add vote to issue {issue_key}: {e}"));
@@ -80,7 +80,7 @@ pub fn assign(global: &Global, issue_key: &str, account_id: &str, success_messag
         Some(&format!("/{issue_key}/assignee")),
     );
     let payload: Value = json!({ "accountId": account_id });
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => println!("{success_message}"),
         Err(e) => {
             handle_error_and_exit(&format!("Impossible to assign the issue {issue_key}: {e}"));
@@ -117,7 +117,7 @@ pub fn create(
         payload["fields"]["priority"] = json!({ "name": priority });
     }
 
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Err(e) => handle_error_and_exit(&format!("Failed to create issue: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -134,7 +134,7 @@ pub fn create_link_type(global: &Global, name: &str, inward: &str, outward: &str
         "inward": inward,
         "outward": outward
     });
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Err(e) => handle_error_and_exit(&format!("Failed to create issue link type: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -162,7 +162,7 @@ pub fn delete(global: &Global, issue_key: &str, delete_subtasks: bool) {
     } else {
         format!("Issue {issue_key} deleted")
     };
-    match delete_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::DELETE, &url, None, global) {
         Ok(_) => print_output(&success_message),
         Err(e) => handle_error_and_exit(&format!("Impossible to delete issue {issue_key}: {e}")),
     }
@@ -174,7 +174,7 @@ pub fn delete_link_type(global: &Global, link_type_id: &str) {
         "issue_link_types",
         Some(&format!("/{link_type_id}")),
     );
-    match delete_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::DELETE, &url, None, global) {
         Ok(_) => print_output(&format!("Link type {link_type_id} deleted")),
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to delete link type id {link_type_id}: {e}"
@@ -190,7 +190,7 @@ pub fn get_link_type(global: &Global, link_type_id: &str) {
         "issue_link_types",
         Some(&format!("/{link_type_id}")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => {
             handle_error_and_exit(&format!("Impossible to get link type {link_type_id}: {e}"));
         }
@@ -228,7 +228,7 @@ pub fn get_transitions(global: &Global, issue_key: &str) {
         "issue",
         Some(&format!("/{issue_key}/transitions")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!(
             "Failed to get transitions for issue {issue_key}: {e}"
         )),
@@ -263,7 +263,7 @@ pub fn get_transitions(global: &Global, issue_key: &str) {
 #[allow(clippy::missing_panics_doc)]
 pub fn list_link_types(global: &Global) {
     let url: String = generate_url(&global.domain, "issue_link_types", None);
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Failed to get issue link types: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -297,7 +297,7 @@ pub fn list_link_types(global: &Global) {
 #[allow(clippy::missing_panics_doc)]
 pub fn list_priorities(global: &Global) {
     let url: String = generate_url(&global.domain, "priority", None);
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Impossible to get priorities: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -316,7 +316,7 @@ pub fn list_types(global: &Global, project_key: &str) {
         "issue",
         Some(&format!("/createmeta?projectKeys={project_key}")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Impossible to list types: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -339,7 +339,7 @@ pub fn list_votes(global: &Global, issue_key: &str) {
         "issue",
         Some(&format!("/{issue_key}/votes")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list votes for issue {issue_key}: {e}"
         )),
@@ -386,7 +386,7 @@ pub fn remove_label(global: &Global, issue_key: &str, label: &str) {
             ]
         }
     });
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Label {label} removed from issue {issue_key}")),
         Err(e) => handle_error_and_exit(&format!(
             "Failed to remove label {label} from issue {issue_key}: {e}",
@@ -408,7 +408,7 @@ pub fn remove_version(global: &Global, version_name: &str, issue_key: &str) {
         }
     });
 
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!(
             "Version {version_name} removed from issue {issue_key}"
         )),
@@ -424,7 +424,7 @@ pub fn remove_vote(global: &Global, issue_key: &str) {
         "issue",
         Some(&format!("/{issue_key}/votes")),
     );
-    match delete_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::DELETE, &url, None, global) {
         Ok(_) => print_output(&format!("Vote removed from issue {issue_key}")),
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to remove vote from issue {issue_key}: {e}"
@@ -435,7 +435,7 @@ pub fn remove_vote(global: &Global, issue_key: &str) {
 #[allow(clippy::missing_panics_doc)]
 pub fn show_fixversions(global: &Global, issue_key: &str) {
     let url: String = generate_url(&global.domain, "issue", Some(&format!("/{issue_key}")));
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list fix versions for issue {issue_key}: {e}"
         )),
@@ -461,7 +461,7 @@ pub fn transition(global: &Global, issue_key: &str, transition_id: &str) {
             "id": transition_id
         }
     });
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Ok(_) => print_output("Success"),
         Err(e) => handle_error_and_exit(&format!("Failed to transition issue {issue_key}: {e}")),
     }
@@ -484,7 +484,7 @@ pub fn update_link_type(
         "inward": link_type_inward,
         "outward": link_type_outward
     });
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Link type {link_type_id} updated")),
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to update link type {link_type_id}: {e}"

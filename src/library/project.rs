@@ -15,8 +15,8 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 
 use crate::{
-    confirm, create_and_print_table, delete_request, generate_url, get_request,
-    handle_error_and_exit, post_request, print_output, put_request, Global,
+    confirm, create_and_print_table, generate_url, handle_error_and_exit, print_output, request,
+    Authorization, Global, HttpRequest,
 };
 
 #[allow(clippy::too_many_arguments)]
@@ -37,7 +37,7 @@ pub fn create(
         "projectTemplateKey": project_template,
         "assigneeType": "UNASSIGNED"
     });
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Project {project_key} created")),
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to create the project {project_key}: {e}"
@@ -55,7 +55,7 @@ pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
     if confirm(format!(
         "Are you sure you want to delete the project key: {project_key}?"
     )) {
-        match delete_request(&url, &global.b64auth()) {
+        match request(&HttpRequest::DELETE, &url, None, global) {
             Ok(_) => print_output(&format!("Project {project_key} deleted")),
             Err(e) => handle_error_and_exit(&format!(
                 "Impossible to delete the project {project_key}: {e}"
@@ -69,7 +69,7 @@ pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
 #[allow(clippy::missing_panics_doc)]
 pub fn get_id(global: &Global, project_key: &str) {
     let url: String = generate_url(&global.domain, "project", Some(&format!("/{project_key}")));
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => {
             handle_error_and_exit(&format!("Impossible to get project {project_key} id: {e}"));
         }
@@ -94,7 +94,7 @@ pub fn list_features(global: &Global, project_key: &str) {
         "project",
         Some(&format!("/{project_key}/features")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list features for project {project_key}: {e}"
         )),
@@ -138,8 +138,8 @@ pub enum APIError {
     ParsingError(serde_json::Error),
 }
 
-impl From<attohttpc::Error> for APIError {
-    fn from(err: attohttpc::Error) -> Self {
+impl From<Error> for APIError {
+    fn from(err: Error) -> Self {
         Self::RequestError(err)
     }
 }
@@ -228,7 +228,7 @@ pub fn list_versions(global: &Global, project_key: &str) {
         "project",
         Some(&format!("/{project_key}/versions")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list versions on project {project_key}: {e}"
         )),
@@ -285,7 +285,7 @@ pub fn new_version(global: &Global, project_id: &str, version_name: &str) {
       "name": version_name,
       "projectId": project_id.parse::<i32>().unwrap()
     });
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Version created: {version_name}")),
         Err(e) => handle_error_and_exit(&format!("Failed to create version {version_name}: {e}")),
     }
@@ -303,7 +303,7 @@ pub fn set_feature_state(
         Some(&format!("/{project_key}/features/{project_feature_key}")),
     );
     let payload: Value = json!({ "state": project_feature_state });
-    match put_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::PUT, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!(
             "Feature {project_feature_key} set to {project_feature_state} on project {project_key}"
         )),

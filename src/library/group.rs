@@ -12,8 +12,8 @@ use rayon::prelude::*;
 use serde_json::{json, Value};
 
 use crate::{
-    confirm, create_and_print_table, delete_request, generate_url, get_request,
-    handle_error_and_exit, post_request, print_output, Global,
+    confirm, create_and_print_table, generate_url, handle_error_and_exit, print_output, request,
+    Global, HttpRequest,
 };
 
 pub fn add_user(global: &Global, account_id: &str, group_id: &str) {
@@ -23,7 +23,7 @@ pub fn add_user(global: &Global, account_id: &str, group_id: &str) {
         Some(&format!("/user?groupId={group_id}")),
     );
     let payload: Value = json!({ "accountId": account_id });
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!(
             "Account id {account_id} added to group id {group_id}"
         )),
@@ -34,7 +34,7 @@ pub fn add_user(global: &Global, account_id: &str, group_id: &str) {
 pub fn create(global: &Global, name: &str) {
     let url: String = generate_url(&global.domain, "group", None);
     let payload: Value = json!({ "name": name });
-    match post_request(&url, &payload, &global.b64auth()) {
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
         Ok(_) => print_output(&format!("Group {name} created")),
         Err(e) => handle_error_and_exit(&format!("Impossible to create group {name}: {e}")),
     }
@@ -50,7 +50,7 @@ pub fn delete(global: &Global, group_id: &str) {
     if confirm(format!(
         "Are you sure you want to delete the group id: {group_id}?"
     )) {
-        match delete_request(&url, &global.b64auth()) {
+        match request(&HttpRequest::DELETE, &url, None, global) {
             Ok(_) => print_output(&format!("The group id {group_id} has been deleted.")),
             Err(e) => {
                 handle_error_and_exit(&format!("Impossible to delete group id {group_id}: {e}"));
@@ -69,7 +69,7 @@ pub fn find(global: &Global, query: &str) {
         "groups",
         Some(&format!("/picker?query={query}")),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Impossible to find group {query}: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -103,7 +103,7 @@ pub fn list_groups(global: &Global, start_at: &str, max_results: &str) {
             "/bulk?startAt={start_at}&maxResults={max_results}"
         )),
     );
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!("Impossible to list groups: {e}")),
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
@@ -138,7 +138,7 @@ pub fn list_users(
 ) {
     let url: String = generate_url(
         &global.domain, "group", Some(&format!("/member?groupId={group_id}&includeInactiveUsers={include_inactive}&startAt={start_at}&maxResults={max_results}")));
-    match get_request(&url, &global.b64auth()) {
+    match request(&HttpRequest::GET, &url, None, global) {
         Err(e) => handle_error_and_exit(&format!(
             "Impossible to list users in group {group_id}: {e}"
         )),
@@ -183,7 +183,7 @@ pub fn remove_user(global: &Global, account_id: &str, group_id: &str) {
     if confirm(format!(
         "Are you sure you want to remove account id {account_id} from group id: {group_id}?"
     )) {
-        match delete_request(&url, &global.b64auth()) {
+        match request(&HttpRequest::DELETE, &url, None, global) {
             Err(e) => handle_error_and_exit(&format!("Impossible to remove user: {e}")),
             Ok(_) => print_output(&format!(
                 "Account id {account_id} removed from group id {group_id}"
