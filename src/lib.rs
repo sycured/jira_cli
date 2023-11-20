@@ -93,7 +93,7 @@ pub fn make_request<A: Authorization>(
         .header("Accept", "application/json")
         .header("Authorization", format!("Basic {}", b64auth.b64auth()));
 
-    let payload = payload.unwrap_or(&Value::Null);
+    let payload = payload.unwrap_or_else(&Value::Null);
     let builder = builder.json(payload)?;
 
     builder.send().and_then(Response::error_for_status)
