@@ -49,7 +49,7 @@ pub fn print_output(output: &str) {
 #[allow(clippy::missing_panics_doc)]
 #[must_use]
 pub fn get_single_arg<'a>(args: &'a ArgMatches, arg_name: &str) -> &'a str {
-    args.get_one::<String>(arg_name).unwrap().as_str()
+    args.get_one::<String>(arg_name).map_or("", String::as_str)
 }
 
 #[allow(clippy::missing_panics_doc)]
@@ -93,7 +93,7 @@ pub fn make_request<A: Authorization>(
         .header("Accept", "application/json")
         .header("Authorization", format!("Basic {}", b64auth.b64auth()));
 
-    let payload = payload.unwrap_or(&Value::Null);
+    let payload = payload.map_or(&Value::Null, |payload| payload);
     let builder = builder.json(payload)?;
 
     builder.send().and_then(Response::error_for_status)
