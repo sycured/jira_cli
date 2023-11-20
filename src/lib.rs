@@ -9,6 +9,7 @@
 pub mod library;
 use attohttpc::{Error, Method, Response};
 use base64::{engine::general_purpose as b64, Engine};
+use clap::ArgMatches;
 use comfy_table::{
     modifiers::UTF8_ROUND_CORNERS, presets::UTF8_FULL, Cell, CellAlignment, ContentArrangement,
     Table,
@@ -43,6 +44,12 @@ pub fn handle_error_and_exit(message: &str) {
 
 pub fn print_output(output: &str) {
     println!("{output}");
+}
+
+#[allow(clippy::missing_panics_doc)]
+#[must_use]
+pub fn get_single_arg<'a>(args: &'a ArgMatches, arg_name: &str) -> &'a str {
+    args.get_one::<String>(arg_name).unwrap().as_str()
 }
 
 #[allow(clippy::missing_panics_doc)]
