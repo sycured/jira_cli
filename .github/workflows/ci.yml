@@ -230,49 +230,6 @@ jobs:
           cargo build --target=aarch64-apple-darwin
         if: matrix.target == 'aarch64-apple-darwin'
 
-  freebsd:
-    name: FreeBSD ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
-    needs:
-      - check
-      - test
-    env:
-      RUSTFLAGS: "-C target-feature=+crt-static"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x86-64
-            os: macos-12
-            hypervisor: xhyve
-            target: x86_64-unknown-freebsd
-          - arch: arm64
-            os: ubuntu-latest
-            hypervisor: qemu
-            target: aarch64-unknown-freebsd
-    steps:
-      - uses: actions/checkout@v4
-      - name: Cache target
-        uses: actions/cache@v3
-        with:
-          path: target/
-          key: jira_cli-freebsd-${{ matrix.arch }}
-      - uses: cross-platform-actions/action@v0.21.0
-        with:
-          operating_system: freebsd
-          architecture: ${{ matrix.arch }}
-          hypervisor: ${{ matrix.hypervisor }}
-          version: '13.2'
-          shell: bash
-          environment_variables: RUSTFLAGS
-          run: |
-            sudo mkdir -p /usr/local/etc/pkg/repos/
-            sudo cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
-            sudo sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
-            sudo pkg upgrade -y
-            sudo pkg install -y gmake rust
-            cargo build --target ${{ matrix.target }}
-
   approve-pr:
     name: Approve PR
     if: ${{ github.event_name == 'pull_request' }}
@@ -281,7 +238,6 @@ jobs:
       - test
       - native
       - cross
-      - freebsd
     runs-on: ubuntu-latest
     steps:
       - uses: hmarr/auto-approve-action@v2

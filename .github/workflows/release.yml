@@ -107,53 +107,6 @@ jobs:
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref_name }}
 
-  freebsd:
-    name: FreeBSD ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
-    env:
-      RUSTFLAGS: "-C target-feature=+crt-static"
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - arch: x86-64
-            os: macos-12
-            hypervisor: xhyve
-            target: x86_64-unknown-freebsd
-          - arch: arm64
-            os: ubuntu-latest
-            hypervisor: qemu
-            target: aarch64-unknown-freebsd
-    steps:
-      - uses: actions/checkout@v4
-      - name: Cache target
-        uses: actions/cache@v3
-        with:
-          path: target/
-          key: jira_cli-freebsd-${{ matrix.arch }}
-      - uses: cross-platform-actions/action@v0.21.0
-        with:
-          operating_system: freebsd
-          architecture: ${{ matrix.arch }}
-          hypervisor: ${{ matrix.hypervisor }}
-          version: '13.2'
-          shell: bash
-          environment_variables: RUSTFLAGS
-          run: |
-            sudo mkdir -p /usr/local/etc/pkg/repos/
-            sudo cp /etc/pkg/FreeBSD.conf /usr/local/etc/pkg/repos/
-            sudo sed -i '' -e 's/quarterly/latest/g' /usr/local/etc/pkg/repos/FreeBSD.conf
-            sudo pkg upgrade -y
-            sudo pkg install -y gmake rust
-            cargo build --target ${{ matrix.target }}
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: target/${{ matrix.target }}/release/jira_cli
-          asset_name: jira_cli-freebsd_${{ matrix.arch }}
-          tag: ${{ github.ref_name }}
-
   sbom:
     runs-on: ubuntu-latest
     name: Generate SBOM
