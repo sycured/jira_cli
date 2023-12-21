@@ -22,6 +22,15 @@ fn get_feature_keys(args: &ArgMatches) -> Vec<&String> {
         .unwrap()
 }
 
+pub fn add_component(global: &Global, args: &ArgMatches) {
+    let (name, project_key, jira_project_leadaccountid) = (
+        get_single_arg(args, "name"),
+        get_single_arg(args, "project_key"),
+        get_single_arg(args, "jira_project_leadaccountid"),
+    );
+    project::add_component(global, name, project_key, jira_project_leadaccountid);
+}
+
 pub fn create(global: &Global, args: &ArgMatches) {
     let (project_name, project_key, jira_project_leadaccountid, project_type, project_template) = (
         get_single_arg(args, "project_name"),
@@ -40,6 +49,14 @@ pub fn create(global: &Global, args: &ArgMatches) {
     );
 }
 
+pub fn delete_component(global: &Global, args: &ArgMatches) {
+    let (component_id, move_issues_to) = (
+        get_single_arg(args, "component_id"),
+        get_single_arg(args, "move_issues_to"),
+    );
+    project::delete_component(global, component_id, Some(move_issues_to));
+}
+
 pub fn delete_project(global: &Global, args: &ArgMatches) {
     let project_keys = get_project_keys(args);
     project_keys
@@ -50,6 +67,11 @@ pub fn delete_project(global: &Global, args: &ArgMatches) {
 pub fn get_id(global: &Global, args: &ArgMatches) {
     let project_key = get_single_arg(args, "project_key");
     project::get_id(global, project_key);
+}
+
+pub fn list_components(global: &Global, args: &ArgMatches) {
+    let project_key = get_single_arg(args, "project_key");
+    project::list_components(global, project_key);
 }
 
 pub fn list_features(global: &Global, args: &ArgMatches) {

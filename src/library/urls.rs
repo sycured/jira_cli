@@ -8,6 +8,7 @@
 use phf::phf_map;
 
 pub(crate) static URLS: phf::Map<&'static str, &'static str> = phf_map! {
+    "component" => "/rest/api/3/component",
     "group" => "/rest/api/3/group",
     "group_user_picker" => "/rest/api/3/groupuserpicker",
     "groups" => "/rest/api/3/groups",

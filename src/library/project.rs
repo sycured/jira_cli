@@ -19,6 +19,23 @@ use crate::{
     Authorization, Global, HttpRequest,
 };
 
+pub fn add_component(global: &Global, name: &str, project_key: &str, lead_account_id: &str) {
+    let url: String = generate_url(&global.domain, "component", None);
+    let payload: Value = json!({
+        "leadAccountId": lead_account_id,
+        "name": name,
+        "project": project_key
+    });
+    match request(&HttpRequest::POST, &url, Some(&payload), global) {
+        Ok(_) => print_output(&format!(
+            "Component {name} created in project {project_key}"
+        )),
+        Err(e) => handle_error_and_exit(&format!(
+            "Impossible to create the component {name} in project {project_key}: {e}"
+        )),
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub fn create(
     global: &Global,
@@ -66,6 +83,30 @@ pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
     }
 }
 
+pub fn delete_component(global: &Global, component_id: &str, move_issues_to: Option<&str>) {
+    let mut url: String = generate_url(
+        &global.domain,
+        "component",
+        Some(&format!("/{component_id}")),
+    );
+    if let Some(move_to) = move_issues_to {
+        url.push_str(&format!("?moveIssuesTo={move_to}"));
+    }
+
+    if confirm(format!(
+        "Are you sure you want to delete the component {component_id}?"
+    )) {
+        match request(&HttpRequest::DELETE, &url, None, global) {
+            Ok(_) => print_output(&format!("Component {component_id} deleted")),
+            Err(e) => handle_error_and_exit(&format!(
+                "Impossible to create the component {component_id}: {e}"
+            )),
+        }
+    } else {
+        println!("Component {component_id} not deleted");
+    }
+}
+
 #[allow(clippy::missing_panics_doc)]
 pub fn get_id(global: &Global, project_key: &str) {
     let url: String = generate_url(&global.domain, "project", Some(&format!("/{project_key}")));
@@ -88,6 +129,44 @@ pub fn get_id(global: &Global, project_key: &str) {
 }
 
 #[allow(clippy::missing_panics_doc)]
+pub fn list_components(global: &Global, project_key: &str) {
+    let url: String = generate_url(
+        &global.domain,
+        "project",
+        Some(&format!("/{project_key}/components")),
+    );
+    match request(&HttpRequest::GET, &url, None, global) {
+        Err(e) => handle_error_and_exit(&format!(
+            "Impossible to list components for project {project_key}: {e}"
+        )),
+        Ok(r) => {
+            let json: Value = r.json().expect("Failed to parse json");
+            let rows: Vec<Vec<Cell>> = json
+                .as_array()
+                .unwrap()
+                .par_iter()
+                .map(|x| {
+                    vec![
+                        Cell::new(x["id"].as_str().unwrap()),
+                        Cell::new(x["name"].as_str().unwrap()),
+                        Cell::new(x["lead"]["accountId"].as_str().unwrap()),
+                    ]
+                })
+                .collect();
+            create_and_print_table(
+                vec!["id", "name", "leadaccountid"],
+                &HashMap::from([
+                    (0, CellAlignment::Center),
+                    (1, CellAlignment::Center),
+                    (2, CellAlignment::Center),
+                ]),
+                rows,
+            );
+        }
+    }
+}
+
+#[allow(clippy::missing_panics_doc)]
 pub fn list_features(global: &Global, project_key: &str) {
     let url: String = generate_url(
         &global.domain,
@@ -99,7 +178,7 @@ pub fn list_features(global: &Global, project_key: &str) {
             "Impossible to list features for project {project_key}: {e}"
         )),
         Ok(r) => {
-            let json: Value = r.json().expect("Faield to parse json");
+            let json: Value = r.json().expect("Failed to parse json");
             let rows: Vec<Vec<Cell>> = json["features"]
                 .as_array()
                 .unwrap()

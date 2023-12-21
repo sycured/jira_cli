@@ -7,6 +7,19 @@
 
 use clap::{Arg, ArgAction::SetTrue, Command};
 
+pub fn add_component() -> Command {
+    Command::new("add_component")
+        .about("Create component")
+        .arg_required_else_help(true)
+        .arg(Arg::new("name").help("Component name").required(true))
+        .arg(Arg::new("project_key").help("Project key").required(true))
+        .arg(
+            Arg::new("jira_project_leadaccountid")
+                .help("Project lead (account id)")
+                .required(true),
+        )
+}
+
 pub fn create() -> Command {
     Command::new("create")
         .about("Create project")
@@ -41,6 +54,22 @@ pub fn create() -> Command {
         )
 }
 
+pub fn delete_component() -> Command {
+    Command::new("delete_component")
+        .about("Delete component")
+        .arg_required_else_help(true)
+        .arg(
+            Arg::new("component_id")
+                .help("Id of the component to delete")
+                .required(true),
+        )
+        .arg(
+            Arg::new("move_issues_to")
+                .help("The ID of the component to replace the deleted component")
+                .required(false),
+        )
+}
+
 pub fn delete_project() -> Command {
     Command::new("delete_project")
         .visible_aliases(["destroy", "destroy_project"])
@@ -60,6 +89,14 @@ pub fn get_id() -> Command {
     Command::new("get_id")
         .about("Get project id")
         .visible_aliases(["gi", "get-id"])
+        .arg_required_else_help(true)
+        .arg(Arg::new("project_key").help("Project key").required(true))
+}
+
+pub fn list_components() -> Command {
+    Command::new("list_components")
+        .about("List project components")
+        .visible_aliases(["list-components"])
         .arg_required_else_help(true)
         .arg(Arg::new("project_key").help("Project key").required(true))
 }

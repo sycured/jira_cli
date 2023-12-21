@@ -19,8 +19,11 @@ pub fn cli_commands() -> Command {
         .subcommand_required(true)
         .arg_required_else_help(true)
         .subcommand(cli_commands::get_id())
+        .subcommand(cli_commands::add_component())
         .subcommand(cli_commands::create())
+        .subcommand(cli_commands::delete_component())
         .subcommand(cli_commands::delete_project())
+        .subcommand(cli_commands::list_components())
         .subcommand(cli_commands::list_features())
         .subcommand(cli_commands::list_projects())
         .subcommand(cli_commands::list_versions())
@@ -30,9 +33,12 @@ pub fn cli_commands() -> Command {
 
 pub fn logic_commands(global: &Global, args: &ArgMatches) {
     match args.subcommand() {
+        Some(("add_component", args)) => cli_logic::add_component(global, args),
         Some(("create", args)) => cli_logic::create(global, args),
+        Some(("delete_component", args)) => cli_logic::delete_component(global, args),
         Some(("delete_project", args)) => cli_logic::delete_project(global, args),
         Some(("get_id", args)) => cli_logic::get_id(global, args),
+        Some(("list_components", args)) => cli_logic::list_components(global, args),
         Some(("list_features", args)) => cli_logic::list_features(global, args),
         Some(("list_projects", args)) => cli_logic::list_projects(global, args),
         Some(("list_versions", args)) => cli_logic::list_versions(global, args),
