@@ -39,6 +39,10 @@ echo "$JIRA_USER_ACCOUNT_ID"
 ## create
 echo "project create"
 $JIRA_CLI project create $JIRA_PROJECT_NAME $JIRA_PROJECT_KEY "$JIRA_USER_ACCOUNT_ID"
+## add_component
+$JIRA_CLI project add_component "test_component" $JIRA_PROJECT_KEY "$JIRA_USER_ACCOUNT_ID"
+## list_components
+$JIRA_CLI project list_components $JIRA_PROJECT_KEY
 ## get_id
 echo "project get_id"
 $JIRA_CLI project get_id $JIRA_PROJECT_KEY

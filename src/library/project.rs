@@ -89,7 +89,8 @@ pub fn delete_component(global: &Global, component_id: &str, move_issues_to: Opt
         "component",
         Some(&format!("/{component_id}")),
     );
-    if let Some(move_to) = move_issues_to {
+
+    if let Some(move_to) = move_issues_to.filter(|&mt| !mt.is_empty()) {
         url.push_str(&format!("?moveIssuesTo={move_to}"));
     }
 
