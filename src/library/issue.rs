@@ -8,6 +8,7 @@
 use std::collections::HashMap;
 
 use comfy_table::{Cell, CellAlignment};
+use log::info;
 use rayon::prelude::*;
 use serde_json::{json, Value};
 
@@ -81,7 +82,7 @@ pub fn assign(global: &Global, issue_key: &str, account_id: &str, success_messag
     );
     let payload: Value = json!({ "accountId": account_id });
     match request(&HttpRequest::PUT, &url, Some(&payload), global) {
-        Ok(_) => println!("{success_message}"),
+        Ok(_) => info!("{success_message}"),
         Err(e) => {
             handle_error_and_exit(&format!("Impossible to assign the issue {issue_key}: {e}"));
         }
@@ -346,7 +347,7 @@ pub fn list_votes(global: &Global, issue_key: &str) {
         Ok(response) => {
             let json: Value = response.json().expect("Failed to parse json");
             if json["hasVoted"] == "true" {
-                println!("Votes: {}", json["votes"]);
+                info!("Votes: {}", json["votes"]);
                 let rows: Vec<Vec<Cell>> = json["voters"]
                     .as_array()
                     .unwrap()

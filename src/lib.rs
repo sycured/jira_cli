@@ -16,6 +16,7 @@ use comfy_table::{
 };
 use dialoguer::Confirm;
 pub use library::*;
+use log::error;
 use serde_json::Value;
 use std::{collections::HashMap, process::exit};
 use zeroize::{Zeroize, ZeroizeOnDrop};
@@ -38,7 +39,7 @@ impl Authorization for Global {
 }
 
 pub fn handle_error_and_exit(message: &str) {
-    eprintln!("{message}");
+    error!("{message}");
     exit(1);
 }
 

@@ -14,6 +14,7 @@ use std::io::stdout;
 use clap::{ArgMatches, Command};
 use clap_complete::{generate, Generator, Shell};
 use human_panic::setup_panic;
+use pretty_env_logger::init as pretty_env_logger_init;
 
 use jira_cli::Global;
 
@@ -28,6 +29,7 @@ fn get_one_match_string(matches: &ArgMatches, name: &str) -> String {
 }
 
 fn main() {
+    pretty_env_logger_init();
     setup_panic!();
     let matches = cli::build_cli().get_matches();
     let global: Global = Global {

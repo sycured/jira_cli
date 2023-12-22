@@ -10,6 +10,7 @@ use std::collections::HashMap;
 use attohttpc::{Error, Method};
 use comfy_table::{Cell, CellAlignment};
 use itertools::Itertools;
+use log::warn;
 use rayon::prelude::*;
 use serde::Deserialize;
 use serde_json::{json, Value};
@@ -79,7 +80,7 @@ pub fn delete(global: &Global, project_key: &str, enable_undo: bool) {
             )),
         }
     } else {
-        println!("Project {project_key} not deleted.");
+        warn!("Project {project_key} not deleted.");
     }
 }
 
@@ -104,7 +105,7 @@ pub fn delete_component(global: &Global, component_id: &str, move_issues_to: Opt
             )),
         }
     } else {
-        println!("Component {component_id} not deleted");
+        warn!("Component {component_id} not deleted");
     }
 }
 

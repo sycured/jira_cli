@@ -8,6 +8,7 @@
 use attohttpc::{get, Error as AttohttpcError, Response};
 use clap::{crate_version, Command};
 use jira_cli::handle_error_and_exit;
+use log::{error, info, warn};
 use serde_json::Value;
 use std::error::Error;
 
@@ -46,16 +47,16 @@ fn extract_version_from_response(json: &Value) -> Result<String, Box<dyn Error>>
 fn print_version_info(actual_version: &str, latest_version: &str) {
     match actual_version {
         x if x == latest_version => {
-            println!("You are using the latest version.");
+            info!("You are using the latest version.");
         }
         x if x < latest_version => {
-            println!("You are using an outdated version. The latest version is {latest_version}");
+            warn!("You are using an outdated version. The latest version is {latest_version}");
         }
         x if x > latest_version => {
-            println!("You are using an unreleased version. The latest version is {latest_version}");
+            warn!("You are using an unreleased version. The latest version is {latest_version}");
         }
         _ => {
-            println!("You are using an unknown version. The latest version is {latest_version}");
+            error!("You are using an unknown version. The latest version is {latest_version}");
         }
     }
 }
