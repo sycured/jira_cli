@@ -29,8 +29,8 @@ normal = ["tikv-jemallocator-global"]
 [dependencies]
 attohttpc = { version = "0.26.1", default-features = false, features = ["compress", "json", "rustls"] }
 base64 = "0.21.5"
-clap = { version = "4.4.11", features = ["cargo", "env", "wrap_help"] }
-clap_complete = "4.4.4"
+clap = { version = "4.4.12", features = ["cargo", "env", "wrap_help"] }
+clap_complete = "4.4.5"
 comfy-table = "7.1.0"
 dialoguer = "0.11.0"
 pretty_env_logger = "0.5.0"
@@ -46,4 +46,4 @@ serde_json = "1.0.108"
 zeroize = { version = "1.7.0", features = ["zeroize_derive"] }
 
 [dev-dependencies]
-clap = { version = "4.4.11", features = ["cargo", "deprecated", "env", "wrap_help"] }
+clap = { version = "4.4.12", features = ["cargo", "deprecated", "env", "wrap_help"] }
