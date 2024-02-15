@@ -20,8 +20,8 @@ use jira_cli::Global;
 
 use crate::cli::{check_version, group, issue, labels, license, project, user};
 
-fn print_completions<G: Generator>(gen: G, cmd: &mut Command) {
-    generate(gen, cmd, cmd.get_name().to_owned(), &mut stdout());
+fn print_completions<G: Generator>(generator: G, cmd: &mut Command) {
+    generate(generator, cmd, cmd.get_name().to_owned(), &mut stdout());
 }
 
 fn get_one_match_string(matches: &ArgMatches, name: &str) -> String {
