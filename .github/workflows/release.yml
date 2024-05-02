@@ -106,27 +106,3 @@ jobs:
           file: target/${{ matrix.target }}/release/${{ matrix.artifact_name }}
           asset_name: ${{ matrix.asset_name }}
           tag: ${{ github.ref_name }}
-
-  sbom:
-    runs-on: ubuntu-latest
-    name: Generate SBOM
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install stable toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          cache-on-failure: true
-      - name: Install cargo-cyclonedx
-        run: cargo install cargo-cyclonedx
-      - name: Generate SBOM
-        run: cargo cyclonedx -a --output-cdx
-      - name: Upload SBOM
-        uses: svenstaro/upload-release-action@v1-release
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: bom.cdx.xml
-          asset_name: bom.cdx.xml
-          tag: ${{ github.ref_name }}
