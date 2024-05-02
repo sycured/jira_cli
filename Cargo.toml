@@ -4,7 +4,7 @@ version = "2.15.0"
 edition = "2021"
 license = "GPL-2.0"
 readme = "README.md"
-rust-version = "1.59"
+rust-version = "1.78"
 description = "A little CLI for Jira"
 authors = ["sycured <60801403+sycured@users.noreply.github.com>"]
 repository = "https://github.com/sycured/jira_cli"
@@ -28,7 +28,7 @@ normal = ["tikv-jemallocator-global"]
 
 [dependencies]
 attohttpc = { version = "0.28.0", default-features = false, features = ["compress", "json", "rustls"] }
-base64 = "0.22.0"
+base64 = "0.22.1"
 clap = { version = "4.5.4", features = ["cargo", "env", "wrap_help"] }
 clap_complete = "4.5.2"
 comfy-table = "7.1.1"
@@ -41,9 +41,9 @@ tikv-jemallocator-global = "0.5.0"
 lazy_static = "1.4.0"
 phf = { version = "0.11.2", features = ["macros"] }
 rayon = "1.10.0"
-serde = { version = "1.0.198", features = ["derive"] }
+serde = { version = "1.0.200", features = ["derive"] }
 serde_json = "1.0.116"
-zeroize = { version = "1.8.0", features = ["zeroize_derive"] }
+zeroize = { version = "1.7.0", features = ["zeroize_derive"] }
 
 [dev-dependencies]
 clap = { version = "4.5.4", features = ["cargo", "deprecated", "env", "wrap_help"] }
